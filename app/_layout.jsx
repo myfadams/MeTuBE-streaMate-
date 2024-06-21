@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native'
 import React, { useEffect } from 'react'
 import {SplashScreen, Stack} from "expo-router"
+
 // import { useFonts } from 'expo-font';
 import {
 	useFonts,
@@ -14,6 +15,7 @@ import {
 	Montserrat_800ExtraBold,
 	Montserrat_900Black,
 } from "@expo-google-fonts/montserrat";
+import { GlobalContext } from '../context/GlobalContext';
 SplashScreen.preventAutoHideAsync()
 const _layout = () => {
 
@@ -33,14 +35,22 @@ const _layout = () => {
         SplashScreen.hideAsync()
     })
   return (
-		<Stack screenOptions={{ headerShown: false }}>
-			<Stack.Screen
-				name="index"
-				options={{
-					headerShown: false,
-				}}
-			/>
-		</Stack>
+		<GlobalContext>
+			<Stack screenOptions={{ headerShown: false }}>
+				<Stack.Screen
+					name="index"
+					options={{
+						headerShown: false,
+					}}
+				/>
+				<Stack.Screen
+					name="(auth)"
+					options={{
+						headerShown: false,
+					}}
+				/>
+			</Stack>
+		</GlobalContext>
 	);
 }
 

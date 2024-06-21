@@ -1,17 +1,80 @@
-import { StyleSheet, Text, View,Image, ScrollView, TouchableOpacity, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context';
-import InputFields from '../../components/InputFields';
-import { bgColor, borderPrimary, otherColor } from '../../constants/colors';
-import { logo } from '../../constants/images';
+import {
+	StyleSheet,
+	Text,
+	View,
+	Image,
+	ScrollView,
+	TouchableOpacity,
+	Platform,
+	Alert,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import InputFields from "../../components/InputFields";
+import { bgColor, borderPrimary, otherColor } from "../../constants/colors";
+import { logo } from "../../constants/images";
 
-import Button from '../../components/Button';
-import { apple, google } from '../../constants/icons';
-import { Link } from 'expo-router';
+import Button from "../../components/Button";
+import { apple, google } from "../../constants/icons";
+import { Link, Redirect, router } from "expo-router";
+import { getContext } from "../../context/GlobalContext";
+import { emailVerification, loginUser } from "../../libs/firebase";
+import { authentication } from "../../libs/config";
+import { getAuth } from "firebase/auth";
 const SignIn = () => {
-	const [form, setform] = useState({email:"",password:""})
-  
-  return (
+	const [form, setform] = useState({ email: "", password: "" });
+	const [isLoading, setIsLoading] = useState(false);
+	const { user,setUser } = getContext();
+	
+	if (authentication["currentUser"] && user.emailVerified) {
+		return <Redirect href="home" />;
+	}
+
+	async function login() {
+		setIsLoading(true);
+		try {
+			if (!form.email || !form.password) {
+				Alert.alert("please fill the fields");
+				return;
+			}
+
+			const user = await loginUser(form.email, form.password);
+			setUser(user);
+			if (!emailVerification(user)) {
+				Alert.alert("Please verify, an email was sent to " + form.email, "", [
+					{
+						text: "continue",
+						onPress: () => {
+							router.push("verification");
+						},
+					},
+				]);
+			}else{
+				router.replace("home")
+			}
+		} catch (error) {
+			console.log(error.code);
+
+			let errorMessage = error.message.replace("Firebase", "MeTuBE");
+			if (error.code === "auth/invalid-email")
+				errorMessage = errorMessage.replace(
+					"(" + error.code + ")",
+					"The Email Entered is Invalid"
+				);
+			else if (error.code === "auth/network-request-failed") {
+				errorMessage = "Theres a problem with your network";
+			} else if (error.code === "auth/user-not-found") {
+				errorMessage = "No account with that email";
+			} else {
+				errorMessage = errorMessage.replace("(" + error.code + ")", "");
+			}
+			Alert.alert(errorMessage);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView
 				contentContainerStyle={styles.vewStyle}
@@ -75,7 +138,7 @@ const SignIn = () => {
 					value={form.password}
 				/>
 				<View style={{ marginTop: 30 }} />
-				<Button title="Sign In" />
+				<Button title="Sign In" isLoading={isLoading} handlePress={login} />
 				<View
 					style={{
 						width: "100%",
@@ -136,25 +199,25 @@ const SignIn = () => {
 			</ScrollView>
 		</SafeAreaView>
 	);
-}
+};
 
-export default SignIn
+export default SignIn;
 
 const styles = StyleSheet.create({
 	container: {
 		justifyContent: "center",
 		// alignItems: "center",
 		flex: 1,
-    backgroundColor:bgColor
+		backgroundColor: bgColor,
 	},
-  image:{
-    width:90,
-    height:66,
-  },
-  vewStyle:{
-    justifyContent: "center",
+	image: {
+		width: 90,
+		height: 66,
+	},
+	vewStyle: {
+		justifyContent: "center",
 		alignItems: "center",
-		flex: 1, 
-    height:"100vh"
-  }
+		flex: 1,
+		height: "100vh",
+	},
 });

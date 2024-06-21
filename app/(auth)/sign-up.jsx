@@ -6,6 +6,7 @@ import {
 	ScrollView,
 	TouchableOpacity,
 	Platform,
+	Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,9 +16,67 @@ import { logo } from "../../constants/images";
 
 import Button from "../../components/Button";
 import { apple, google } from "../../constants/icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { createAccount, emailVerification } from "../../libs/firebase";
+import { getContext } from "../../context/GlobalContext";
+
 const SignUp = () => {
-	const [form, setForm] = useState({name:"",email:"",password:""})
+	const [form, setForm] = useState({ name: "", email: "", password: "" });
+	const { setUser,setName } = getContext();
+	const [isLoading, setIsLoading] = useState(false);
+
+	async function signUp() {
+		setIsLoading(true);
+		try {
+			if(!form.email || !form.name || !form.password){
+				Alert.alert("please fill the fields")
+				return;
+			}
+
+			const user = await createAccount(form.email, form.password);
+			setUser(user);
+			setName(form.name)
+
+			Alert.alert("sent an email verifcation to "+form.email,"",[{
+				text:"continue", onPress:()=>{router.replace("verification")}
+			}])
+		} catch (error) {
+			console.log(error.code);
+			if (error.code === "auth/email-already-in-use") {
+				if(emailVerification(form.email)){
+					Alert.alert("This email already has an account ", "", [
+						{
+							text: "Login",
+							onPress: () => {
+								router.push("sign-in");
+							},
+						},
+					]);
+				}else{
+					Alert.alert("This email already exist please verify to continue", "", [
+						{
+							text: "continue",
+							onPress: () => {
+								router.replace("verification");
+							},
+						},
+					]);
+				}
+			} else {
+				let errorMessage = error.message.replace("Firebase","MeTuBE")
+				if(error.code==="auth/invalid-email")
+					errorMessage=errorMessage.replace("("+error.code+")","The Email Entered is Invalid")
+				else{
+					errorMessage = errorMessage.replace("(" + error.code + ")", "");
+				}
+				Alert.alert(errorMessage);
+			}
+		} finally {
+			setIsLoading(false);
+		}
+
+		
+	}
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView
@@ -91,7 +150,7 @@ const SignUp = () => {
 					value={form.password}
 				/>
 				<View style={{ marginTop: 30 }} />
-				<Button title="Sign In" />
+				<Button title="Sign Up" handlePress={signUp} isLoading={isLoading} />
 				<View
 					style={{
 						width: "100%",

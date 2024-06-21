@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 
 const _layout = () => {
   return (
-		<Stack screenOptions={{headerShown:false}}>
+		<Stack screenOptions={{ headerShown: false }}>
 			<Stack.Screen
 				name="sign-in"
 				options={{
@@ -13,6 +13,12 @@ const _layout = () => {
 			/>
 			<Stack.Screen
 				name="sign-up"
+				options={{
+					headerShown: false,
+				}}
+			/>
+			<Stack.Screen
+				name="verification"
 				options={{
 					headerShown: false,
 				}}
