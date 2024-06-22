@@ -16,7 +16,7 @@ import { logo } from "../../constants/images";
 
 import Button from "../../components/Button";
 import { apple, google } from "../../constants/icons";
-import { Link, Redirect, router } from "expo-router";
+import { Link, Redirect, SplashScreen, router } from "expo-router";
 import { getContext } from "../../context/GlobalContext";
 import { emailVerification, loginUser } from "../../libs/firebase";
 import { authentication } from "../../libs/config";
@@ -25,10 +25,10 @@ const SignIn = () => {
 	const [form, setform] = useState({ email: "", password: "" });
 	const [isLoading, setIsLoading] = useState(false);
 	const { user,setUser } = getContext();
-	
-	if (authentication["currentUser"] && user.emailVerified) {
-		return <Redirect href="home" />;
-	}
+	SplashScreen.hideAsync()
+	// if (authentication["currentUser"] && user.emailVerified) {
+	// 	return <Redirect href="home" />;
+	// }
 
 	async function login() {
 		setIsLoading(true);

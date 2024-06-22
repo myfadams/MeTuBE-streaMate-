@@ -66,6 +66,8 @@ const SignUp = () => {
 				let errorMessage = error.message.replace("Firebase","MeTuBE")
 				if(error.code==="auth/invalid-email")
 					errorMessage=errorMessage.replace("("+error.code+")","The Email Entered is Invalid")
+				else if(error.code==="auth/network-request-failed")
+					errorMessage="Network Error please try Again"
 				else{
 					errorMessage = errorMessage.replace("(" + error.code + ")", "");
 				}
@@ -119,7 +121,7 @@ const SignUp = () => {
 							marginBottom: 23,
 						}}
 					>
-						Log in to your account
+						Sign up for an Account
 					</Text>
 				</View>
 				<InputFields

@@ -6,7 +6,9 @@ import {
 	onAuthStateChanged,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-import { app, set, usersRef } from "./config";
+import { app, db, ref, set, usersRef } from "./config";
+import { avatars } from "./appwrite";
+import { get, onValue } from "firebase/database";
 
 const authentication = getAuth();
 // let user;
@@ -40,12 +42,29 @@ export async function checkVerified(user,name){
 			user.reload();
 			
 		}else{
+			console.log(avatars.getInitials(name));
+			const image = avatars.getInitials(name);
+			set(usersRef(user.uid), {name:name,email:user.email,image:(""+image)})
 
 		}
 	});
-	set(usersRef(user.uid), {name:name,email:user.email})
 	console.log("here nowe: "+user.emailVerified);
 	return user.emailVerified
+}
+
+export async function getUSerProfile(userId){
+	// console.log(userId)
+	const userInfo =ref(db, "usersref/"+userId);
+	const data = await get(userInfo)
+	// console.log("data: "+JSON.stringify(data))
+	const user = {
+		name: data.val().name,
+		email: data.val().email,
+		image: data.val().image,
+	};
+	// console.log(user)
+	return user
+	// data
 }
 
 export { createAccount};

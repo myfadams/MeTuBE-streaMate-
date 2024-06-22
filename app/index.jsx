@@ -14,12 +14,18 @@ import * as Animatable from "react-native-animatable";
 import AnimatedLoader from "react-native-animated-loader";
 
 import { Redirect, SplashScreen, router } from "expo-router";
-import { authentication } from "../libs/config";
 import { getContext } from "../context/GlobalContext";
-import { getAuth } from "firebase/auth";
+import { get } from "firebase/database";
 
 const Index = () => {
-	const { user } = getContext();
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			router.replace("/home");
+		}, 5000);
+		console.log("pushed to home");
+		return () => clearTimeout(timer);
+	});
+
 	const slideInDown = {
 		from: {
 			translateY: -20, // Starting position (50 units above the original position)
@@ -28,20 +34,20 @@ const Index = () => {
 			translateY: 0, // Ending position (original position)
 		},
 	};
-	
-	if (!user) return <Redirect href="sign-in" />;
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView
 				contentContainerStyle={styles.vewStyle}
 				automaticallyAdjustKeyboardInsets
 			>
-				<AnimatedLoader
-					visible={true}
-					overlayColor={bgColor}
-					source={require("../assets/animations/loading.json")}
-					animationStyle={styles.lottie}
-					speed={1}
+				<View
+					style={{
+						
+						alignItems: "center",
+						justifyContent: "center",
+						
+					}}
 				>
 					<View
 						style={{
@@ -89,7 +95,7 @@ const Index = () => {
 							Loading..
 						</Animatable.Text>
 					</View>
-				</AnimatedLoader>
+				</View>
 			</ScrollView>
 		</SafeAreaView>
 	);
