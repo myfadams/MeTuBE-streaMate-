@@ -21,7 +21,7 @@ const Index = () => {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			router.replace("/home");
-		}, 5000);
+		}, 4000);
 		console.log("pushed to home");
 		return () => clearTimeout(timer);
 	});

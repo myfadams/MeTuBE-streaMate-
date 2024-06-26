@@ -7,6 +7,7 @@ import { getContext } from '../../context/GlobalContext';
 import { getUSerProfile } from '../../libs/firebase';
 function TabIcon({ icon, color, name, focused }) {
 	const {user} = getContext();
+	// console.log(user)
 	const [userInfo,setUserInfo]=useState(null)
 	// const [userImage, setUserImage] = useState("")
 	// console.log(user)
@@ -25,7 +26,14 @@ function TabIcon({ icon, color, name, focused }) {
 	}, []);
 	
 	return (
-		<View style={{ justifyContent: "center", alignItems: "center", gap: 1, marginTop:9}}>
+		<View
+			style={{
+				justifyContent: "center",
+				alignItems: "center",
+				gap: 1,
+				marginTop: 9,
+			}}
+		>
 			{name !== "You" ? (
 				<Image
 					source={icon}
@@ -34,8 +42,9 @@ function TabIcon({ icon, color, name, focused }) {
 					style={{ width: 25, height: 25 }}
 				/>
 			) : (
+				// userInfo?.image
 				<Image
-					source={{ uri: userInfo?.image }}
+					source={{ uri: user?.photoURL }}
 					resizeMode="contain"
 					style={{
 						width: 26,
@@ -43,6 +52,7 @@ function TabIcon({ icon, color, name, focused }) {
 						borderWidth: 1,
 						borderRadius: "50%",
 						borderColor: "#fff",
+						backgroundColor: color,
 					}}
 				/>
 			)}

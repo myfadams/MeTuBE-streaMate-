@@ -33,7 +33,7 @@ const SignUp = () => {
 				return;
 			}
 
-			const user = await createAccount(form.email, form.password);
+			const user = await createAccount(form.email, form.password,form.name);
 			setUser(user);
 			setName(form.name)
 

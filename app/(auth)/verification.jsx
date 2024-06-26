@@ -37,8 +37,8 @@ const Verification = () => {
 	
 	 useEffect(() => {
 		 const interval = setInterval(async () => {
-			 const verified = await checkVerified(user,name);
-			 console.log("hi :"+verified)
+			 const verified = await checkVerified(user);
+			//  console.log("hi :"+verified)
 				if (verified) {
 					setIsVerified(true);
 					clearInterval(interval);

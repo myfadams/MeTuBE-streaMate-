@@ -32,6 +32,10 @@ const db =getDatabase(app);
 const usersRef  = (userId)=>{
 	return ref(db, "usersref/"+userId);
 }
+
+const VideosRef = (videoID) => {
+	return ref(db, "videosRef/" + videoID);
+};
 // console.log(app)
 
-export {app,authentication,storage,db,usersRef,set,ref};
+export {app,authentication,storage,db,usersRef,set,ref,VideosRef};
