@@ -15,6 +15,8 @@ import like from "../assets/icons/like.png";
 import dislike from "../assets/icons/dislike.png"
 import comment from "../assets/icons/comment.png"
 import share from "../assets/icons/share.png"
+import play from "../assets/icons/active/play.png"
+import pause from "../assets/icons/active/pause.png";
 export {
 	apple,
 	google,
@@ -28,5 +30,5 @@ export {
 	search,
 	chromecast,
 	sub,
-	dislike,like,comment,share
+	dislike,like,comment,share,pause,play
 };

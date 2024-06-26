@@ -3,6 +3,7 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { bgColor } from '../../constants/colors';
 import ShortsView from '../../components/ShortsView';
+import WrapperComponent from "../../components/CommentSection";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -19,8 +20,9 @@ const shorts = () => {
         showsVerticalScrollIndicator={false}
 				renderItem={(item) => {
 					return (
+	
 						<View style={{ height: (windowHeight-80), borderTopWidth: 0.7, borderBottomWidth: 0.7 }}>
-							<ShortsView />
+							<ShortsView sourceUrl={require("../../tempVid/small.mp4")}/>
 						</View>
 					);
 				}}
