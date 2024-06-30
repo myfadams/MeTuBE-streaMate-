@@ -1,10 +1,13 @@
-import { View, Text,StyleSheet,Image } from 'react-native'
+import { View, Text,StyleSheet,Image, TouchableWithoutFeedback } from 'react-native'
 import React from 'react'
 import { loadingColor } from '../constants/colors';
 import * as Animatable from "react-native-animatable";
-const VideoView = ({creator,thumbnail,title,url}) => {
-    // console.log(thumbnail)
+import { router } from 'expo-router';
+const VideoView = ({creator,thumbnail,title,url,id}) => {
   return (
+		<TouchableWithoutFeedback onPress={()=>{
+			router.push("video/"+id)
+		}}>
 		<View>
 				<View
 					style={{
@@ -74,6 +77,7 @@ const VideoView = ({creator,thumbnail,title,url}) => {
 					</View>
 				</View>
 		</View>
+		</TouchableWithoutFeedback>
 	);
 }
 

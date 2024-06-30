@@ -37,7 +37,7 @@ const home = () => {
 				showsVerticalScrollIndicator={false}
 				data={fetchVideos()}
 				renderItem={(item) => {
-					return <VideoView thumbnail={item.item.thumbnail} />;
+					return <VideoView thumbnail={item.item.thumbnail} id={item.item.id}/>;
 				}}
 				ListHeaderComponent={<HeaderApp />}
 				ListEmptyComponent={

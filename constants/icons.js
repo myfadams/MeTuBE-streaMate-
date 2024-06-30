@@ -12,11 +12,15 @@ import sub from "../assets/icons/active/sub.png";
 import gear from "../assets/icons/active/gear.png";
 import show from "../assets/icons/unhide.png";
 import like from "../assets/icons/like.png";
-import dislike from "../assets/icons/dislike.png"
-import comment from "../assets/icons/comment.png"
-import share from "../assets/icons/share.png"
-import play from "../assets/icons/active/play.png"
+import dislike from "../assets/icons/dislike.png";
+import comment from "../assets/icons/comment.png";
+import share from "../assets/icons/share.png";
+import play from "../assets/icons/active/play.png";
 import pause from "../assets/icons/active/pause.png";
+import replay from "../assets/icons/active/replay.png";
+import close from "../assets/icons/active/close.png";
+import adjuster from "../assets/icons/active/adjuster.png";
+import send from "../assets/icons/active/send.png";
 export {
 	apple,
 	google,
@@ -24,11 +28,21 @@ export {
 	show,
 	home,
 	shorts,
-	add,gear,
+	add,
+	gear,
 	subsription,
-    message,
+	message,
 	search,
 	chromecast,
 	sub,
-	dislike,like,comment,share,pause,play
+	dislike,
+	like,
+	comment,
+	share,
+	pause,
+	play,
+	replay,
+	close,
+	adjuster,
+	send
 };

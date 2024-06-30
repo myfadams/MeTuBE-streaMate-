@@ -108,7 +108,7 @@ export function fetchVideos() {
 			});
 		});
 		vids=videos
-		console.log(vids)
+		// console.log(vids)
 		
 	});
 	// console.log(vids);
