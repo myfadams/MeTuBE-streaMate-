@@ -1,11 +1,14 @@
 import { View, Text,FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { bgColor, loadingColor } from '../../constants/colors';
 import { ResizeMode, Video } from 'expo-av';
 import VidScreenLoad from '../../components/VidScreenLoad';
 import { replay } from '../../constants/icons';
+import VidHeader from '../../components/VideoHeader';
+import BottomSheetComponent from '../../components/CommentSection';
+import VideoView from '../../components/VideoView';
 
 
 const VideoPlayer = () => {
@@ -13,7 +16,13 @@ const VideoPlayer = () => {
 	const [isDone, setIsDone] = useState(false)
 	const videoRef = useRef(null);
 	const [hasStarted, setHasStarted] = useState(false);
-
+	const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+	const handleCloseBottomSheet = () => {
+		setIsBottomSheetVisible(false);
+	};
+	const handleToggleBottomSheet = () => {
+		setIsBottomSheetVisible(!isBottomSheetVisible);
+	};
 	const handleRestart = async () => {
 		if (videoRef.current) {
 			await videoRef.current.setPositionAsync(0); // Seek to the beginning
@@ -21,7 +30,14 @@ const VideoPlayer = () => {
 		}
 		setIsDone(false)
 	};
-    console.log(videoID)
+    // console.log(videoID)
+	const [testData, settestData] = useState([])
+	useEffect(()=>{
+		setTimeout(()=>{
+			settestData([1, 2, 3, 4, 5, 6, , 7]);
+		},2000)
+	})
+	// const testData=[1, 2, 3, 4, 5, 6, ,7]
   return (
 		<SafeAreaView
 			style={{ backgroundColor: bgColor, width: "100%", height: "100%" }}
@@ -59,12 +75,18 @@ const VideoPlayer = () => {
 				)}
 			</View>
 			<FlatList
-				// data={[1,2,3,4,5,6,7,8,9,10]}
+				data={testData}
+				ListHeaderComponent={testData.length>0 && <VidHeader comment={()=>{handleToggleBottomSheet()}}/>}
 				renderItem={(item) => {
-					return <Text>Done</Text>;
+					return <VideoView type={"subvideos"} />;
 				}}
 				showsVerticalScrollIndicator={false}
 				ListEmptyComponent={<VidScreenLoad />}
+			/>
+			{/* <View></View> */}
+			<BottomSheetComponent
+				isVisible={isBottomSheetVisible}
+				onClose={handleCloseBottomSheet}
 			/>
 		</SafeAreaView>
 	);

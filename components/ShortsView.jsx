@@ -7,13 +7,14 @@ import {
 	StyleSheet,
 	Pressable,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import BottomSheetComponent from "./CommentSection";
 import { ResizeMode, Video } from "expo-av";
 import { buttonColor, loadingColor } from "../constants/colors";
 import { comment, dislike, like, pause, share } from "../constants/icons";
+import OtherViewButtons from "./OtherViewButtons";
 
-const ShortsView = ({ sourceUrl, title, shouldPlay,fix }) => {
+const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 	const [play, setPlay] = useState(true);
 	const [likeClicked, setLikeClicked] = useState(false);
 	const [dislikeClicked, setDislikeClicked] = useState(false);
@@ -32,6 +33,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix }) => {
 	const handleCloseBottomSheet = () => {
 		setIsBottomSheetVisible(false);
 	};
+
 
 	function addLike() {
 		if (!likeClicked) {
@@ -64,7 +66,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix }) => {
 			>
 				<Video
 					resizeMode={ResizeMode.COVER}
-					shouldPlay={play && shouldPlay}
+					shouldPlay={play && shouldPlay && beFocused}
 					isLooping
 					onPlaybackStatusUpdate={(video) => {
 						if (video.isLoaded) setHasStarted(true);
@@ -153,8 +155,9 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix }) => {
 							borderRadius: "50%",
 						}}
 					/>
-					<TouchableOpacity
-						style={{
+					<OtherViewButtons
+						title={"Subscribe"}
+						styles={{
 							width: 100,
 							height: 30,
 							backgroundColor: buttonColor,
@@ -162,9 +165,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix }) => {
 							alignItems: "center",
 							borderRadius: 3,
 						}}
-					>
-						<Text style={{ color: "#fff" }}>Subscribe</Text>
-					</TouchableOpacity>
+					/>
 				</View>
 				<Text
 					style={{ fontSize: 18, margin: 8, color: "#fff" }}
@@ -173,11 +174,13 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix }) => {
 					Shorts description for now
 				</Text>
 			</View>
-			<BottomSheetComponent
-				isVisible={isBottomSheetVisible}
-				onClose={handleCloseBottomSheet}
-				isActive={handleActive}
-			/>
+			{beFocused && (
+				<BottomSheetComponent
+					isVisible={isBottomSheetVisible}
+					onClose={handleCloseBottomSheet}
+					isActive={handleActive}
+				/>
+			)}
 		</View>
 	);
 };

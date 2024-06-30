@@ -31,6 +31,7 @@ const _layout = () => {
 			Montserrat_900Black,
 		});
     useEffect(()=>{
+		// configureAudio(); 
       if(fontsLoaded)
         SplashScreen.hideAsync()
     })

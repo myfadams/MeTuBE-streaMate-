@@ -21,6 +21,14 @@ import replay from "../assets/icons/active/replay.png";
 import close from "../assets/icons/active/close.png";
 import adjuster from "../assets/icons/active/adjuster.png";
 import send from "../assets/icons/active/send.png";
+import download from "../assets/icons/outline/download.png";
+import flag from "../assets/icons/outline/flag.png";
+import foward from "../assets/icons/outline/foward.png";
+import save from "../assets/icons/outline/save.png";
+import clip from "../assets/icons/outline/scissors.png";
+import subsOutline from "../assets/icons/outline/subs.png";
+import likeOutline from "../assets/icons/outline/thumbsUp.png";
+import dislikOutline from "../assets/icons/outline/thumbsDown.png";
 export {
 	apple,
 	google,
@@ -44,5 +52,13 @@ export {
 	replay,
 	close,
 	adjuster,
-	send
+	send,
+	download,
+	flag,
+	foward,
+	save,
+	clip,
+	subsOutline,
+	likeOutline,
+	dislikOutline,
 };

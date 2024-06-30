@@ -16,14 +16,16 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 	React.useEffect(() => {
 		if (isVisible) {
 			bottomSheetRef.current?.expand();
-			isActive(true)
+			if(isActive)
+				isActive(true)
 		}
 	}, [isVisible]);
 
 	const handleClosePress = useCallback(() => {
 		bottomSheetRef.current?.close();
 		onClose && onClose();
-		isActive(false)
+		if(isActive)
+			isActive(false)
 	}, [onClose]);
 
 	const handleSheetChanges = useCallback(
@@ -33,7 +35,8 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 			if (index === 0) {
 				bottomSheetRef.current?.close();
 				onClose && onClose();
-				isActive(false);
+				if(isActive)
+					isActive(false);
 			}
 
 			// Perform other actions based on snap point index if needed

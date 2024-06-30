@@ -3,12 +3,17 @@ import React from 'react'
 import { loadingColor } from '../constants/colors';
 import * as Animatable from "react-native-animatable";
 import { router } from 'expo-router';
-const VideoView = ({creator,thumbnail,title,url,id}) => {
+const VideoView = ({creator,thumbnail,title,url,id,type}) => {
   return (
-		<TouchableWithoutFeedback onPress={()=>{
-			router.push("video/"+id)
-		}}>
-		<View>
+		<TouchableWithoutFeedback
+			onPress={() => {
+				if(type!=="subvideos")
+					router.push("video/" + id);
+				else
+					router.replace("video/" + id);
+			}}
+		>
+			<View>
 				<View
 					style={{
 						width: "100%",
@@ -23,10 +28,18 @@ const VideoView = ({creator,thumbnail,title,url,id}) => {
 							// opacity: 0.6,
 						}}
 					>
-                        <Image source={{uri:thumbnail}} style={{width:"100%", height:"100%"}} resizeMode='contain'/>
-                    </View>
+						<Image
+							source={{ uri: thumbnail }}
+							style={{
+								width: "100%",
+								height: "100%",
+								backgroundColor: "#1A1818",
+							}}
+							resizeMode="contain"
+						/>
+					</View>
 					<View style={{ flexDirection: "row", width: "95%", margin: 8 }}>
-						<View
+						<Image
 							style={{
 								width: 50,
 								height: 50,
@@ -34,10 +47,9 @@ const VideoView = ({creator,thumbnail,title,url,id}) => {
 								borderColor: "#000",
 								borderWidth: 1,
 								margin: 3,
-								// backgroundColor: loadingColor,
-								opacity: 0.6,
+								backgroundColor: "#fff",
 							}}
-						></View>
+						/>
 						<View style={{ width: "90%", justifyContent: "center" }}>
 							<View
 								style={{
@@ -76,7 +88,7 @@ const VideoView = ({creator,thumbnail,title,url,id}) => {
 						</View>
 					</View>
 				</View>
-		</View>
+			</View>
 		</TouchableWithoutFeedback>
 	);
 }
