@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import { adjuster, close } from '../constants/icons';
 
-const CommentsHeader = ({handleClose}) => {
+const CommentsHeader = ({handleClose,text}) => {
   return (
 		<View
 			style={{
@@ -20,12 +20,12 @@ const CommentsHeader = ({handleClose}) => {
 						fontFamily: "Montserrat_700Bold",
 					}}
 				>
-					Comments
+					{text}
 				</Text>
 				<View style={{ flexDirection: "row", gap: 15 }}>
-					<TouchableOpacity>
+					{text==="Comments"&&<TouchableOpacity>
 						<Image style={{ width: 30, height: 30 }} source={adjuster} />
-					</TouchableOpacity>
+					</TouchableOpacity>}
 					<TouchableOpacity onPress={handleClose}>
 						<Image style={{ width: 30, height: 30 }} source={close} />
 					</TouchableOpacity>

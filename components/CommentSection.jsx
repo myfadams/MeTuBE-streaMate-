@@ -1,17 +1,20 @@
 // BottomSheetComponent.js
 
 import React, { useCallback, useRef, useState } from "react";
-import { Button, StyleSheet, View, Text, KeyboardAvoidingView, Platform } from "react-native";
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { Button, StyleSheet, View, Text, Keyboard, Dimensions } from "react-native";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { bgColor, loadingColor } from "../constants/colors";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList} from "react-native-gesture-handler";
 import CommentsHeader from "./CommentsHeader";
 import CommentFooter from "./CommentFooter";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+const windowHeight = Dimensions.get("window").height;
 const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
+	const insets = useSafeAreaInsets();
+	const commentHeight = ((windowHeight-250-insets.bottom)/windowHeight)*100
 	const bottomSheetRef = useRef(null);
 	const [currentSnapPointIndex, setCurrentSnapPointIndex] = useState(-1);
-
+	
 	// Handle opening the bottom sheet when isVisible changes to true
 	React.useEffect(() => {
 		if (isVisible) {
@@ -23,6 +26,7 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 
 	const handleClosePress = useCallback(() => {
 		bottomSheetRef.current?.close();
+		Keyboard.dismiss();
 		onClose && onClose();
 		if(isActive)
 			isActive(false)
@@ -34,6 +38,7 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 
 			if (index === 0) {
 				bottomSheetRef.current?.close();
+				Keyboard.dismiss()
 				onClose && onClose();
 				if(isActive)
 					isActive(false);
@@ -48,12 +53,14 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 		<BottomSheet
 			ref={bottomSheetRef}
 			index={isVisible ? 0 : -1} // Start at snap point 0 when visible
-			snapPoints={["2%", "60%"]}
+			// 60%"
+			snapPoints={["2%", `${commentHeight}%`]}
 			// enablePanDownToClose={true}
 			onChange={handleSheetChanges}
 			backgroundStyle={{ backgroundColor: bgColor }}
 		>
-			<CommentsHeader handleClose={handleClosePress} />
+			<CommentsHeader handleClose={handleClosePress} text={"Comments"} />
+
 			<FlatList
 				// data={[1, 2, 3, 4, 5, 6, 8, 9, 0]}
 				showsVerticalScrollIndicator={false}
@@ -79,9 +86,8 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 					);
 				}}
 			/>
-			
-				<CommentFooter />
-			
+
+			<CommentFooter />
 		</BottomSheet>
 	);
 };

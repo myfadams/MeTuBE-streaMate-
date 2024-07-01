@@ -3,10 +3,9 @@ import React, { useState } from "react";
 import { buttonColor, fieldColor, loadingColor } from "../constants/colors";
 import OtherViewButtons from "./OtherViewButtons";
 import BottomSheetComponent from "./CommentSection";
+import ScrollButtons from "./ScrollButtons";
 
-const VidHeader = ({comment}) => {
-	
-
+const VidHeader = ({ comment, about }) => {
 	return (
 		<View
 			style={{
@@ -15,6 +14,7 @@ const VidHeader = ({comment}) => {
 			}}
 		>
 			<TouchableOpacity
+				onPress={about}
 				activeOpacity={0.8}
 				style={{
 					width: "96%",
@@ -28,6 +28,8 @@ const VidHeader = ({comment}) => {
 						color: "white",
 						fontSize: 20,
 						fontFamily: "Montserrat_600SemiBold",
+						flexWrap: "wrap",
+						flexDirection: "row",
 					}}
 				>
 					This is the ttile
@@ -131,6 +133,8 @@ const VidHeader = ({comment}) => {
 					/>
 				</View>
 			</View>
+			{/* //my ScrollButtons */}
+			<ScrollButtons />
 			<TouchableOpacity
 				onPress={comment}
 				activeOpacity={0.6}
@@ -200,7 +204,8 @@ const VidHeader = ({comment}) => {
 							color: "white",
 							fontSize: 14.5,
 							fontFamily: "Montserrat_400Regular",
-							// flexShrink: 1
+							flexWrap: "wrap",
+							flexDirection: "row",
 							flex: 1,
 						}}
 					>
@@ -208,7 +213,6 @@ const VidHeader = ({comment}) => {
 					</Text>
 				</View>
 			</TouchableOpacity>
-			
 		</View>
 	);
 };

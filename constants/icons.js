@@ -29,6 +29,9 @@ import clip from "../assets/icons/outline/scissors.png";
 import subsOutline from "../assets/icons/outline/subs.png";
 import likeOutline from "../assets/icons/outline/thumbsUp.png";
 import dislikOutline from "../assets/icons/outline/thumbsDown.png";
+import options from "../assets/icons/options.png";
+import back from "../assets/icons/back.png";
+import shortLogo from "../assets/images/shorts.png";
 export {
 	apple,
 	google,
@@ -55,10 +58,13 @@ export {
 	send,
 	download,
 	flag,
+	back,
 	foward,
 	save,
 	clip,
 	subsOutline,
 	likeOutline,
 	dislikOutline,
+	options,
+	shortLogo
 };

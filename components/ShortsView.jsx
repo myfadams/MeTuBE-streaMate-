@@ -171,7 +171,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 					style={{ fontSize: 18, margin: 8, color: "#fff" }}
 					numberOfLines={1}
 				>
-					Shorts description for now
+					{title?title:"Shorts description for now"}
 				</Text>
 			</View>
 			{beFocused && (

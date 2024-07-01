@@ -1,23 +1,42 @@
-import { View, Text, TouchableOpacity, ScrollView,Image, Pressable } from "react-native"
+import { View, Text, TouchableOpacity, ScrollView,Image } from "react-native"
 import {
 	clip,
 	dislikOutline,
+	dislike,
 	download,
 	flag,
 	foward,
+	like,
 	likeOutline,
 	save,
 	shorts,
 } from "../constants/icons";
-import { fieldColor} from "../constants/colors";
-import React from 'react'
+import { buttonColor, fieldColor} from "../constants/colors";
+import React, { useState } from 'react'
 
 const ScrollButtons = () => {
+	const [likeClicked, setLikeClicked] = useState(false);
+	const [dislikeClicked, setDislikeClicked] = useState(false);
+	function addLike() {
+		if (!likeClicked) {
+			setLikeClicked(true);
+			setDislikeClicked(false);
+		} else setLikeClicked(false);
+	}
+
+	function addDislike() {
+		if (!dislikeClicked) {
+			// console.log("dislike");
+			setLikeClicked(false);
+			setDislikeClicked(true);
+		} else setDislikeClicked(false);
+	}
   return (
 		<ScrollView
 			horizontal
+			decelerationRate={"fast"}
+			showsHorizontalScrollIndicator={false}
 			contentContainerStyle={{
-				width: "96%",
 				gap: 5,
 				margin: 6,
 				justifyContent: "space-between",
@@ -34,10 +53,8 @@ const ScrollButtons = () => {
 					flexDirection: "row",
 				}}
 			>
-				<Pressable
-					onPress={() => {
-						console.log("pressed");
-					}}
+				<TouchableOpacity
+					onPress={addLike}
 					style={{
 						flexDirection: "row",
 						alignItems: "center",
@@ -46,7 +63,8 @@ const ScrollButtons = () => {
 					}}
 				>
 					<Image
-						source={likeOutline}
+						source={likeClicked ? like : likeOutline}
+						tintColor={likeClicked ? buttonColor : "#fff"}
 						style={{ width: 22, height: 22 }}
 						resizeMode="contain"
 					/>
@@ -60,9 +78,10 @@ const ScrollButtons = () => {
 						{" "}
 						53K
 					</Text>
-				</Pressable>
+				</TouchableOpacity>
 				<Text style={{ color: "#fff", fontSize: 18 }}>|</Text>
-				<Pressable
+				<TouchableOpacity
+					onPress={addDislike}
 					style={{
 						flexDirection: "row",
 						alignItems: "center",
@@ -71,14 +90,15 @@ const ScrollButtons = () => {
 					}}
 				>
 					<Image
-						source={dislikOutline}
+						source={dislikeClicked ? dislike : dislikOutline}
+						tintColor={dislikeClicked ? buttonColor : "#fff"}
 						style={{ width: 22, height: 22 }}
 						resizeMode="contain"
 					/>
-				</Pressable>
+				</TouchableOpacity>
 			</View>
 
-			<Pressable
+			<TouchableOpacity
 				style={{
 					height: 35,
 					gap: 3,
@@ -104,8 +124,8 @@ const ScrollButtons = () => {
 				>
 					share
 				</Text>
-			</Pressable>
-			<Pressable
+			</TouchableOpacity>
+			<TouchableOpacity
 				style={{
 					height: 35,
 					gap: 3,
@@ -132,8 +152,8 @@ const ScrollButtons = () => {
 				>
 					remix
 				</Text>
-			</Pressable>
-			<Pressable
+			</TouchableOpacity>
+			<TouchableOpacity
 				style={{
 					height: 35,
 					gap: 3,
@@ -159,8 +179,8 @@ const ScrollButtons = () => {
 				>
 					download
 				</Text>
-			</Pressable>
-			<Pressable
+			</TouchableOpacity>
+			<TouchableOpacity
 				style={{
 					height: 35,
 					gap: 3,
@@ -186,9 +206,9 @@ const ScrollButtons = () => {
 				>
 					clip
 				</Text>
-			</Pressable>
+			</TouchableOpacity>
 
-			<Pressable
+			<TouchableOpacity
 				style={{
 					height: 35,
 					gap: 3,
@@ -214,8 +234,8 @@ const ScrollButtons = () => {
 				>
 					save
 				</Text>
-			</Pressable>
-			<Pressable
+			</TouchableOpacity>
+			<TouchableOpacity
 				style={{
 					height: 35,
 					gap: 3,
@@ -241,7 +261,7 @@ const ScrollButtons = () => {
 				>
 					report
 				</Text>
-			</Pressable>
+			</TouchableOpacity>
 		</ScrollView>
 	);
 }

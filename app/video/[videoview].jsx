@@ -1,6 +1,6 @@
-import { View, Text,FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text,FlatList, TouchableOpacity, Image, ActivityIndicator, Dimensions } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { bgColor, loadingColor } from '../../constants/colors';
 import { ResizeMode, Video } from 'expo-av';
@@ -9,6 +9,8 @@ import { replay } from '../../constants/icons';
 import VidHeader from '../../components/VideoHeader';
 import BottomSheetComponent from '../../components/CommentSection';
 import VideoView from '../../components/VideoView';
+import AboutVideo from '../../components/AboutVideo';
+import TrendingShorts from '../../components/TrendingShorts';
 
 
 const VideoPlayer = () => {
@@ -16,6 +18,17 @@ const VideoPlayer = () => {
 	const [isDone, setIsDone] = useState(false)
 	const videoRef = useRef(null);
 	const [hasStarted, setHasStarted] = useState(false);
+	const [isFocused, setIsFocused] = useState(false);
+	
+
+	useFocusEffect(
+		useCallback(() => {
+			setIsFocused(true);
+			return () => {
+				setIsFocused(false);
+			};
+		}, [])
+	);
 	const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
 	const handleCloseBottomSheet = () => {
 		setIsBottomSheetVisible(false);
@@ -23,6 +36,16 @@ const VideoPlayer = () => {
 	const handleToggleBottomSheet = () => {
 		setIsBottomSheetVisible(!isBottomSheetVisible);
 	};
+
+
+	const [isAboutVisible, setIsAboutVisible] = useState(false);
+	const handleCloseAbout = () => {
+		setIsAboutVisible(false);
+	};
+	const handleToggleAbout = () => {
+		setIsAboutVisible(!isBottomSheetVisible);
+	};
+
 	const handleRestart = async () => {
 		if (videoRef.current) {
 			await videoRef.current.setPositionAsync(0); // Seek to the beginning
@@ -37,6 +60,7 @@ const VideoPlayer = () => {
 			settestData([1, 2, 3, 4, 5, 6, , 7]);
 		},2000)
 	})
+	// const memoizedData = useMemo(() => data, [data]);
 	// const testData=[1, 2, 3, 4, 5, 6, ,7]
   return (
 		<SafeAreaView
@@ -46,7 +70,7 @@ const VideoPlayer = () => {
 				<Video
 					ref={videoRef}
 					resizeMode={ResizeMode.CONTAIN}
-					shouldPlay={true}
+					shouldPlay={true&&isFocused}
 					useNativeControls={!isDone}
 					onPlaybackStatusUpdate={(video) => {
 						if (video.isLoaded) setHasStarted(true);
@@ -76,8 +100,29 @@ const VideoPlayer = () => {
 			</View>
 			<FlatList
 				data={testData}
-				ListHeaderComponent={testData.length>0 && <VidHeader comment={()=>{handleToggleBottomSheet()}}/>}
-				renderItem={(item) => {
+				// removeClippedSubviews
+				initialNumToRender={3}
+				decelerationRate={0.94}
+				ListHeaderComponent={
+					testData.length > 0 && (
+						<VidHeader
+							comment={() => {
+								handleToggleBottomSheet();
+							}}
+							about={() => {
+								handleToggleAbout();
+							}}
+						/>
+					)
+				}
+				renderItem={({ item, index }) => {
+					if (index === 1)
+						return (
+							<>
+								<TrendingShorts type={"suggested"} />
+								<VideoView type={"subvideos"} />
+							</>
+						);
 					return <VideoView type={"subvideos"} />;
 				}}
 				showsVerticalScrollIndicator={false}
@@ -88,8 +133,8 @@ const VideoPlayer = () => {
 				isVisible={isBottomSheetVisible}
 				onClose={handleCloseBottomSheet}
 			/>
+			<AboutVideo isVisible={isAboutVisible} onClose={handleCloseAbout} />
 		</SafeAreaView>
 	);
 }
-
 export default VideoPlayer

@@ -11,12 +11,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor } from "../../constants/colors";
 import ShortsView from "../../components/ShortsView";
 
-import { router, useFocusEffect } from "expo-router";
-import { search } from "../../constants/icons";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { back, search } from "../../constants/icons";
 
 const windowHeight = Dimensions.get("window").height;
 
-const shorts = () => {
+const TrendingShort = () => {
+    const {trendingshort: toBePlayed} = useLocalSearchParams();
 	const [viewableItems, setViewableItems] = useState([]);
 	const [scollable, setScollable] = useState(false);
 	const onViewableItemsChanged = useRef(({ viewableItems }) => {
@@ -44,15 +45,29 @@ const shorts = () => {
 		>
 			<View
 				style={{
-					width: "100%",
+					width: "90%",
 					top: "8%",
-					right: 15,
+					right: "5%",
+					left:"5%",
 					position: "absolute",
 					zIndex: 1,
 					flexDirection: "row",
-					justifyContent: "flex-end",
+					justifyContent: "space-between",
 				}}
 			>
+				<TouchableOpacity
+					style={{ margin: 10 }}
+					activeOpacity={0.7}
+					onPress={() => {
+						router.push("../");
+					}}
+				>
+					<Image
+						source={back}
+						resizeMode="contain"
+						style={{ width: 35, height: 35 }}
+					/>
+				</TouchableOpacity>
 				<TouchableOpacity
 					style={{ margin: 10 }}
 					activeOpacity={0.7}
@@ -76,25 +91,38 @@ const shorts = () => {
 				snapToAlignment="start"
 				decelerationRate="fast"
 				showsVerticalScrollIndicator={false}
-				renderItem={({ item }) => {
+				renderItem={({ item, index }) => {
 					const shouldPlay = viewableItems.includes(item.toString());
 					return (
 						<View
 							style={{
-								height: windowHeight - 80,
+								height: windowHeight,
 								borderTopWidth: 0.7,
 								borderBottomWidth: 0.7,
 							}}
 						>
-							<ShortsView
-								sourceUrl={require("../../tempVid/small.mp4")}
-								shouldPlay={shouldPlay}
-								fix={(val) => {
-									// console.log(val);
-									setScollable(val);
-								}}
-								beFocused={isFocused}
-							/>
+							{index === 0 ? (
+								<ShortsView
+									title={toBePlayed}
+									sourceUrl={require("../../tempVid/small.mp4")}
+									shouldPlay={shouldPlay}
+									fix={(val) => {
+										// console.log(val);
+										setScollable(val);
+									}}
+									beFocused={isFocused}
+								/>
+							) : (
+								<ShortsView
+									sourceUrl={require("../../tempVid/small.mp4")}
+									shouldPlay={shouldPlay}
+									fix={(val) => {
+										console.log(val);
+										setScollable(val);
+									}}
+									beFocused={isFocused}
+								/>
+							)}
 						</View>
 					);
 				}}
@@ -104,4 +132,4 @@ const shorts = () => {
 	);
 };
 
-export default shorts;
+export default TrendingShort;

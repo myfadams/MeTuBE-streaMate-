@@ -22,7 +22,7 @@ const CommentFooter = () => {
 					style={{
 						width: "94%",
 						flexDirection: "row",
-						marginBottom: 7,
+						marginBottom: 16,
 						backgroundColor: bgColor,
 						// position: keyboard.keyboardShown && "absolute",
 						// bottom: keyboard.keyboardShown && keyboard.keyboardHeight - 80,
