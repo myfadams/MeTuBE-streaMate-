@@ -8,13 +8,15 @@ import { FlatList} from "react-native-gesture-handler";
 import CommentsHeader from "./CommentsHeader";
 import CommentFooter from "./CommentFooter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { getContext } from "../context/GlobalContext";
 const windowHeight = Dimensions.get("window").height;
 const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 	const insets = useSafeAreaInsets();
 	const commentHeight = ((windowHeight-250-insets.bottom)/windowHeight)*100
 	const bottomSheetRef = useRef(null);
 	const [currentSnapPointIndex, setCurrentSnapPointIndex] = useState(-1);
-	
+	const { user } = getContext();
+
 	// Handle opening the bottom sheet when isVisible changes to true
 	React.useEffect(() => {
 		if (isVisible) {
@@ -55,7 +57,7 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 			index={isVisible ? 0 : -1} // Start at snap point 0 when visible
 			// 60%"
 			snapPoints={["2%", `${commentHeight}%`]}
-			// enablePanDownToClose={true}
+			enablePanDownToClose={false}
 			onChange={handleSheetChanges}
 			backgroundStyle={{ backgroundColor: bgColor }}
 		>
@@ -87,7 +89,7 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 				}}
 			/>
 
-			<CommentFooter />
+			<CommentFooter profile={user.photoURL} />
 		</BottomSheet>
 	);
 };

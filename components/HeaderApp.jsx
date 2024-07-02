@@ -4,9 +4,9 @@ import { logo } from '../constants/images';
 import { chromecast, gear, message, search, sub } from '../constants/icons';
 import { router } from 'expo-router';
 
-const HeaderApp= ({screenName}) => {
+const HeaderApp = ({ screenName, disable }) => {
 	// console.log(screenName)
-  return (
+	return (
 		<View
 			style={{
 				flexDirection: "row",
@@ -117,6 +117,6 @@ const HeaderApp= ({screenName}) => {
 			</View>
 		</View>
 	);
-}
+};
 
 export default HeaderApp

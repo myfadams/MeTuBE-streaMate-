@@ -32,6 +32,14 @@ import dislikOutline from "../assets/icons/outline/thumbsDown.png";
 import options from "../assets/icons/options.png";
 import back from "../assets/icons/back.png";
 import shortLogo from "../assets/images/shorts.png";
+import clapper from "../assets/icons/clapper.png";
+import getPremium from "../assets/icons/getPremium.png";
+import help from "../assets/icons/help.png";
+import lightbulb from "../assets/icons/ligtbulb.png";
+import watchtime from "../assets/icons/watchTime.png";
+import yourVideos from "../assets/icons/yourVideos.png";
+import switchAccount from "../assets/icons/switch.png";
+import incoginito from "../assets/icons/incognito.png";
 export {
 	apple,
 	google,
@@ -66,5 +74,13 @@ export {
 	likeOutline,
 	dislikOutline,
 	options,
-	shortLogo
+	shortLogo,
+	clapper,
+	getPremium,
+	help,
+	lightbulb,
+	watchtime,
+	yourVideos,
+	switchAccount,
+	incoginito
 };

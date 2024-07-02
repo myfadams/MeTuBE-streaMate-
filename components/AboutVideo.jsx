@@ -63,7 +63,7 @@ const AboutVideo = ({ isVisible, onClose, isActive }) => {
 			index={isVisible ? 0 : -1} // Start at snap point 0 when visible
 			// 60%"
 			snapPoints={["2%", `${commentHeight}%`]}
-			// enablePanDownToClose={true}
+			enablePanDownToClose={false}
 			onChange={handleSheetChanges}
 			backgroundStyle={{ backgroundColor: bgColor }}
 		>
@@ -203,7 +203,7 @@ const AboutVideo = ({ isVisible, onClose, isActive }) => {
 					style={{
 						width: "50%",
 						flexDirection: "row",
-                        marginTop:30,
+						marginTop: 30,
 						alignItems: "center",
 						gap: 10,
 					}}

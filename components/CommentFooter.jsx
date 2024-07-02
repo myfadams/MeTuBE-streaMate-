@@ -5,7 +5,7 @@ import { useKeyboard } from "@react-native-community/hooks";
 import { bgColor } from "../constants/colors";
 import { send } from "../constants/icons";
 
-const CommentFooter = () => {
+const CommentFooter = ({profile}) => {
 	const keyboard = useKeyboard();
 
 	// console.log("keyboard isKeyboardShow: ", keyboard.keyboardShown);
@@ -28,7 +28,8 @@ const CommentFooter = () => {
 						// bottom: keyboard.keyboardShown && keyboard.keyboardHeight - 80,
 					}}
 				>
-					<View
+					<Image
+					source={{uri:profile}}
 						style={{
 							width: 40,
 							height: 40,
@@ -36,7 +37,7 @@ const CommentFooter = () => {
 							backgroundColor: "white",
 							// opacity: 0.6,
 						}}
-					></View>
+					/>
 					<View style={{ width: "80%", alignItems: "center" }}>
 						<ChatInput />
 					</View>
