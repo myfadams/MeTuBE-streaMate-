@@ -106,6 +106,7 @@ const shorts = () => {
 								sourceUrl={item.video}
 								shouldPlay={shouldPlay}
 								title={item.caption}
+								creatorID={item.creator}
 								fix={(val) => {
 									// console.log(val);
 									setScollable(val);

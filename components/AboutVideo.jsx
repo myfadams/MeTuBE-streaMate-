@@ -210,6 +210,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 					}}
 				>
 					<Image
+						source={{uri:info?.image}}
 						style={{
 							borderRadius: "50%",
 							width: 45,
@@ -225,7 +226,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 								fontFamily: "Montserrat_600SemiBold",
 							}}
 						>
-							Channel name
+							{info?.name}
 						</Text>
 
 						<Text

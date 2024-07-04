@@ -10,19 +10,47 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import BottomSheetComponent from "./CommentSection";
 import { ResizeMode, Video } from "expo-av";
-import { buttonColor, loadingColor } from "../constants/colors";
+import { borderLight, buttonColor, fieldColor, loadingColor } from "../constants/colors";
 import { comment, dislike, like, pause, share } from "../constants/icons";
 import OtherViewButtons from "./OtherViewButtons";
+import { getCreatorInfo } from "../libs/firebase";
+import MoreButton from "./MoreButton";
+import { getContext } from "../context/GlobalContext";
 
-const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
+const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID}) => {
+	// console.log(creatorID)
 	const [play, setPlay] = useState(true);
 	const [likeClicked, setLikeClicked] = useState(false);
 	const [dislikeClicked, setDislikeClicked] = useState(false);
-	const [commentsEnabled, setCommentsEnabled] = useState(false);
+	// const [commentsEnabled, setCommentsEnabled] = useState(false);
 	const [hasStarted, setHasStarted] = useState(false);
 
 	const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+	const [creator, setCreator] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState();
+	// thumbnail={item.thumbnail} id={item.id}
+	const {user}=getContext();
+	const [subscribed, setsubscribed] = useState(false);
+	function handleSubscribe() {
+		setsubscribed(!subscribed);
+	}
+	useEffect(() => {
+		const fetchCreator = async () => {
+			try {
+				const users = await getCreatorInfo(creatorID);
+				// console.log(users)
+				setCreator([...users]);
+			} catch (err) {
+				setError(err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
 
+		fetchCreator();
+	}, [creatorID]);
+	// console.log(creator)
 	const handleToggleBottomSheet = () => {
 		setIsBottomSheetVisible(!isBottomSheetVisible);
 	};
@@ -76,7 +104,6 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 					resizeMode={ResizeMode.COVER}
 					shouldPlay={play && shouldPlay && beFocused}
 					isLooping
-					
 					onPlaybackStatusUpdate={(video) => {
 						if (video.isLoaded) setHasStarted(true);
 					}}
@@ -86,7 +113,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 						backgroundColor: "#000",
 					}}
 					source={{
-						uri: sourceUrl
+						uri: sourceUrl,
 					}}
 				/>
 			</Pressable>
@@ -147,16 +174,17 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 					<Image source={share} style={styles.button} tintColor={"#fff"} />
 				</TouchableOpacity>
 			</View>
-			<View style={{ position: "absolute", bottom: 20, left: 10 }}>
+			<View style={{ position: "absolute", bottom: 50, left: 10 }}>
 				<View
 					style={{
 						flexDirection: "row",
 						alignItems: "center",
-						gap: 20,
+						gap: 15,
 						width: "70%",
 					}}
 				>
 					<Image
+						source={{ uri: creator[0]?.image }}
 						style={{
 							width: 45,
 							height: 45,
@@ -164,17 +192,30 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 							borderRadius: "50%",
 						}}
 					/>
-					<OtherViewButtons
-						title={"Subscribe"}
+					<Text
+						style={{
+							color: "white",
+							fontSize: 18,
+							fontFamily: "Montserrat_600SemiBold",
+						}}
+					>
+						{creator[0]?.name}
+					</Text>
+					
+					{creatorID!==user.uid&&<OtherViewButtons
+						title={subscribed ? "Subscribed" : "Subscribe"}
+						handlePress={handleSubscribe}
 						styles={{
 							width: 100,
-							height: 30,
-							backgroundColor: buttonColor,
+							height: 35,
+							backgroundColor: subscribed ? fieldColor : buttonColor,
+							borderWidth: subscribed && 0.6,
+							borderColor: borderLight,
 							justifyContent: "center",
 							alignItems: "center",
-							borderRadius: 3,
+							borderRadius: 30,
 						}}
-					/>
+					/>}
 				</View>
 				<Text
 					style={{ fontSize: 18, margin: 8, color: "#fff" }}

@@ -6,21 +6,42 @@ import {
 	TouchableWithoutFeedback,
 	TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { borderLight, loadingColor } from "../constants/colors";
 import * as Animatable from "react-native-animatable";
 import { router } from "expo-router";
 import { options } from "../constants/icons";
+import { getCreatorInfo } from "../libs/firebase";
 const VideoView = ({videoInfo,type}) => {
+	const [creator, setCreator] = useState([])
+	const [isLoading, setIsLoading] = useState(false);
+	const [error,setError]=useState()
 	// thumbnail={item.thumbnail} id={item.id} 
+	useEffect(()=>{
+		const fetchCreator = async () => {
+			try {
+				const users = await getCreatorInfo(videoInfo.creator);
+				setCreator([...users]);
+			} catch (err) {
+				setError(err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchCreator();
+	},[])
+	// console.log(creator)
 	return (
 		<TouchableWithoutFeedback
 			onPress={() => {
-				if(!type)
-					router.push({pathname:"video/" + videoInfo.id,params:videoInfo});
+				if (!type)
+					router.push({ pathname: "video/" + videoInfo.id, params: {...videoInfo,...creator[0]} });
 				else
-					router.replace({ pathname: "video/" + videoInfo.id, params: videoInfo });
-				
+					router.replace({
+						pathname: "video/" + videoInfo.id,
+						params: { ...videoInfo, ...creator[0] },
+					});
 			}}
 		>
 			<View>
@@ -48,8 +69,16 @@ const VideoView = ({videoInfo,type}) => {
 							resizeMode="contain"
 						/>
 					</View>
-					<View style={{ flexDirection: "row", width: "100%", margin: 8, justifyContent:"center" }}>
+					<View
+						style={{
+							flexDirection: "row",
+							width: "100%",
+							margin: 8,
+							justifyContent: "center",
+						}}
+					>
 						<Image
+							source={{ uri: creator[0]?.image }}
 							style={{
 								width: 50,
 								height: 50,
@@ -60,11 +89,17 @@ const VideoView = ({videoInfo,type}) => {
 								backgroundColor: "#fff",
 							}}
 						/>
-						<View style={{ flex:1, justifyContent: "center" ,flexDirection:"row"}}>
+						<View
+							style={{
+								flex: 1,
+								justifyContent: "center",
+								flexDirection: "row",
+							}}
+						>
 							<View
 								style={{
 									width: "85%",
-									gap:9
+									gap: 9,
 								}}
 							>
 								<Text
@@ -75,21 +110,26 @@ const VideoView = ({videoInfo,type}) => {
 										fontSize: 16,
 									}}
 								>
-									{videoInfo?.title?videoInfo?.title:"This is the videos Title for now and still now"}
+									{videoInfo?.title
+										? videoInfo?.title
+										: "This is the videos Title for now and still now"}
 								</Text>
 								<Text
 									style={{
-										
-										
 										flexWrap: 1,
-										fontSize:12,
-										color:borderLight,
+										fontSize: 12,
+										color: borderLight,
 									}}
-								>Channel_name . 491k views . 1 day ago </Text>
+								>
+									{creator[0]?.name} . 491k views . 1 day ago{" "}
+								</Text>
 							</View>
 							<TouchableOpacity>
-								
-							<Image source={options} style={{width:15,height:15}} resizeMode="contain"/>
+								<Image
+									source={options}
+									style={{ width: 15, height: 15 }}
+									resizeMode="contain"
+								/>
 							</TouchableOpacity>
 						</View>
 					</View>

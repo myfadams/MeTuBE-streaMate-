@@ -85,7 +85,6 @@ export async function getUSerProfile(userId) {
 	// data
 }
 
-
 export function fetchVideos() {
 	const videosRef = ref(db, "videosRef");
 
@@ -138,32 +137,58 @@ export function fetchShorts() {
 		);
 	});
 }
+export const getCreatorInfo = (creatorID) => {
+	const videosRef = ref(db, "usersref");
 
+	return new Promise((resolve, reject) => {
+		onValue(
+			videosRef,
+			(snapshot) => {
+				const users = [];
+				snapshot.forEach((childSnapshot) => {
+					// console.log(creatorID)
+					if (creatorID === childSnapshot.key) {
+						const childData = childSnapshot.val();
+						if (childData) {
+							users.push({
+								id: childSnapshot.key,
+								...childData,
+							});
+						}
+					}
+				});
+				resolve(users);
+			},
+			(error) => {
+				reject(error); // Handle potential errors
+			}
+		);
+	});
+};
 export function getEncodedFirebaseUrl(originalUrl) {
-  try {
-    // Parse the URL
-    const url = new URL(originalUrl);
+	try {
+		// Parse the URL
+		const url = new URL(originalUrl);
 
-    // Extract the base URL and path
-    const baseUrl = `${url.origin}/v0/b/metube-d21b6.appspot.com/o/`;
-    let path = url.pathname.split('/o/')[1];
-    const params = url.search;
+		// Extract the base URL and path
+		const baseUrl = `${url.origin}/v0/b/metube-d21b6.appspot.com/o/`;
+		let path = url.pathname.split("/o/")[1];
+		const params = url.search;
 
-    // Decode the path first to avoid double encoding issues
-    path = decodeURIComponent(path);
+		// Decode the path first to avoid double encoding issues
+		path = decodeURIComponent(path);
 
-    // Encode only the path part
-    const encodedPath = encodeURIComponent(path);
+		// Encode only the path part
+		const encodedPath = encodeURIComponent(path);
 
-    // Combine them back
-    const finalUrl = `${baseUrl}${encodedPath}${params}`;
-    
-    return finalUrl;
-  } catch (error) {
-    console.error('Invalid URL', error);
-    return null;
-  }
+		// Combine them back
+		const finalUrl = `${baseUrl}${encodedPath}${params}`;
+
+		return finalUrl;
+	} catch (error) {
+		console.error("Invalid URL", error);
+		return null;
+	}
 }
-
 
 export { createAccount };

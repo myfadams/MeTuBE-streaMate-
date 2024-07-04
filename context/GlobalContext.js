@@ -12,6 +12,7 @@ const GlobalContext = ({children}) => {
     const [user, setUser] = useState(null)
     const [name, setName] = useState(null);
     const [usrInfo,setUsrInfo]=useState("");
+    const [refereshing, setRefreshing]=useState(false)
      const [vidDescription, setVidDescription] = useState(null);
      useEffect(() => {
 				const unsubscribe = onAuthStateChanged(authentication, (currentUser) => {
@@ -22,7 +23,7 @@ const GlobalContext = ({children}) => {
 			}, []);
     // console.log("user: "+user)
   return (
-    <MyContext.Provider value={{user,setUser,name,setName, setUsrInfo,usrInfo,vidDescription,setVidDescription}}>
+    <MyContext.Provider value={{user,setUser,name,setName, setUsrInfo,usrInfo,vidDescription,setVidDescription,setRefreshing,refereshing}}>
         {children}
     </MyContext.Provider>
   )

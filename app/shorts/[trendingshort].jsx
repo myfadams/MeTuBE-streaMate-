@@ -131,6 +131,7 @@ const TrendingShort = () => {
 								<ShortsView
 									title={shortItem.caption}
 									sourceUrl={getEncodedFirebaseUrl(shortItem.video)}
+									creatorID={shortItem.creator}
 									shouldPlay={shouldPlay}
 									fix={(val) => {
 										// console.log(val);

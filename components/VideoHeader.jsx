@@ -1,11 +1,18 @@
 import { View, Text, TouchableOpacity,Image} from "react-native";
 import React, { useState } from "react";
-import { buttonColor, fieldColor, loadingColor } from "../constants/colors";
+import { borderLight, buttonColor, fieldColor, loadingColor } from "../constants/colors";
 import OtherViewButtons from "./OtherViewButtons";
 import BottomSheetComponent from "./CommentSection";
 import ScrollButtons from "./ScrollButtons";
+import { getContext } from "../context/GlobalContext";
 
 const VidHeader = ({ comment, about,vidinfo }) => {
+	const { user } = getContext();
+	// console.log(vidinfo)
+	const [subscribed, setsubscribed] = useState(false)
+	function handleSubscribe(){
+		setsubscribed(!subscribed)
+	}
 	return (
 		<View
 			style={{
@@ -90,6 +97,7 @@ const VidHeader = ({ comment, about,vidinfo }) => {
 					}}
 				>
 					<Image
+						source={{ uri: vidinfo?.image }}
 						style={{
 							borderRadius: "50%",
 							width: 45,
@@ -99,13 +107,14 @@ const VidHeader = ({ comment, about,vidinfo }) => {
 					/>
 					<View style={{ flexDirection: "row", gap: 10 }}>
 						<Text
+							numberOfLines={1}
 							style={{
 								color: "white",
 								fontSize: 14,
 								fontFamily: "Montserrat_600SemiBold",
 							}}
 						>
-							Channel name
+							{vidinfo?.name}
 						</Text>
 
 						<Text
@@ -120,17 +129,20 @@ const VidHeader = ({ comment, about,vidinfo }) => {
 					</View>
 				</TouchableOpacity>
 				<View>
-					<OtherViewButtons
-						title={"Subscribe"}
+					{vidinfo.creator!==user.uid&&<OtherViewButtons
+						title={subscribed ? "Subscribed" : "Subscribe"}
+						handlePress={handleSubscribe}
 						styles={{
 							width: 100,
-							height: 30,
-							backgroundColor: buttonColor,
+							height: 35,
+							backgroundColor:subscribed ? fieldColor:buttonColor,
+							borderWidth:subscribed&&0.6,
+							borderColor:borderLight,
 							justifyContent: "center",
 							alignItems: "center",
-							borderRadius: 3,
+							borderRadius: 30,
 						}}
-					/>
+					/>}
 				</View>
 			</View>
 			{/* //my ScrollButtons */}

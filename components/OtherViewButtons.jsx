@@ -4,6 +4,7 @@ import React from 'react'
 const OtherViewButtons = ({title, handlePress,styles}) => {
   return (
 		<TouchableOpacity
+			onPress={handlePress}
 			style={styles}
 		>
 			<Text style={{ color: "#fff" }}>{title}</Text>

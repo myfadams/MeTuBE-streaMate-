@@ -1,4 +1,4 @@
-import { View, Text , FlatList} from 'react-native'
+import { View, Text , FlatList, RefreshControl} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getContext } from '../../context/GlobalContext';
@@ -15,7 +15,8 @@ const home = () => {
 	// console.log(shortsPostion)
 	const [videos, setVideos] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
-
+	const [error, setError] = useState();
+	const { setRefreshing, refereshing } = getContext();
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -30,7 +31,7 @@ const home = () => {
 		};
 
 		fetchData();
-	}, []);
+	}, [refereshing]);
 	// console.log(videos); // Videos are now available here
 
 	const { user, setUsrInfo, usrInfo } = getContext();
@@ -41,6 +42,9 @@ const home = () => {
 			<FlatList
 				showsVerticalScrollIndicator={false}
 				data={videos}
+				refreshControl={<RefreshControl onRefresh={()=>{
+					setRefreshing(!refereshing);
+				}}/>}
 				renderItem={({ item, index }) => {
 					if (index === 0)
 						return (
