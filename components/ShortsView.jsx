@@ -77,7 +77,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 						backgroundColor: "#000",
 					}}
 					source={{
-						uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+						uri: sourceUrl
 					}}
 				/>
 			</Pressable>
@@ -171,7 +171,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 					style={{ fontSize: 18, margin: 8, color: "#fff" }}
 					numberOfLines={1}
 				>
-					{title?title:"Shorts description for now"}
+					{title}
 				</Text>
 			</View>
 			{beFocused && (

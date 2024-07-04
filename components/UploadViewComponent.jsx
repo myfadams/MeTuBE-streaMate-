@@ -37,10 +37,16 @@ const UploadVideoComponent = React.memo(({ item, isLoaded }) => {
 			style={{ flex: 1, margin: 2, height: 120 }}
 			activeOpacity={0.6}
 			onPress={() => {
-				router.push({
-					pathname: "/upload/uploadScreen",
-					params: item,
-				});
+				if(parseInt(item.height)>=845 && Math.round(item.duration)<=60)
+					router.push({
+						pathname: "/upload/uploadShorts",
+						params: { ...item, thumbnailURL: thumbnail },
+					});
+				else
+					router.push({
+						pathname: "/upload/uploadScreen",
+						params: { ...item, thumbnailURL: thumbnail },
+					});
 			}}
 		>
 			<Image

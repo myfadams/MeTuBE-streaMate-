@@ -11,16 +11,32 @@ import BottomSheetComponent from '../../components/CommentSection';
 import VideoView from '../../components/VideoView';
 import AboutVideo from '../../components/AboutVideo';
 import TrendingShorts from '../../components/TrendingShorts';
+import { fetchVideos } from '../../libs/firebase';
 
 
 const VideoPlayer = () => {
-    const videoID = useLocalSearchParams()
+    const video = useLocalSearchParams()
+	// console.log(video)
 	const [isDone, setIsDone] = useState(false)
 	const videoRef = useRef(null);
 	const [hasStarted, setHasStarted] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
-	
+	const [subvideos, setSubvideos] = useState([])
+	const [error,setError]=useState()	
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const videoData = await fetchVideos();
+				// console.log(videoData)
+				setSubvideos([...videoData]);
+			} catch (err) {
+				setError(err);
+			} 
+		};
 
+		fetchData();
+	}, []);
+	// console.log(subvideos)
 	useFocusEffect(
 		useCallback(() => {
 			setIsFocused(true);
@@ -79,7 +95,7 @@ const VideoPlayer = () => {
 					isMuted={false}
 					style={{ width: "100%", height: 250, backgroundColor: "#000" }}
 					source={{
-						uri: "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+						uri: video.video,
 					}}
 				/>
 				{isDone && (
@@ -99,7 +115,9 @@ const VideoPlayer = () => {
 				)}
 			</View>
 			<FlatList
-				data={testData}
+				data={subvideos.filter((vid)=>{
+					return vid.id !==video.id
+				})}
 				// removeClippedSubviews
 				initialNumToRender={3}
 				decelerationRate={0.94}
@@ -112,6 +130,7 @@ const VideoPlayer = () => {
 							about={() => {
 								handleToggleAbout();
 							}}
+							vidinfo={video}
 						/>
 					)
 				}
@@ -120,10 +139,10 @@ const VideoPlayer = () => {
 						return (
 							<>
 								<TrendingShorts type={"suggested"} />
-								<VideoView type={"subvideos"} />
+								<VideoView  videoInfo={item} type={"subvideo"}/>
 							</>
 						);
-					return <VideoView type={"subvideos"} />;
+					return <VideoView videoInfo={item} type={"subvideo"} />;
 				}}
 				showsVerticalScrollIndicator={false}
 				ListEmptyComponent={<VidScreenLoad />}
@@ -133,7 +152,7 @@ const VideoPlayer = () => {
 				isVisible={isBottomSheetVisible}
 				onClose={handleCloseBottomSheet}
 			/>
-			<AboutVideo isVisible={isAboutVisible} onClose={handleCloseAbout} />
+			<AboutVideo isVisible={isAboutVisible} onClose={handleCloseAbout} info={video} />
 		</SafeAreaView>
 	);
 }

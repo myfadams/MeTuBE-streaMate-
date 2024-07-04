@@ -5,4 +5,5 @@ const otherColor = "#FFD0EC";
 const buttonColor = "#5BBCFF";
 const loadingColor = "#616161";
 const ldingColor = "#2F0E2F";
-export {bgColor,borderPrimary,fieldColor,otherColor,buttonColor,ldingColor,loadingColor}
+const borderLight = "#C5C5C5";
+export {bgColor,borderPrimary,fieldColor,otherColor,buttonColor,ldingColor,loadingColor,borderLight}

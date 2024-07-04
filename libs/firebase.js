@@ -85,34 +85,76 @@ export async function getUSerProfile(userId) {
 	// data
 }
 
-// export async function fetchVideos() {
-// 	// console.log(userId)
+
+// export function fetchVideos() {
 // 	const videosRef = ref(db, "Videos");
-// 	const data = await get(videosRef);
-// 	const arrayVideos=[]
-// 	let temp ={...data.toJSON()}
-// 	console.log(temp)
-// 	return temp
-// }
-
-export function fetchVideos() {
-	const videosRef = ref(db, "Videos");
-	let vids =[]
-	onValue(videosRef,(snapshot)=>{
-		// console.log(snapshot)
-		const videos = [];
-		snapshot.forEach((childSnapshot) => {
-			videos.push({
-				id: childSnapshot.key,
-				...childSnapshot.val(),
-			});
-		});
-		vids=videos
-		// console.log(vids)
+// 	let vids =[]
+// 	onValue(videosRef,(snapshot)=>{
+// 		// console.log(snapshot)
+// 		const videos = [];
+// 		snapshot.forEach((childSnapshot) => {
+// 			videos.push({
+// 				id: childSnapshot.key,
+// 				...childSnapshot.val(),
+// 			});
+// 		});
+// 		vids=videos
+// 		// console.log(vids)
 		
-	});
-	// console.log(vids);
-	return vids
-}
+// 	});
+// 	// console.log(vids);
+// 	return vids
+// }
+export function fetchVideos() {
+	const videosRef = ref(db, "videosRef");
 
+	return new Promise((resolve, reject) => {
+		onValue(
+			videosRef,
+			(snapshot) => {
+				const videos = [];
+				snapshot.forEach((childSnapshot) => {
+					const childData = childSnapshot.val();
+					if (childData) {
+						videos.push({
+							id: childSnapshot.key,
+							...childData,
+							video: encodeURIComponent(childData.video),
+						});
+					}
+				});
+				resolve(videos);
+			},
+			(error) => {
+				reject(error); // Handle potential errors
+			}
+		);
+	});
+}
+export function fetchShorts() {
+	const videosRef = ref(db, "shortsRef");
+
+	return new Promise((resolve, reject) => {
+		onValue(
+			videosRef,
+			(snapshot) => {
+				const shorts = [];
+				snapshot.forEach((childSnapshot) => {
+					const childData = childSnapshot.val();
+					if (childData) {
+						shorts.push({
+							id: childSnapshot.key,
+							...childData,
+							video: encodeURIComponent(childData.video),
+						});
+					}
+				});
+				resolve(shorts);
+			},
+			(error) => {
+				reject(error); // Handle potential errors
+			}
+		);
+	});
+}
 export { createAccount };

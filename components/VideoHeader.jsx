@@ -5,7 +5,7 @@ import OtherViewButtons from "./OtherViewButtons";
 import BottomSheetComponent from "./CommentSection";
 import ScrollButtons from "./ScrollButtons";
 
-const VidHeader = ({ comment, about }) => {
+const VidHeader = ({ comment, about,vidinfo }) => {
 	return (
 		<View
 			style={{
@@ -32,7 +32,7 @@ const VidHeader = ({ comment, about }) => {
 						flexDirection: "row",
 					}}
 				>
-					This is the ttile
+					{vidinfo.title}
 				</Text>
 				<View
 					style={{

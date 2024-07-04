@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
 	Button,
 	Text,
@@ -16,16 +16,21 @@ import * as MediaLibrary from "expo-media-library";
 import { Video } from "expo-av";
 import { bgColor } from "../../constants/colors";
 import { formatTime } from "../../constants/videoTime";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import UploadVideoComponent from "../../components/UploadViewComponent";
+import { getContext } from "../../context/GlobalContext";
 export default function App() {
 	const [doneLoading, setDoneLoading] = useState(false);
 	const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
 	const [videos, setVideos]=useState(null);
+	const { vidDescription, setVidDescription } = getContext();
 	function handleLoaing(){
 		setDoneLoading(true);
 		// console.log("1232321312")
 	}
+	useFocusEffect(useCallback(()=>{
+		setVidDescription("")
+	}, []))
 	useEffect(() => {
 		if (!permissionResponse) {
 			requestPermission();

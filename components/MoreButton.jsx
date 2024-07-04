@@ -3,20 +3,21 @@ import React from 'react'
 
 import { fieldColor } from '../constants/colors';
 
-const MoreButton = ({ title, imageUrl, handlePress }) => {
+const MoreButton = ({ title, imageUrl, handlePress,height,color }) => {
 	return (
 		<TouchableOpacity
 			onPress={handlePress}
 			style={{
-				height: 35,
+				height: height?height:35,
 				gap: 3,
 				borderRadius: "50%",
-				backgroundColor: fieldColor,
+				backgroundColor: color?color:fieldColor,
 				justifyContent: "center",
 				alignItems: "center",
 				minWidth: 80,
 				margin: 8,
 				flexDirection: "row",
+				
 			}}
 		>
 			{imageUrl && (

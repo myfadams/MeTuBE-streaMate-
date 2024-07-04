@@ -11,7 +11,8 @@ const getContext = ()=>{
 const GlobalContext = ({children}) => {
     const [user, setUser] = useState(null)
     const [name, setName] = useState(null);
-    const [usrInfo,setUsrInfo]=useState("hi");
+    const [usrInfo,setUsrInfo]=useState("");
+     const [vidDescription, setVidDescription] = useState(null);
      useEffect(() => {
 				const unsubscribe = onAuthStateChanged(authentication, (currentUser) => {
 					setUser(currentUser);
@@ -21,7 +22,7 @@ const GlobalContext = ({children}) => {
 			}, []);
     // console.log("user: "+user)
   return (
-    <MyContext.Provider value={{user,setUser,name,setName, setUsrInfo,usrInfo}}>
+    <MyContext.Provider value={{user,setUser,name,setName, setUsrInfo,usrInfo,vidDescription,setVidDescription}}>
         {children}
     </MyContext.Provider>
   )

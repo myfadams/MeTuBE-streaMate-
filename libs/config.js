@@ -32,10 +32,13 @@ const db =getDatabase(app);
 const usersRef  = (userId)=>{
 	return ref(db, "usersref/"+userId);
 }
-
+const firestore = getFirestore(app);
 const VideosRef = (videoID) => {
 	return ref(db, "videosRef/" + videoID);
 };
+const ShortsRef = (shortId) => {
+	return ref(db, "shortsRef/" + shortId);
+};
 // console.log(app)
 
-export {app,authentication,storage,db,usersRef,set,ref,VideosRef};
+export {app,authentication,storage,db,usersRef,set,ref,VideosRef,firestore,ShortsRef};

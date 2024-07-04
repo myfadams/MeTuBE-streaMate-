@@ -1,23 +1,33 @@
-import { View, Text,StyleSheet,Image, TouchableWithoutFeedback } from 'react-native'
-import React from 'react'
-import { loadingColor } from '../constants/colors';
+import {
+	View,
+	Text,
+	StyleSheet,
+	Image,
+	TouchableWithoutFeedback,
+	TouchableOpacity,
+} from "react-native";
+import React from "react";
+import { borderLight, loadingColor } from "../constants/colors";
 import * as Animatable from "react-native-animatable";
-import { router } from 'expo-router';
-const VideoView = ({creator,thumbnail,title,url,id,type}) => {
-  return (
+import { router } from "expo-router";
+import { options } from "../constants/icons";
+const VideoView = ({videoInfo,type}) => {
+	// thumbnail={item.thumbnail} id={item.id} 
+	return (
 		<TouchableWithoutFeedback
 			onPress={() => {
-				if(type!=="subvideos")
-					router.push("video/" + id);
+				if(!type)
+					router.push({pathname:"video/" + videoInfo.id,params:videoInfo});
 				else
-					router.replace("video/" + id);
+					router.replace({ pathname: "video/" + videoInfo.id, params: videoInfo });
+				
 			}}
 		>
 			<View>
 				<View
 					style={{
 						width: "100%",
-						marginTop: 30,
+						marginTop: 20,
 					}}
 				>
 					<View
@@ -29,7 +39,7 @@ const VideoView = ({creator,thumbnail,title,url,id,type}) => {
 						}}
 					>
 						<Image
-							source={{ uri: thumbnail }}
+							source={{ uri: videoInfo?.thumbnail }}
 							style={{
 								width: "100%",
 								height: "100%",
@@ -38,7 +48,7 @@ const VideoView = ({creator,thumbnail,title,url,id,type}) => {
 							resizeMode="contain"
 						/>
 					</View>
-					<View style={{ flexDirection: "row", width: "95%", margin: 8 }}>
+					<View style={{ flexDirection: "row", width: "100%", margin: 8, justifyContent:"center" }}>
 						<Image
 							style={{
 								width: 50,
@@ -50,47 +60,43 @@ const VideoView = ({creator,thumbnail,title,url,id,type}) => {
 								backgroundColor: "#fff",
 							}}
 						/>
-						<View style={{ width: "90%", justifyContent: "center" }}>
+						<View style={{ flex:1, justifyContent: "center" ,flexDirection:"row"}}>
 							<View
 								style={{
-									width: "95%",
-									height: 16,
-									backgroundColor: loadingColor,
-									borderColor: "#000",
-									borderWidth: 1,
-									opacity: 0.6,
-									marginTop: 5,
-									marginBottom: 5,
+									width: "85%",
+									gap:9
 								}}
-							></View>
-							<View
-								style={{
-									width: "95%",
-									height: 16,
-									backgroundColor: loadingColor,
-									borderColor: "#000",
-									borderWidth: 1,
-									opacity: 0.6,
-									marginBottom: 5,
-								}}
-							></View>
-							<View
-								style={{
-									width: "95%",
-									height: 16,
-									backgroundColor: loadingColor,
-									borderColor: "#000",
-									borderWidth: 1,
-									opacity: 0.6,
-									marginBottom: 5,
-								}}
-							></View>
+							>
+								<Text
+									numberOfLines={2}
+									style={{
+										color: "#fff",
+										fontFamily: "Montserrat_500Medium",
+										fontSize: 16,
+									}}
+								>
+									{videoInfo?.title?videoInfo?.title:"This is the videos Title for now and still now"}
+								</Text>
+								<Text
+									style={{
+										
+										
+										flexWrap: 1,
+										fontSize:12,
+										color:borderLight,
+									}}
+								>Channel_name . 491k views . 1 day ago </Text>
+							</View>
+							<TouchableOpacity>
+								
+							<Image source={options} style={{width:15,height:15}} resizeMode="contain"/>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</View>
 			</View>
 		</TouchableWithoutFeedback>
 	);
-}
+};
 
 export default VideoView;

@@ -18,6 +18,8 @@ const windowHeight = Dimensions.get("window").height;
 
 const TrendingShort = () => {
     const {trendingshort: toBePlayed} = useLocalSearchParams();
+	const shortItem = useLocalSearchParams();
+	// console.log(shortItem.video)
 	const [viewableItems, setViewableItems] = useState([]);
 	const [scollable, setScollable] = useState(false);
 	const onViewableItemsChanged = useRef(({ viewableItems }) => {
@@ -103,8 +105,8 @@ const TrendingShort = () => {
 						>
 							{index === 0 ? (
 								<ShortsView
-									title={toBePlayed}
-									sourceUrl={require("../../tempVid/small.mp4")}
+									title={shortItem.caption}
+									sourceUrl={shortItem.video}
 									shouldPlay={shouldPlay}
 									fix={(val) => {
 										// console.log(val);
@@ -114,7 +116,8 @@ const TrendingShort = () => {
 								/>
 							) : (
 								<ShortsView
-									sourceUrl={require("../../tempVid/small.mp4")}
+									title={shortItem.caption}
+									sourceUrl={shortItem.video}
 									shouldPlay={shouldPlay}
 									fix={(val) => {
 										console.log(val);

@@ -19,7 +19,7 @@ import CommentsHeader from "./CommentsHeader";
 import CommentFooter from "./CommentFooter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 const windowHeight = Dimensions.get("window").height;
-const AboutVideo = ({ isVisible, onClose, isActive }) => {
+const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 	const insets = useSafeAreaInsets();
 	const commentHeight =
 		((windowHeight - 250 - insets.bottom) / windowHeight) * 100;
@@ -88,7 +88,7 @@ const AboutVideo = ({ isVisible, onClose, isActive }) => {
 							flexDirection: "row",
 						}}
 					>
-						The Title of the video
+						{info?.title}
 					</Text>
 				</View>
 				<View
@@ -194,8 +194,9 @@ const AboutVideo = ({ isVisible, onClose, isActive }) => {
 							flexDirection: "row",
 						}}
 					>
-						The Title of the video, the video descriotion is say something to
-						say someting because eii sekof eiii
+						{info?.description !== ""
+							? info?.description
+							: "This video has no description"}
 					</Text>
 				</View>
 

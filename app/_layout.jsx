@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import React, { useEffect } from 'react'
 import {SplashScreen, Stack} from "expo-router"
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { RootSiblingParent } from "react-native-root-siblings";
 // import { useFonts } from 'expo-font';
 import {
 	useFonts,
@@ -38,20 +39,36 @@ const _layout = () => {
   return (
 		<GlobalContext>
 			<GestureHandlerRootView>
-				<Stack screenOptions={{ headerShown: false }}>
-					<Stack.Screen
-						name="index"
-						options={{
-							headerShown: false,
-						}}
-					/>
-					<Stack.Screen
-						name="(auth)"
-						options={{
-							headerShown: false,
-						}}
-					/>
-				</Stack>
+				<RootSiblingParent>
+					<Stack screenOptions={{ headerShown: false }}>
+						<Stack.Screen
+							name="index"
+							options={{
+								headerShown: false,
+							}}
+						/>
+						<Stack.Screen
+							name="(auth)"
+							options={{
+								headerShown: false,
+							}}
+						/>
+						<Stack.Screen
+							name="(tab)"
+							options={{
+								headerShown: false,
+								gestureEnabled: false,
+							}}
+						/>
+						<Stack.Screen
+							name="upload/[uploadFeatures]"
+							options={{
+								headerShown: false,
+								gestureEnabled: false,
+							}}
+						/>
+					</Stack>
+				</RootSiblingParent>
 			</GestureHandlerRootView>
 		</GlobalContext>
 	);

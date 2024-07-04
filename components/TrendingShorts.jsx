@@ -1,53 +1,98 @@
-import { View, Text, TouchableOpacity, ImageBackground, Image } from 'react-native'
-import React from 'react'
-import ShortComponent from './ShortComponent';
-import { shortLogo } from '../constants/icons';
-import { FlatList } from 'react-native-gesture-handler';
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	ImageBackground,
+	Image,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import ShortComponent from "./ShortComponent";
+import { shortLogo, shorts } from "../constants/icons";
+import { FlatList } from "react-native-gesture-handler";
+import { fetchShorts } from "../libs/firebase";
 
-const TrendingShorts = ({type}) => {
-	
-  return (
-		<View style={{ gap: 20 }}>
-			<View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-				<Image
-					source={shortLogo}
-					style={{ width: 46, height: 46 }}
-					resizeMode="contain"
-				/>
-				<Text
-					style={{
-						color: "#fff",
-						fontFamily: "Montserrat_700Bold",
-						fontSize: 20,
-						marginLeft: 2,
-					}}
-				>
-					Shorts
-				</Text>
-			</View>
-			{type==="regular"&&<>
-				<View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-					<ShortComponent title={"This is the ttile 1"} />
-					<ShortComponent title={"This is the ttile 2"} />
-				</View>
-				<View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-					<ShortComponent title={"This is the ttile 3"} />
-					<ShortComponent title={"This is the ttile 4"} />
-				</View>
-			</>}
-			{
-				type==="suggested"&&
-				<FlatList 
-				horizontal
-				data={[1,2,3,4,5,6]}
-				showsHorizontalScrollIndicator={false}
-				decelerationRate={"fast"}
-				renderItem={({item,index})=>{
-					return <ShortComponent title={"Suggested shorts "+index} marginVid={8}/>
-				}}/>
+const ShortView = ({shorts}) => {
+	return shorts.map((value,index) => {
+		if(index<3)
+			return <ShortComponent title={value?.caption} short={value} key={value.id}/>;
+		
+	});
+};
+const TrendingShorts = ({ type }) => {
+	const [shorts, setShorts] = useState([]);
+	const [error, setError] = useState();
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const shortsData = await fetchShorts();
+				console.log(shortsData);
+				setShorts([...shortsData]);
+			} catch (err) {
+				setError(err);
 			}
-		</View>
-	);
-}
+		};
 
-export default TrendingShorts
+		fetchData();
+	}, []);
+	if (shorts.length > 0)
+		return (
+			<View style={{ gap: 20, marginTop: 25, marginBottom: 20 }}>
+				<View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+					<Image
+						source={shortLogo}
+						style={{ width: 40, height: 40 }}
+						resizeMode="contain"
+					/>
+					<Text
+						style={{
+							color: "#fff",
+							fontFamily: "Montserrat_700Bold",
+							fontSize: 20,
+							marginLeft: 2,
+						}}
+					>
+						Shorts
+					</Text>
+				</View>
+				{type === "regular" && (
+					<>
+						<View
+							style={{
+								flexDirection: "row",
+								
+								gap:10,
+								flexWrap: 1,
+							}}
+						>
+							<ShortView shorts={shorts}/>
+						</View>
+						{/* <View
+						style={{ flexDirection: "row", justifyContent: "space-around" }}
+					>
+						<ShortComponent title={"This is the ttile 3"} />
+						<ShortComponent title={"This is the ttile 4"} />
+					</View> */}
+					</>
+				)}
+				{type === "suggested" && (
+					<FlatList
+						horizontal
+						data={shorts}
+						showsHorizontalScrollIndicator={false}
+						decelerationRate={"fast"}
+						renderItem={({ item, index }) => {
+							return (
+								<ShortComponent
+									title={item?.caption}
+									marginVid={8}
+									short={item}
+								/>
+							);
+						}}
+					/>
+				)}
+			</View>
+		);
+};
+
+export default TrendingShorts;

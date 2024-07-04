@@ -40,8 +40,24 @@ import watchtime from "../assets/icons/watchTime.png";
 import yourVideos from "../assets/icons/yourVideos.png";
 import switchAccount from "../assets/icons/switch.png";
 import incoginito from "../assets/icons/incognito.png";
+import addImage from "../assets/icons/imageAdd.png";
+import allowComment from "../assets/icons/comments.png"
+import globe from "../assets/icons/globe.png"
+import location from "../assets/icons/location.png"
+import playlist from "../assets/icons/playlist.png"
+import description from "../assets/icons/description.png"
+import playAdd from "../assets/icons/playAdd.png";
+import edit from "../assets/icons/edit.png";
+import audience from "../assets/icons/audience.png";
+import sponsor from "../assets/icons/costs.png";
+import metube from "../assets/icons/metube.png";
 export {
+	edit,
+	metube,
+audience,
+sponsor,
 	apple,
+	playAdd,
 	google,
 	hide,
 	show,
@@ -68,6 +84,7 @@ export {
 	flag,
 	back,
 	foward,
+	addImage,
 	save,
 	clip,
 	subsOutline,
@@ -82,5 +99,10 @@ export {
 	watchtime,
 	yourVideos,
 	switchAccount,
-	incoginito
+	incoginito,
+	allowComment,
+globe,
+location,
+playlist,
+description,
 };

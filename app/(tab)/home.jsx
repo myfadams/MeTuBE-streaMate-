@@ -12,44 +12,44 @@ import VideoView from '../../components/VideoView';
 import TrendingShorts from '../../components/TrendingShorts';
 const shortsPostion = Math.floor(Math.random() * fetchVideos().length);
 const home = () => {
-	console.log(shortsPostion)
-	const [videos, setVideos] = useState()
-	const [isLoading, setIsLoading]= useState(false)
+	// console.log(shortsPostion)
+	const [videos, setVideos] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 
-	useEffect(()=>{
-		setIsLoading(true)
-		// const getVideos = async()=>{
-		// 	return await fetchVideos()
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const videoData = await fetchVideos();
+				// console.log(videoData)
+				setVideos([...videoData]);
+			} catch (err) {
+				setError(err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
 
-		// }
-		setVideos(fetchVideos())
-		setTimeout(()=>{
-			setIsLoading(false);
-		},3000)
-
-	},[])
-	// console.log(fetchVideos())
-	
+		fetchData();
+	}, []);
+	// console.log(videos); // Videos are now available here
 
 	const { user, setUsrInfo, usrInfo } = getContext();
-	if(!user  || user && !user.emailVerified)
-		return <Redirect href="sign-in"/>
-  return (
+	if (!user || (user && !user.emailVerified))
+		return <Redirect href="sign-in" />;
+	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
 			<FlatList
 				showsVerticalScrollIndicator={false}
-				data={fetchVideos()}
-				renderItem={({item,index}) => {
-					// console.log(Math.floor(Math.random() * fetchVideos().length));
-					if (index === shortsPostion)
+				data={videos}
+				renderItem={({ item, index }) => {
+					if (index === 0)
 						return (
 							<>
-								<VideoView thumbnail={item.thumbnail} id={item.id} />
-								<TrendingShorts type={"regular"}/>
+								<TrendingShorts type={"regular"} />
+								<VideoView videoInfo={item}/>
 							</>
 						);
-					return <VideoView thumbnail={item.thumbnail} id={item.id}/>;
-
+					return <VideoView videoInfo={item} />;
 				}}
 				ListHeaderComponent={<HeaderApp />}
 				ListEmptyComponent={
