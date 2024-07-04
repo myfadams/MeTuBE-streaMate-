@@ -49,7 +49,14 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 			setDislikeClicked(true);
 		} else setDislikeClicked(false);
 	}
-
+	// console.log(shouldPlay);
+	const videoRef = useRef(null);
+	useEffect(() => {
+		if (shouldPlay && videoRef.current) {
+			videoRef.current.replayAsync();
+			setPlay(true)
+		}
+	}, [shouldPlay]);
 	return (
 		<View
 			style={{
@@ -65,9 +72,11 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused }) => {
 				}}
 			>
 				<Video
+					ref={videoRef}
 					resizeMode={ResizeMode.COVER}
 					shouldPlay={play && shouldPlay && beFocused}
 					isLooping
+					
 					onPlaybackStatusUpdate={(video) => {
 						if (video.isLoaded) setHasStarted(true);
 					}}

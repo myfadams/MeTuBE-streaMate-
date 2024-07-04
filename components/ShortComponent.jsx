@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 
 const width =Dimensions.get("window").width
 const ShortComponent = ({title,short,marginVid}) => {
+	// console.log(short)
   return (
 		<TouchableOpacity
 			style={{ width: 0.48 * width, height: 250, margin: marginVid }}

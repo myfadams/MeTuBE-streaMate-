@@ -13,7 +13,7 @@ import { fetchShorts } from "../libs/firebase";
 
 const ShortView = ({shorts}) => {
 	return shorts.map((value,index) => {
-		if(index<3)
+		if(index<=3)
 			return <ShortComponent title={value?.caption} short={value} key={value.id}/>;
 		
 	});
@@ -25,7 +25,7 @@ const TrendingShorts = ({ type }) => {
 		const fetchData = async () => {
 			try {
 				const shortsData = await fetchShorts();
-				console.log(shortsData);
+				// console.log(shortsData);
 				setShorts([...shortsData]);
 			} catch (err) {
 				setError(err);
@@ -66,12 +66,8 @@ const TrendingShorts = ({ type }) => {
 						>
 							<ShortView shorts={shorts}/>
 						</View>
-						{/* <View
-						style={{ flexDirection: "row", justifyContent: "space-around" }}
-					>
-						<ShortComponent title={"This is the ttile 3"} />
-						<ShortComponent title={"This is the ttile 4"} />
-					</View> */}
+					
+						
 					</>
 				)}
 				{type === "suggested" && (

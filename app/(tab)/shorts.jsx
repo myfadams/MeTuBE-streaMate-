@@ -6,13 +6,14 @@ import {
 	TouchableOpacity,
 	Image,
 } from "react-native";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor } from "../../constants/colors";
 import ShortsView from "../../components/ShortsView";
 
 import { router, useFocusEffect } from "expo-router";
 import { search } from "../../constants/icons";
+import { fetchShorts } from "../../libs/firebase";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -32,6 +33,21 @@ const shorts = () => {
 			};
 		}, [])
 	);
+	const [shorts, setShorts] = useState([]);
+	const [error, setError] = useState();
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const shortsData = await fetchShorts();
+				// console.log(shortsData);
+				setShorts([...shortsData]);
+			} catch (err) {
+				setError(err);
+			}
+		};
+
+		fetchData();
+	}, []);
 
 	return (
 		<View
@@ -68,7 +84,7 @@ const shorts = () => {
 				</TouchableOpacity>
 			</View>
 			<FlatList
-				data={[1, 2, 3, 4, 5]}
+				data={shorts}
 				viewabilityConfig={{ itemVisiblePercentThreshold: 75 }}
 				onViewableItemsChanged={onViewableItemsChanged.current}
 				pagingEnabled
@@ -77,7 +93,7 @@ const shorts = () => {
 				decelerationRate="fast"
 				showsVerticalScrollIndicator={false}
 				renderItem={({ item }) => {
-					const shouldPlay = viewableItems.includes(item.toString());
+					const shouldPlay = viewableItems.includes(item.id.toString());
 					return (
 						<View
 							style={{
@@ -87,8 +103,9 @@ const shorts = () => {
 							}}
 						>
 							<ShortsView
-								sourceUrl={require("../../tempVid/small.mp4")}
+								sourceUrl={item.video}
 								shouldPlay={shouldPlay}
+								title={item.caption}
 								fix={(val) => {
 									// console.log(val);
 									setScollable(val);
@@ -98,7 +115,7 @@ const shorts = () => {
 						</View>
 					);
 				}}
-				keyExtractor={(item) => item.toString()}
+				keyExtractor={(item) => item.id}
 			/>
 		</View>
 	);

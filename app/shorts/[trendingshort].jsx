@@ -6,25 +6,44 @@ import {
 	TouchableOpacity,
 	Image,
 } from "react-native";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor } from "../../constants/colors";
 import ShortsView from "../../components/ShortsView";
 
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { back, search } from "../../constants/icons";
+import { fetchShorts, getEncodedFirebaseUrl } from "../../libs/firebase";
 
 const windowHeight = Dimensions.get("window").height;
 
 const TrendingShort = () => {
-    const {trendingshort: toBePlayed} = useLocalSearchParams();
+	const { trendingshort: toBePlayed } = useLocalSearchParams();
 	const shortItem = useLocalSearchParams();
-	// console.log(shortItem.video)
+	// console.log(shortItem)
+	const [shorts, setShorts] = useState([]);
+	const [error, setError] = useState();
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const shortsData = await fetchShorts();
+				// console.log(shortsData);
+				setShorts([...shortsData]);
+			} catch (err) {
+				setError(err);
+			}
+		};
+
+		fetchData();
+	}, []);
+
 	const [viewableItems, setViewableItems] = useState([]);
 	const [scollable, setScollable] = useState(false);
 	const onViewableItemsChanged = useRef(({ viewableItems }) => {
+		// console.log(viewableItems)
 		setViewableItems(viewableItems.map((item) => item.key));
 	});
+	// console.log(viewableItems)
 	const [isFocused, setIsFocused] = useState(false);
 
 	useFocusEffect(
@@ -35,7 +54,11 @@ const TrendingShort = () => {
 			};
 		}, [])
 	);
-
+	const newS = shorts.filter((short) => {
+		return short.id !== shortItem.id;
+	});
+	newS.unshift(shortItem)
+	// console.log(newS)
 	return (
 		<View
 			style={{
@@ -50,7 +73,7 @@ const TrendingShort = () => {
 					width: "90%",
 					top: "8%",
 					right: "5%",
-					left:"5%",
+					left: "5%",
 					position: "absolute",
 					zIndex: 1,
 					flexDirection: "row",
@@ -85,7 +108,7 @@ const TrendingShort = () => {
 				</TouchableOpacity>
 			</View>
 			<FlatList
-				data={[1, 2, 3, 4, 5]}
+				data={newS}
 				viewabilityConfig={{ itemVisiblePercentThreshold: 75 }}
 				onViewableItemsChanged={onViewableItemsChanged.current}
 				pagingEnabled
@@ -94,7 +117,8 @@ const TrendingShort = () => {
 				decelerationRate="fast"
 				showsVerticalScrollIndicator={false}
 				renderItem={({ item, index }) => {
-					const shouldPlay = viewableItems.includes(item.toString());
+					// console.log(item.id)
+					const shouldPlay = viewableItems.includes(item.id.toString());
 					return (
 						<View
 							style={{
@@ -106,7 +130,7 @@ const TrendingShort = () => {
 							{index === 0 ? (
 								<ShortsView
 									title={shortItem.caption}
-									sourceUrl={shortItem.video}
+									sourceUrl={getEncodedFirebaseUrl(shortItem.video)}
 									shouldPlay={shouldPlay}
 									fix={(val) => {
 										// console.log(val);
@@ -116,8 +140,8 @@ const TrendingShort = () => {
 								/>
 							) : (
 								<ShortsView
-									title={shortItem.caption}
-									sourceUrl={shortItem.video}
+									title={item.caption}
+									sourceUrl={item.video}
 									shouldPlay={shouldPlay}
 									fix={(val) => {
 										console.log(val);
@@ -129,7 +153,7 @@ const TrendingShort = () => {
 						</View>
 					);
 				}}
-				keyExtractor={(item) => item.toString()}
+				keyExtractor={(item) => item.id}
 			/>
 		</View>
 	);

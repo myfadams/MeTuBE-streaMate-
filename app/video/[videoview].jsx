@@ -86,7 +86,7 @@ const VideoPlayer = () => {
 				<Video
 					ref={videoRef}
 					resizeMode={ResizeMode.CONTAIN}
-					shouldPlay={true&&isFocused}
+					shouldPlay={true&&isFocused&&!isDone}
 					useNativeControls={!isDone}
 					onPlaybackStatusUpdate={(video) => {
 						if (video.isLoaded) setHasStarted(true);
