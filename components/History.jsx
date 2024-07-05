@@ -4,19 +4,31 @@ import { loadingColor } from '../constants/colors';
 import { options } from '../constants/icons';
 import { router } from 'expo-router';
 
-const History = () => {
+const History = ({data}) => {
+	// console.log(data?.video)
   return (
-		<TouchableOpacity style={{ margin: 4 }} onPress={()=>{
-            router.push("/video/history")
-        }}>
-			<ImageBackground
-				source={{}}
+		<TouchableOpacity
+			style={{ margin: 4 }}
+			onPress={() => {
+				if (data) {
+					const { videoview, ...passedData } = data;
+					// console.log(passedData)
+					router.push({
+						pathname: "video/" + data.videoview,
+						params: { ...passedData},
+					});
+				}
+			}}
+		>
+			<Image
+				source={{ uri: data?.thumbnail.replace("videos/", "videos%2F") }}
 				style={{
 					backgroundColor: "#000",
 					width: 130,
 					height: 80,
 					borderRadius: 8,
 				}}
+				resizeMode="cover"
 			/>
 			<View style={{ marginTop: 8, position: "relative" }}>
 				<Text
@@ -25,12 +37,12 @@ const History = () => {
 						color: "white",
 						fontSize: 15,
 						fontFamily: "Montserrat_500Medium",
-						width: 125,
+						width: 120,
 						flexWrap: "wrap",
 						flexDirection: "row",
 					}}
 				>
-					History Title of the video
+					{data?.title}
 				</Text>
 				<Text
 					style={{
@@ -43,11 +55,9 @@ const History = () => {
 						flexDirection: "row",
 					}}
 				>
-					channel name
+					{data?.name}
 				</Text>
-				<TouchableOpacity
-					style={{position: "absolute", right: 0 }}
-				>
+				<TouchableOpacity style={{ position: "absolute", right: 0 }}>
 					<Image
 						source={options}
 						style={{ width: 15, height: 15, position: "absolute", right: 0 }}

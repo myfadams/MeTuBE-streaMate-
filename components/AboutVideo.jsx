@@ -1,6 +1,6 @@
 // BottomSheetComponent.js
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
 	Button,
 	StyleSheet,
@@ -18,8 +18,11 @@ import { FlatList } from "react-native-gesture-handler";
 import CommentsHeader from "./CommentsHeader";
 import CommentFooter from "./CommentFooter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { onValue, ref } from "firebase/database";
+import { db } from "../libs/config";
 const windowHeight = Dimensions.get("window").height;
 const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
+	// console.log(info)
 	const insets = useSafeAreaInsets();
 	const commentHeight =
 		((windowHeight - 250 - insets.bottom) / windowHeight) * 100;
@@ -56,7 +59,18 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 		},
 		[onClose]
 	);
+	const [views, setViews] = useState(0);
+	useEffect(() => {
+		const videoRef = ref(db, `videosRef/${info.videoview}/views`);
 
+		const unsubscribe = onValue(videoRef, (snapshot) => {
+			const data = snapshot.val();
+			setViews(data || 0);
+		});
+
+		// Cleanup listener on unmount
+		return () => unsubscribe();
+	}, [info.videoview]);
 	return (
 		<BottomSheet
 			ref={bottomSheetRef}
@@ -134,7 +148,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 								// flex:1
 							}}
 						>
-							22,454
+							{views}
 						</Text>
 						<Text
 							style={{

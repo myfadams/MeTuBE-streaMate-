@@ -26,17 +26,20 @@ import VideoView from "../../components/VideoView";
 import AboutVideo from "../../components/AboutVideo";
 import TrendingShorts from "../../components/TrendingShorts";
 import { fetchVideos } from "../../libs/firebase";
-import { incrementVideoViews } from "../../libs/videoUpdates";
+import { addToHistory, incrementVideoViews } from "../../libs/videoUpdates";
+import { getContext } from "../../context/GlobalContext";
 
 const VideoPlayer = () => {
+	const { user, isIcognito } = getContext();
 	const video = useLocalSearchParams();
-	// console.log(video)
+	// console.log(video.video)
 	const [isDone, setIsDone] = useState(false);
 	const videoRef = useRef(null);
 	const [hasStarted, setHasStarted] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
 	const [subvideos, setSubvideos] = useState([]);
 	const [error, setError] = useState();
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -83,7 +86,6 @@ const VideoPlayer = () => {
 		setIsDone(false);
 	};
 	// console.log(videoID)
-	
 
 	return (
 		<SafeAreaView
@@ -95,27 +97,27 @@ const VideoPlayer = () => {
 					resizeMode={ResizeMode.CONTAIN}
 					shouldPlay={true && isFocused && !isDone}
 					useNativeControls={!isDone}
-					onLoad={()=>{
-						setTimeout(()=>{
+					onLoad={() => {
+						setTimeout(() => {
 							incrementVideoViews(video.videoview, "videosRef");
-						},4000)
+							if (!isIcognito)
+							addToHistory("videos", video, video.videoview, user.uid);
+						}, 4000);
 					}}
 					onPlaybackStatusUpdate={(vid) => {
 						if (vid.isLoaded) {
 							setHasStarted(true);
-							
 						}
-						if(video.isBuffering)
-							setHasStarted(false)
-						else
-							setHasStarted(true)
-						
+						if (video.isBuffering) setHasStarted(false);
+						else setHasStarted(true);
+
 						if (vid.didJustFinish) setIsDone(true);
+						// if(vid.is)
 					}}
 					isMuted={false}
 					style={{ width: "100%", height: 250, backgroundColor: "#000" }}
 					source={{
-						uri: video.video,
+						uri: (video.video).replace("videos/", "videos%2F"),
 					}}
 				/>
 				{isDone && (
@@ -140,7 +142,7 @@ const VideoPlayer = () => {
 					return vid.id !== video.videoview;
 				})}
 				// removeClippedSubviews
-				key={(item)=>(item.id)}
+				key={(item) => item.id}
 				initialNumToRender={3}
 				decelerationRate={0.94}
 				ListHeaderComponent={
@@ -152,7 +154,6 @@ const VideoPlayer = () => {
 							handleToggleAbout();
 						}}
 						vidinfo={video}
-					
 					/>
 					// testData.length > 0 && (
 					// )

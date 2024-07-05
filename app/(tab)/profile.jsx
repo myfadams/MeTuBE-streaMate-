@@ -1,5 +1,5 @@
 import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor, loadingColor } from "../../constants/colors";
 import HeaderApp from "../../components/HeaderApp";
@@ -21,15 +21,47 @@ import {
 import MoreButton from "../../components/MoreButton";
 import History from "../../components/History";
 import { getContext } from "../../context/GlobalContext";
-
+import Toast from "react-native-root-toast";
+import { onValue, ref } from "firebase/database";
+import { db } from "../../libs/config";
 const profile = () => {
-	const [isActivated, setIsActivated] = useState(false)
-	const {user}= getContext();
-	const incognitoMode = ()=>{
-		// console.log("hit")
-		setIsActivated(!isActivated)
-	}
-	
+	const [isActivated, setIsActivated] = useState(false);
+	const { user, isIcognito, setIsIncognito } = getContext();
+	const incognitoMode = () => {
+		setIsIncognito(!isIcognito);
+		setIsActivated(!isActivated);
+		if (!isActivated) {
+			let toast = Toast.show("Videos will not be in your history", {
+				duration: Toast.durations.LONG,
+			});
+			setTimeout(function hideToast() {
+				Toast.hide(toast);
+			}, 3000);
+		} else {
+			let toast = Toast.show("Incognito mode turned off", {
+				duration: Toast.durations.LONG,
+			});
+			setTimeout(function hideToast() {
+				Toast.hide(toast);
+			}, 3000);
+		}
+	};
+	const [history, setHistory] = useState([]);
+	useEffect(() => {
+		const videoRef = ref(db, `history/videos/${user.uid}`);
+
+		const unsubscribe = onValue(videoRef, (snapshot) => {
+			const data = snapshot.val();
+			// console.log(snapshot.val())
+			
+			setHistory([...data])
+		});
+
+		// Cleanup listener on unmount
+		return () => unsubscribe();
+	}, [user.uid]);
+	// console.log(history)
+	// history.reverse();
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
 			<ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
@@ -142,10 +174,11 @@ const profile = () => {
 							horizontal
 							decelerationRate={"fast"}
 							showsHorizontalScrollIndicator={false}
-							data={[1, 2, 3, 4, 5, 6]}
+							data={history.slice(0,5)}
 							renderItem={({ item, index }) => {
-								return <History />;
+								return <History data={item}/>;
 							}}
+							keyExtractor={(item)=>(item.videoview)}
 						/>
 					</View>
 					<View style={{ marginTop: 25 }}>
