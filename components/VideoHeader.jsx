@@ -1,12 +1,28 @@
 import { View, Text, TouchableOpacity,Image} from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { borderLight, buttonColor, fieldColor, loadingColor } from "../constants/colors";
 import OtherViewButtons from "./OtherViewButtons";
 import BottomSheetComponent from "./CommentSection";
 import ScrollButtons from "./ScrollButtons";
 import { getContext } from "../context/GlobalContext";
+import { formatViews } from "../libs/videoUpdates";
 
-const VidHeader = ({ comment, about,vidinfo }) => {
+import { ref, onValue } from "firebase/database";
+import { db } from "../libs/config";
+
+const VidHeader = ({ comment, about,vidinfo}) => {
+	const [views, setViews] = useState(0);
+	useEffect(() => {
+		const videoRef = ref(db, `videosRef/${vidinfo.videoview}/views`);
+
+		const unsubscribe = onValue(videoRef, (snapshot) => {
+			const data = snapshot.val();
+			setViews(data || 0);
+		});
+
+		// Cleanup listener on unmount
+		return () => unsubscribe();
+	}, [vidinfo.videoview]);
 	const { user } = getContext();
 	// console.log(vidinfo)
 	const [subscribed, setsubscribed] = useState(false)
@@ -56,7 +72,7 @@ const VidHeader = ({ comment, about,vidinfo }) => {
 							fontFamily: "Montserrat_300Light",
 						}}
 					>
-						53K views
+						{formatViews(views)}
 					</Text>
 
 					<Text
@@ -129,20 +145,22 @@ const VidHeader = ({ comment, about,vidinfo }) => {
 					</View>
 				</TouchableOpacity>
 				<View>
-					{vidinfo.creator!==user.uid&&<OtherViewButtons
-						title={subscribed ? "Subscribed" : "Subscribe"}
-						handlePress={handleSubscribe}
-						styles={{
-							width: 100,
-							height: 35,
-							backgroundColor:subscribed ? fieldColor:buttonColor,
-							borderWidth:subscribed&&0.6,
-							borderColor:borderLight,
-							justifyContent: "center",
-							alignItems: "center",
-							borderRadius: 30,
-						}}
-					/>}
+					{vidinfo.creator !== user.uid && (
+						<OtherViewButtons
+							title={subscribed ? "Subscribed" : "Subscribe"}
+							handlePress={handleSubscribe}
+							styles={{
+								width: 100,
+								height: 35,
+								backgroundColor: subscribed ? fieldColor : buttonColor,
+								borderWidth: subscribed && 0.6,
+								borderColor: borderLight,
+								justifyContent: "center",
+								alignItems: "center",
+								borderRadius: 30,
+							}}
+						/>
+					)}
 				</View>
 			</View>
 			{/* //my ScrollButtons */}

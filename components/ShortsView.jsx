@@ -16,8 +16,11 @@ import OtherViewButtons from "./OtherViewButtons";
 import { getCreatorInfo } from "../libs/firebase";
 import MoreButton from "./MoreButton";
 import { getContext } from "../context/GlobalContext";
+import { onValue, ref } from "firebase/database";
+import { db } from "../libs/config";
+import { incrementVideoViews } from "../libs/videoUpdates";
 
-const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID}) => {
+const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,videoId}) => {
 	// console.log(creatorID)
 	const [play, setPlay] = useState(true);
 	const [likeClicked, setLikeClicked] = useState(false);
@@ -50,7 +53,22 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID}) => 
 
 		fetchCreator();
 	}, [creatorID]);
-	// console.log(creator)
+	
+	
+	const [views, setViews] = useState(0);
+	useEffect(() => {
+		const videoRef = ref(db, `shortsRef/${videoId}/views`);
+
+		const unsubscribe = onValue(videoRef, (snapshot) => {
+			const data = snapshot.val();
+			setViews(data || 0);
+		});
+
+		// Cleanup listener on unmount
+		return () => unsubscribe();
+	}, [videoId]);
+	
+
 	const handleToggleBottomSheet = () => {
 		setIsBottomSheetVisible(!isBottomSheetVisible);
 	};
@@ -80,7 +98,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID}) => 
 	// console.log(shouldPlay);
 	const videoRef = useRef(null);
 	useEffect(() => {
-		if (shouldPlay && videoRef.current) {
+		if (beFocused&&shouldPlay && videoRef.current) {
 			videoRef.current.replayAsync();
 			setPlay(true)
 		}
@@ -97,7 +115,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID}) => 
 				style={{ width: "100%", height: "100%" }}
 				onPress={() => {
 					setPlay(!play);
-				}}
+				}}//mn
 			>
 				<Video
 					ref={videoRef}
@@ -105,7 +123,16 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID}) => 
 					shouldPlay={play && shouldPlay && beFocused}
 					isLooping
 					onPlaybackStatusUpdate={(video) => {
+						
 						if (video.isLoaded) setHasStarted(true);
+						if(video.isBuffering && beFocused && shouldPlay)
+							setHasStarted(false)
+						else
+							setHasStarted(true)
+						if (shouldPlay)
+							if (video.didJustFinish)
+								incrementVideoViews(videoId, "shortsRef");
+						
 					}}
 					style={{
 						width: "100%",

@@ -23,20 +23,11 @@ const VidScreenLoad = () => {
 			<View
 				style={{
 					width: "100%",
-					height: "100%",
+					// height: "100%",
 					justifyContent: "center",
 					alignItems: "center",
 				}}
 			>
-				<View
-					style={{
-						width: "96%",
-						height: 70,
-						backgroundColor: loadingColor,
-						marginTop: 13,
-						borderRadius: "25%",
-					}}
-				></View>
 				<View
 					style={{
 						width: "96%",

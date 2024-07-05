@@ -51,9 +51,13 @@ import edit from "../assets/icons/edit.png";
 import audience from "../assets/icons/audience.png";
 import sponsor from "../assets/icons/costs.png";
 import metube from "../assets/icons/metube.png";
+import compass from "../assets/icons/compass.png";
+import dot from "../assets/icons/dot.png";
 export {
+	dot,
 	edit,
 	metube,
+	compass,
 audience,
 sponsor,
 	apple,

@@ -7,11 +7,14 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
+import { ref, onValue } from "firebase/database";
 import { borderLight, loadingColor } from "../constants/colors";
 import * as Animatable from "react-native-animatable";
 import { router } from "expo-router";
-import { options } from "../constants/icons";
+import { dot, options } from "../constants/icons";
 import { getCreatorInfo } from "../libs/firebase";
+import { db } from "../libs/config";
+import { formatViews } from "../libs/videoUpdates";
 const VideoView = ({videoInfo,type}) => {
 	const [creator, setCreator] = useState([])
 	const [isLoading, setIsLoading] = useState(false);
@@ -31,12 +34,27 @@ const VideoView = ({videoInfo,type}) => {
 
 		fetchCreator();
 	},[])
+	const [views, setViews] = useState(0);
+	useEffect(() => {
+		const videoRef = ref(db, `videosRef/${videoInfo.id}/views`);
+
+		const unsubscribe = onValue(videoRef, (snapshot) => {
+			const data = snapshot.val();
+			setViews(data || 0);
+		});
+
+		// Cleanup listener on unmount
+		return () => unsubscribe();
+	}, [videoInfo.videoview]);
 	// console.log(creator)
 	return (
 		<TouchableWithoutFeedback
 			onPress={() => {
 				if (!type)
-					router.push({ pathname: "video/" + videoInfo.id, params: {...videoInfo,...creator[0]} });
+					router.push({
+						pathname: "video/" + videoInfo.id,
+						params: { ...videoInfo, ...creator[0] },
+					});
 				else
 					router.replace({
 						pathname: "video/" + videoInfo.id,
@@ -121,7 +139,35 @@ const VideoView = ({videoInfo,type}) => {
 										color: borderLight,
 									}}
 								>
-									{creator[0]?.name} . 491k views . 1 day ago{" "}
+									{creator[0]?.name}{" "}
+									<View
+										style={{
+											justifyContent: "center",
+											height: 9,
+											alignItems: "center",
+										}}
+									>
+										<Image
+											source={dot}
+											style={{ width: 3, height: 3 }}
+											resizeMode="contain"
+										/>
+									</View>{" "}
+									{formatViews(views)}{" "}
+									<View
+										style={{
+											justifyContent: "center",
+											height: 9,
+											alignItems: "center",
+										}}
+									>
+										<Image
+											source={dot}
+											style={{ width: 3, height: 3 }}
+											resizeMode="contain"
+										/>
+									</View>{" "}
+									1 day ago
 								</Text>
 							</View>
 							<TouchableOpacity>

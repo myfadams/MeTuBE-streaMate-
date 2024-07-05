@@ -27,6 +27,7 @@ const shorts = () => {
 
 	useFocusEffect(
 		useCallback(() => {
+			console.log("shorts focused")
 			setIsFocused(true);
 			return () => {
 				setIsFocused(false);
@@ -106,6 +107,7 @@ const shorts = () => {
 								sourceUrl={item.video}
 								shouldPlay={shouldPlay}
 								title={item.caption}
+								videoId={item.id}
 								creatorID={item.creator}
 								fix={(val) => {
 									// console.log(val);

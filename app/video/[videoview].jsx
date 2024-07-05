@@ -1,28 +1,42 @@
-import { View, Text,FlatList, TouchableOpacity, Image, ActivityIndicator, Dimensions } from 'react-native'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { bgColor, loadingColor } from '../../constants/colors';
-import { ResizeMode, Video } from 'expo-av';
-import VidScreenLoad from '../../components/VidScreenLoad';
-import { replay } from '../../constants/icons';
-import VidHeader from '../../components/VideoHeader';
-import BottomSheetComponent from '../../components/CommentSection';
-import VideoView from '../../components/VideoView';
-import AboutVideo from '../../components/AboutVideo';
-import TrendingShorts from '../../components/TrendingShorts';
-import { fetchVideos } from '../../libs/firebase';
-
+import {
+	View,
+	Text,
+	FlatList,
+	TouchableOpacity,
+	Image,
+	ActivityIndicator,
+	Dimensions,
+} from "react-native";
+import React, {
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { bgColor, loadingColor } from "../../constants/colors";
+import { ResizeMode, Video } from "expo-av";
+import VidScreenLoad from "../../components/VidScreenLoad";
+import { replay } from "../../constants/icons";
+import VidHeader from "../../components/VideoHeader";
+import BottomSheetComponent from "../../components/CommentSection";
+import VideoView from "../../components/VideoView";
+import AboutVideo from "../../components/AboutVideo";
+import TrendingShorts from "../../components/TrendingShorts";
+import { fetchVideos } from "../../libs/firebase";
+import { incrementVideoViews } from "../../libs/videoUpdates";
 
 const VideoPlayer = () => {
-    const video = useLocalSearchParams()
+	const video = useLocalSearchParams();
 	// console.log(video)
-	const [isDone, setIsDone] = useState(false)
+	const [isDone, setIsDone] = useState(false);
 	const videoRef = useRef(null);
 	const [hasStarted, setHasStarted] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
-	const [subvideos, setSubvideos] = useState([])
-	const [error,setError]=useState()	
+	const [subvideos, setSubvideos] = useState([]);
+	const [error, setError] = useState();
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -31,7 +45,7 @@ const VideoPlayer = () => {
 				setSubvideos([...videoData]);
 			} catch (err) {
 				setError(err);
-			} 
+			}
 		};
 
 		fetchData();
@@ -53,7 +67,6 @@ const VideoPlayer = () => {
 		setIsBottomSheetVisible(!isBottomSheetVisible);
 	};
 
-
 	const [isAboutVisible, setIsAboutVisible] = useState(false);
 	const handleCloseAbout = () => {
 		setIsAboutVisible(false);
@@ -67,18 +80,12 @@ const VideoPlayer = () => {
 			await videoRef.current.setPositionAsync(0); // Seek to the beginning
 			await videoRef.current.playAsync(); // Start playing the video
 		}
-		setIsDone(false)
+		setIsDone(false);
 	};
-    // console.log(videoID)
-	const [testData, settestData] = useState([])
-	useEffect(()=>{
-		setTimeout(()=>{
-			settestData([1, 2, 3, 4, 5, 6, , 7]);
-		},2000)
-	})
-	// const memoizedData = useMemo(() => data, [data]);
-	// const testData=[1, 2, 3, 4, 5, 6, ,7]
-  return (
+	// console.log(videoID)
+	
+
+	return (
 		<SafeAreaView
 			style={{ backgroundColor: bgColor, width: "100%", height: "100%" }}
 		>
@@ -86,11 +93,24 @@ const VideoPlayer = () => {
 				<Video
 					ref={videoRef}
 					resizeMode={ResizeMode.CONTAIN}
-					shouldPlay={true&&isFocused&&!isDone}
+					shouldPlay={true && isFocused && !isDone}
 					useNativeControls={!isDone}
-					onPlaybackStatusUpdate={(video) => {
-						if (video.isLoaded) setHasStarted(true);
-						if (video.didJustFinish) setIsDone(true);
+					onLoad={()=>{
+						setTimeout(()=>{
+							incrementVideoViews(video.videoview, "videosRef");
+						},4000)
+					}}
+					onPlaybackStatusUpdate={(vid) => {
+						if (vid.isLoaded) {
+							setHasStarted(true);
+							
+						}
+						if(video.isBuffering)
+							setHasStarted(false)
+						else
+							setHasStarted(true)
+						
+						if (vid.didJustFinish) setIsDone(true);
 					}}
 					isMuted={false}
 					style={{ width: "100%", height: 250, backgroundColor: "#000" }}
@@ -115,31 +135,34 @@ const VideoPlayer = () => {
 				)}
 			</View>
 			<FlatList
-				data={subvideos.filter((vid)=>{
-					return vid.id !==video.id
+				data={subvideos.filter((vid) => {
+					// console.log(vid)
+					return vid.id !== video.videoview;
 				})}
 				// removeClippedSubviews
+				key={(item)=>(item.id)}
 				initialNumToRender={3}
 				decelerationRate={0.94}
 				ListHeaderComponent={
-					testData.length > 0 && (
-						<VidHeader
-							comment={() => {
-								handleToggleBottomSheet();
-							}}
-							about={() => {
-								handleToggleAbout();
-							}}
-							vidinfo={video}
-						/>
-					)
+					<VidHeader
+						comment={() => {
+							handleToggleBottomSheet();
+						}}
+						about={() => {
+							handleToggleAbout();
+						}}
+						vidinfo={video}
+					
+					/>
+					// testData.length > 0 && (
+					// )
 				}
 				renderItem={({ item, index }) => {
 					if (index === 1)
 						return (
 							<>
 								<TrendingShorts type={"suggested"} />
-								<VideoView  videoInfo={item} type={"subvideo"}/>
+								<VideoView videoInfo={item} type={"subvideo"} />
 							</>
 						);
 					return <VideoView videoInfo={item} type={"subvideo"} />;
@@ -152,8 +175,12 @@ const VideoPlayer = () => {
 				isVisible={isBottomSheetVisible}
 				onClose={handleCloseBottomSheet}
 			/>
-			<AboutVideo isVisible={isAboutVisible} onClose={handleCloseAbout} info={video} />
+			<AboutVideo
+				isVisible={isAboutVisible}
+				onClose={handleCloseAbout}
+				info={video}
+			/>
 		</SafeAreaView>
 	);
-}
-export default VideoPlayer
+};
+export default VideoPlayer;

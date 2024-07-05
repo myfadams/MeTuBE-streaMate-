@@ -42,6 +42,9 @@ const home = () => {
 			<FlatList
 				showsVerticalScrollIndicator={false}
 				data={videos}
+				keyExtractor={(item)=>{
+					return item.id
+				}}
 				refreshControl={<RefreshControl onRefresh={()=>{
 					setRefreshing(!refereshing);
 				}}/>}
@@ -55,7 +58,7 @@ const home = () => {
 						);
 					return <VideoView videoInfo={item} />;
 				}}
-				ListHeaderComponent={<HeaderApp />}
+				ListHeaderComponent={<HeaderApp type={"home"}/>}
 				ListEmptyComponent={
 					// mfnjefrjek
 					<>

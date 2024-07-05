@@ -133,6 +133,7 @@ const TrendingShort = () => {
 									sourceUrl={getEncodedFirebaseUrl(shortItem.video)}
 									creatorID={shortItem.creator}
 									shouldPlay={shouldPlay}
+									videoId={item.id}
 									fix={(val) => {
 										// console.log(val);
 										setScollable(val);
@@ -144,10 +145,12 @@ const TrendingShort = () => {
 									title={item.caption}
 									sourceUrl={item.video}
 									shouldPlay={shouldPlay}
+									creatorID={shortItem.creator}
 									fix={(val) => {
 										console.log(val);
 										setScollable(val);
 									}}
+									videoId={item.id}
 									beFocused={isFocused}
 								/>
 							)}

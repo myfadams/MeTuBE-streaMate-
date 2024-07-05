@@ -74,6 +74,7 @@ const TrendingShorts = ({ type }) => {
 					<FlatList
 						horizontal
 						data={shorts}
+						keyExtractor={(item)=>(item.id)}
 						showsHorizontalScrollIndicator={false}
 						decelerationRate={"fast"}
 						renderItem={({ item, index }) => {
