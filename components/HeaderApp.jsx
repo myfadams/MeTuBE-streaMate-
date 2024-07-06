@@ -108,7 +108,9 @@ const HeaderApp = ({ screenName, disable,type }) => {
 						/>
 					</TouchableOpacity>
 					{screenName === "you" && (
-						<TouchableOpacity>
+						<TouchableOpacity onPress={()=>{
+							router.push("settings");
+						}}>
 							<Image
 								source={gear}
 								style={{ width: 21, height: 21 }}

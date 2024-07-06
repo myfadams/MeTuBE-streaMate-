@@ -10,6 +10,7 @@ import VideosLoading from '../../components/VideosLoading';
 import NotFound from '../../components/NotFound';
 import VideoView from '../../components/VideoView';
 import TrendingShorts from '../../components/TrendingShorts';
+import { shuffleArray } from '../../libs/sound';
 const shortsPostion = Math.floor(Math.random() * fetchVideos().length);
 const home = () => {
 	// console.log(shortsPostion)
@@ -17,12 +18,14 @@ const home = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState();
 	const { setRefreshing, refereshing } = getContext();
+	const [isRefreshing, setIsRefreshing] = useState(false)
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const videoData = await fetchVideos();
+				const tempdata = shuffleArray(videoData?.slice());
 				// console.log(videoData)
-				setVideos([...videoData]);
+				setVideos([...tempdata]);
 			} catch (err) {
 				setError(err);
 			} finally {
@@ -35,7 +38,7 @@ const home = () => {
 	// console.log(videos); // Videos are now available here
 
 	const { user, setUsrInfo, usrInfo } = getContext();
-	if (!user || (user && !user.emailVerified))
+	if (!user || (user && !user?.emailVerified))
 		return <Redirect href="sign-in" />;
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
@@ -45,8 +48,12 @@ const home = () => {
 				keyExtractor={(item)=>{
 					return item.id
 				}}
-				refreshControl={<RefreshControl onRefresh={()=>{
-					setRefreshing(!refereshing);
+				refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={()=>{
+					setIsRefreshing(true)
+					setTimeout(()=>{
+						setRefreshing(!refereshing);
+						setIsRefreshing(false)
+					},3000)
 				}}/>}
 				renderItem={({ item, index }) => {
 					if (index === 0)

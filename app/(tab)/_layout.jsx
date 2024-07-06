@@ -15,7 +15,7 @@ function TabIcon({ icon, color, name, focused }) {
 	useEffect(() => {
 		async function daTa (){
 			if(user && user.emailVerified){
-				const getDAta = await getUSerProfile(user.uid);
+				const getDAta = await getUSerProfile(user?.uid);
 				setUserInfo(getDAta)
 
 			}

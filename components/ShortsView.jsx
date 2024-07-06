@@ -10,17 +10,31 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import BottomSheetComponent from "./CommentSection";
 import { ResizeMode, Video } from "expo-av";
-import { borderLight, buttonColor, fieldColor, loadingColor } from "../constants/colors";
-import { comment, dislike, like, pause, share } from "../constants/icons";
+import {
+	borderLight,
+	buttonColor,
+	fieldColor,
+	loadingColor,
+} from "../constants/colors";
+import { comment, dislike, incoginito, like, pause, share } from "../constants/icons";
 import OtherViewButtons from "./OtherViewButtons";
 import { getCreatorInfo } from "../libs/firebase";
 import MoreButton from "./MoreButton";
 import { getContext } from "../context/GlobalContext";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
-import { incrementVideoViews } from "../libs/videoUpdates";
+import { addToHistory, incrementVideoViews } from "../libs/videoUpdates";
 
-const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,videoId}) => {
+const ShortsView = ({
+	sourceUrl,
+	title,
+	shouldPlay,
+	fix,
+	beFocused,
+	creatorID,
+	videoId,
+	data,
+}) => {
 	// console.log(creatorID)
 	const [play, setPlay] = useState(true);
 	const [likeClicked, setLikeClicked] = useState(false);
@@ -33,11 +47,13 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,video
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState();
 	// thumbnail={item.thumbnail} id={item.id}
-	const {user}=getContext();
+	
+	const { user, isIcognito } = getContext();
 	const [subscribed, setsubscribed] = useState(false);
 	function handleSubscribe() {
 		setsubscribed(!subscribed);
 	}
+	const [count, setCount] = useState(0)
 	useEffect(() => {
 		const fetchCreator = async () => {
 			try {
@@ -53,8 +69,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,video
 
 		fetchCreator();
 	}, [creatorID]);
-	
-	
+
 	const [views, setViews] = useState(0);
 	useEffect(() => {
 		const videoRef = ref(db, `shortsRef/${videoId}/views`);
@@ -67,19 +82,17 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,video
 		// Cleanup listener on unmount
 		return () => unsubscribe();
 	}, [videoId]);
-	
 
 	const handleToggleBottomSheet = () => {
 		setIsBottomSheetVisible(!isBottomSheetVisible);
 	};
-	function handleActive(active){
-		fix(active)
+	function handleActive(active) {
+		fix(active);
 	}
 
 	const handleCloseBottomSheet = () => {
 		setIsBottomSheetVisible(false);
 	};
-
 
 	function addLike() {
 		if (!likeClicked) {
@@ -97,10 +110,12 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,video
 	}
 	// console.log(shouldPlay);
 	const videoRef = useRef(null);
+
 	useEffect(() => {
-		if (beFocused&&shouldPlay && videoRef.current) {
+		if (beFocused && shouldPlay && videoRef.current) {
 			videoRef.current.replayAsync();
-			setPlay(true)
+			setCount(0);
+			setPlay(true);
 		}
 	}, [shouldPlay]);
 	return (
@@ -115,7 +130,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,video
 				style={{ width: "100%", height: "100%" }}
 				onPress={() => {
 					setPlay(!play);
-				}}//mn
+				}} //mn
 			>
 				<Video
 					ref={videoRef}
@@ -123,16 +138,18 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,video
 					shouldPlay={play && shouldPlay && beFocused}
 					isLooping
 					onPlaybackStatusUpdate={(video) => {
-						
-						if (video.isLoaded) setHasStarted(true);
-						if(video.isBuffering && beFocused && shouldPlay)
-							setHasStarted(false)
-						else
-							setHasStarted(true)
+						// console.log(count)
+						if (video.didJustFinish && play && count === 0 && !isIcognito) {
+							addToHistory("shorts", data, video.videoview, user.uid);
+							setCount(count+1);
+						}
+						if (video.isLoaded && video.isPlaying) setHasStarted(true);
+						if (video.isBuffering && beFocused && shouldPlay)
+							setHasStarted(false);
+						// else setHasStarted(true);
 						if (shouldPlay)
 							if (video.didJustFinish)
 								incrementVideoViews(videoId, "shortsRef");
-						
 					}}
 					style={{
 						width: "100%",
@@ -157,7 +174,7 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,video
 					}}
 				/>
 			)}
-			{play && !hasStarted && (
+			{(play && !hasStarted) && (
 				<ActivityIndicator
 					size="large"
 					color="#fff"
@@ -228,21 +245,23 @@ const ShortsView = ({ sourceUrl, title, shouldPlay,fix,beFocused,creatorID,video
 					>
 						{creator[0]?.name}
 					</Text>
-					
-					{creatorID!==user.uid&&<OtherViewButtons
-						title={subscribed ? "Subscribed" : "Subscribe"}
-						handlePress={handleSubscribe}
-						styles={{
-							width: 100,
-							height: 35,
-							backgroundColor: subscribed ? fieldColor : buttonColor,
-							borderWidth: subscribed && 0.6,
-							borderColor: borderLight,
-							justifyContent: "center",
-							alignItems: "center",
-							borderRadius: 30,
-						}}
-					/>}
+
+					{creatorID !== user.uid && (
+						<OtherViewButtons
+							title={subscribed ? "Subscribed" : "Subscribe"}
+							handlePress={handleSubscribe}
+							styles={{
+								width: 100,
+								height: 35,
+								backgroundColor: subscribed ? fieldColor : buttonColor,
+								borderWidth: subscribed && 0.6,
+								borderColor: borderLight,
+								justifyContent: "center",
+								alignItems: "center",
+								borderRadius: 30,
+							}}
+						/>
+					)}
 				</View>
 				<Text
 					style={{ fontSize: 18, margin: 8, color: "#fff" }}

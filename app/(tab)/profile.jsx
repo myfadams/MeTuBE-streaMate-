@@ -24,6 +24,7 @@ import { getContext } from "../../context/GlobalContext";
 import Toast from "react-native-root-toast";
 import { onValue, ref } from "firebase/database";
 import { db } from "../../libs/config";
+import { router } from "expo-router";
 const profile = () => {
 	const [isActivated, setIsActivated] = useState(false);
 	const { user, isIcognito, setIsIncognito } = getContext();
@@ -47,20 +48,38 @@ const profile = () => {
 		}
 	};
 	const [history, setHistory] = useState([]);
+	const [historyShorts, setHistoryShorts] = useState([]);
 	useEffect(() => {
-		const videoRef = ref(db, `history/videos/${user.uid}`);
+		const videoRef = ref(db, `history/videos/${user?.uid}`);
 
 		const unsubscribe = onValue(videoRef, (snapshot) => {
-			const data = snapshot.val();
-			// console.log(snapshot.val())
-			
-			setHistory([...data])
+			if(snapshot.exists()){
+				const data = snapshot.val();
+				// console.log(snapshot.val())
+
+				setHistory([...data]);
+			}
 		});
 
 		// Cleanup listener on unmount
 		return () => unsubscribe();
-	}, [user.uid]);
-	// console.log(history)
+	}, [user?.uid]);
+	useEffect(() => {
+		const shortsRef = ref(db, `history/shorts/${user?.uid}`);
+
+		const unsubscribe = onValue(shortsRef, (snapshot) => {
+			if(snapshot.exists()){
+				const data = snapshot.val();
+				// console.log(snapshot.val())
+
+				setHistoryShorts([...data]);
+			}
+		});
+
+		// Cleanup listener on unmount
+		return () => unsubscribe();
+	}, [user?.uid]);
+	// console.log(historyShorts)
 	// history.reverse();
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
@@ -79,7 +98,7 @@ const profile = () => {
 						}}
 					>
 						<Image
-							source={{ uri: user.photoURL }}
+							source={{ uri: user?.photoURL }}
 							resizeMode="contain"
 							style={{
 								width: 70,
@@ -99,7 +118,7 @@ const profile = () => {
 									flexDirection: "row",
 								}}
 							>
-								{user.displayName}
+								{user?.displayName}
 							</Text>
 							<View style={{ flexDirection: "row" }}>
 								<Text
@@ -136,7 +155,9 @@ const profile = () => {
 					</View>
 				</TouchableOpacity>
 				<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-					<MoreButton imageUrl={switchAccount} title={"Switch Account"} />
+					<MoreButton imageUrl={switchAccount} title={"Switch Account"} handlePress={()=>{
+						router.push("account")
+					}}/>
 					<MoreButton imageUrl={google} title={"Google Account"} />
 					<MoreButton
 						imageUrl={incoginito}
@@ -174,11 +195,25 @@ const profile = () => {
 							horizontal
 							decelerationRate={"fast"}
 							showsHorizontalScrollIndicator={false}
-							data={history.slice(0,5)}
+							data={history.slice(0, 5)}
 							renderItem={({ item, index }) => {
-								return <History data={item}/>;
+								// if(index===0)
+
+								return <History data={item} />;
 							}}
-							keyExtractor={(item)=>(item.videoview)}
+							keyExtractor={(item) => item?.videoview}
+						/>
+						<FlatList
+							horizontal
+							decelerationRate={"fast"}
+							showsHorizontalScrollIndicator={false}
+							data={historyShorts?.slice(0, 5)}
+							renderItem={({ item, index }) => {
+								// if(index===0)
+
+								return <History data={item} type={"shorts"}/>;
+							}}
+							keyExtractor={(item) => item?.id}
 						/>
 					</View>
 					<View style={{ marginTop: 25 }}>

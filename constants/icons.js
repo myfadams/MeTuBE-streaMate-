@@ -53,7 +53,14 @@ import sponsor from "../assets/icons/costs.png";
 import metube from "../assets/icons/metube.png";
 import compass from "../assets/icons/compass.png";
 import dot from "../assets/icons/dot.png";
+import signout from "../assets/icons/signout.png";
+import accountSetting from "../assets/icons/setting.png";
+import addAccount from "../assets/icons/addAccount.png";
+
 export {
+	signout,
+accountSetting,
+addAccount,
 	dot,
 	edit,
 	metube,

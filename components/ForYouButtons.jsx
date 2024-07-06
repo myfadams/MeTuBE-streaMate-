@@ -1,9 +1,9 @@
 import { View, Text, Image ,TouchableOpacity} from "react-native";
 import React from "react";
 
-const ForYouButtons = ({sourceUrl,title}) => {
+const ForYouButtons = ({sourceUrl,title, handlePress}) => {
 	return (
-		<TouchableOpacity style={{ width: "100%", alignItems: "center" }}>
+		<TouchableOpacity style={{ width: "100%", alignItems: "center" }} onPress={handlePress}>
 			<View
 				style={{
 					flexDirection: "row",

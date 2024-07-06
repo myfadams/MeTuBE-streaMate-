@@ -14,10 +14,13 @@ import ShortsView from "../../components/ShortsView";
 import { router, useFocusEffect } from "expo-router";
 import { search } from "../../constants/icons";
 import { fetchShorts } from "../../libs/firebase";
+import { shuffleArray } from "../../libs/sound";
+import { getContext } from "../../context/GlobalContext";
 
 const windowHeight = Dimensions.get("window").height;
 
 const shorts = () => {
+	const {refereshing}=getContext();
 	const [viewableItems, setViewableItems] = useState([]);
 	const [scollable, setScollable] = useState(false);
 	const onViewableItemsChanged = useRef(({ viewableItems }) => {
@@ -41,14 +44,15 @@ const shorts = () => {
 			try {
 				const shortsData = await fetchShorts();
 				// console.log(shortsData);
-				setShorts([...shortsData]);
+				const tempdata = shuffleArray(shortsData?.slice());
+				setShorts([...tempdata]);
 			} catch (err) {
 				setError(err);
 			}
 		};
 
 		fetchData();
-	}, []);
+	}, [refereshing]);
 
 	return (
 		<View
@@ -113,6 +117,7 @@ const shorts = () => {
 									// console.log(val);
 									setScollable(val);
 								}}
+								data={item}
 								beFocused={isFocused}
 							/>
 						</View>

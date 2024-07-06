@@ -17,6 +17,7 @@ import {
 	Montserrat_900Black,
 } from "@expo-google-fonts/montserrat";
 import { GlobalContext } from '../context/GlobalContext';
+import { bgColor } from '../constants/colors';
 SplashScreen.preventAutoHideAsync()
 const _layout = () => {
 
@@ -60,11 +61,30 @@ const _layout = () => {
 								gestureEnabled: false,
 							}}
 						/>
+						
 						<Stack.Screen
 							name="upload/[uploadFeatures]"
 							options={{
 								headerShown: false,
 								gestureEnabled: false,
+							}}
+						/>
+						<Stack.Screen
+							name="settings"
+							options={{
+								gestureResponseDistance: { vertical: 0 },
+								headerShown: false,
+								// gestureEnabled: false,
+								presentation: "modal",
+							}}
+						/>
+						<Stack.Screen
+							name="account"
+							options={{
+								gestureResponseDistance: { vertical: 0 },
+								headerShown: false,
+								// gestureEnabled: false,
+								presentation: "modal",
 							}}
 						/>
 					</Stack>

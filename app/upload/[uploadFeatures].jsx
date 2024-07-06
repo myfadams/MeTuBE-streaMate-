@@ -37,7 +37,7 @@ const UploadFeatures = () => {
 					videoInfo.thumbnailUrl,
 					videoInfo.title.replaceAll(" ","")
 				);
-				await addVideoToDB(videoInfo, thumbnailUrl, videoUrl, user.uid);
+				await addVideoToDB(videoInfo, thumbnailUrl, videoUrl, user?.uid);
 				// Alert.alert("Video Uploaded");
 				
 				let toast = Toast.show("video uploaded", {

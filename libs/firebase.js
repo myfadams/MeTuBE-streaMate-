@@ -49,19 +49,22 @@ export async function loginUser(email, password) {
 		throw error;
 	}
 }
+// export async function logOut(){
+// 	const s = await authentication.signOut()
+// }
 export async function checkVerified(user) {
 	onAuthStateChanged(authentication, (user) => {
-		console.log("verified: " + user.emailVerified); //
+		console.log("verified: " + user?.emailVerified); //
 		console.log();
-		if (!user.emailVerified) {
+		if (!user?.emailVerified) {
 			user.reload();
 		} else {
-			console.log(user.displayName);
-			const image = avatars.getInitials(user.displayName);
+			console.log(user?.displayName);
+			const image = avatars.getInitials(user?.displayName);
 			updateProfile(user, { photoURL: "" + image });
-			set(usersRef(user.uid), {
-				name: user.displayName,
-				email: user.email,
+			set(usersRef(user?.uid), {
+				name: user?.displayName,
+				email: user?.email,
 				image: "" + image,
 			});
 		}

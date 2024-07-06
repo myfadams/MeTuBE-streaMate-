@@ -4,8 +4,9 @@ import { loadingColor } from '../constants/colors';
 import { options } from '../constants/icons';
 import { router } from 'expo-router';
 
-const History = ({data}) => {
+const History = ({data, type}) => {
 	// console.log(data?.video)
+	if(type!=="shorts")
   return (
 		<TouchableOpacity
 			style={{ margin: 4 }}
@@ -67,6 +68,59 @@ const History = ({data}) => {
 			</View>
 		</TouchableOpacity>
 	);
+	else{
+		return (
+			<TouchableOpacity
+				style={{ margin: 4 }}
+				onPress={() => {
+					if (data) {
+						const { trendingshort, ...passedData } = data;
+						console.log(data.id)
+						// console.log(passedData);
+						router.push({ pathname: "shorts/" + data?.id, params: {...passedData, id:data.id} });
+					}
+				}}
+			>
+				<Image
+					source={{
+						uri: (data?.thumbnail).includes("shorts%2F")
+							? data?.thumbnail
+							: (data?.thumbnail).replace("shorts/", "shorts%2F"),
+					}}
+					style={{
+						backgroundColor: "#000",
+						width: 135,
+						height: 80,
+						borderRadius: 8,
+					}}
+					resizeMode="contain"
+				/>
+				<View style={{ marginTop: 8, position: "relative" }}>
+					<Text
+						numberOfLines={1}
+						style={{
+							color: "white",
+							fontSize: 14,
+							fontFamily: "Montserrat_500Medium",
+							width: 120,
+							flexWrap: "wrap",
+							flexDirection: "row",
+						}}
+					>
+						{data?.caption}
+					</Text>
+					
+					<TouchableOpacity style={{ position: "absolute", right: 0 }}>
+						<Image
+							source={options}
+							style={{ width: 15, height: 15, position: "absolute", right: 0 }}
+							resizeMode="contain"
+						/>
+					</TouchableOpacity>
+				</View>
+			</TouchableOpacity>
+		);
+	}
 }
 
 export default History

@@ -18,7 +18,7 @@ import { fetchShorts, getEncodedFirebaseUrl } from "../../libs/firebase";
 const windowHeight = Dimensions.get("window").height;
 
 const TrendingShort = () => {
-	const { trendingshort: toBePlayed } = useLocalSearchParams();
+	// const { trendingshort: toBePlayed } = useLocalSearchParams();
 	const shortItem = useLocalSearchParams();
 	// console.log(shortItem)
 	const [shorts, setShorts] = useState([]);
@@ -55,7 +55,7 @@ const TrendingShort = () => {
 		}, [])
 	);
 	const newS = shorts.filter((short) => {
-		return short.id !== shortItem.id;
+		return short.id !== shortItem?.id;
 	});
 	newS.unshift(shortItem)
 	// console.log(newS)
@@ -117,8 +117,8 @@ const TrendingShort = () => {
 				decelerationRate="fast"
 				showsVerticalScrollIndicator={false}
 				renderItem={({ item, index }) => {
-					// console.log(item.id)
-					const shouldPlay = viewableItems.includes(item.id.toString());
+					// console.log(item)
+					const shouldPlay = viewableItems.includes(item?.id);
 					return (
 						<View
 							style={{
@@ -129,15 +129,17 @@ const TrendingShort = () => {
 						>
 							{index === 0 ? (
 								<ShortsView
-									title={shortItem.caption}
-									sourceUrl={getEncodedFirebaseUrl(shortItem.video)}
-									creatorID={shortItem.creator}
+									title={item.caption}
+									sourceUrl={getEncodedFirebaseUrl(item.video)}
+									creatorID={item.creator}
 									shouldPlay={shouldPlay}
-									videoId={item.id}
+									videoId={item?.id}
 									fix={(val) => {
 										// console.log(val);
 										setScollable(val);
 									}}
+									data={item}
+									
 									beFocused={isFocused}
 								/>
 							) : (
@@ -145,11 +147,12 @@ const TrendingShort = () => {
 									title={item.caption}
 									sourceUrl={item.video}
 									shouldPlay={shouldPlay}
-									creatorID={shortItem.creator}
+									creatorID={item.creator}
 									fix={(val) => {
 										console.log(val);
 										setScollable(val);
 									}}
+									data={item}
 									videoId={item.id}
 									beFocused={isFocused}
 								/>

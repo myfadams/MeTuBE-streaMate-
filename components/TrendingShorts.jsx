@@ -10,6 +10,8 @@ import ShortComponent from "./ShortComponent";
 import { shortLogo, shorts } from "../constants/icons";
 import { FlatList } from "react-native-gesture-handler";
 import { fetchShorts } from "../libs/firebase";
+import { shuffleArray } from "../libs/sound";
+import { getContext } from "../context/GlobalContext";
 
 const ShortView = ({shorts}) => {
 	return shorts.map((value,index) => {
@@ -19,21 +21,25 @@ const ShortView = ({shorts}) => {
 	});
 };
 const TrendingShorts = ({ type }) => {
+	const { refereshing } = getContext();
 	const [shorts, setShorts] = useState([]);
 	const [error, setError] = useState();
+	// console.log(refereshing);
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const shortsData = await fetchShorts();
-				// console.log(shortsData);
-				setShorts([...shortsData]);
+				const tempdata = shuffleArray(shortsData?.slice());
+				// console.log(tempdata);
+				// setShorts([...shortsData]);
+				setShorts([...tempdata]);
 			} catch (err) {
 				setError(err);
 			}
 		};
 
 		fetchData();
-	}, []);
+	}, [refereshing]);
 	if (shorts.length > 0)
 		return (
 			<View style={{ gap: 20, marginTop: 25, marginBottom: 20 }}>

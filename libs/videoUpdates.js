@@ -39,24 +39,6 @@ export function formatViews(numViews) {
 
 	return `${formattedViews} ${submessage}`;
 }
-// Usage example:
-// incrementVideoViews("videosRef", "1000e829-2e26-4ebb-9969-0c93d7edad66"); // Replace 'vid' with the actual video ID
-
-// export const addToHistory = (type, video, videoId, userId) => {
-// 	const historyRef = ref(db, `history/${type}/${userId}/${videoId}`);
-	
-// 	runTransaction(historyRef, (currentHistory) => {
-// 		// console.log(currentHistory)
-
-// 		if (currentHistory === null) return video;
-// 	})
-// 		.then(() => {
-// 			// console.log('Added to history');
-// 		})
-// 		.catch((error) => {
-// 			console.error("Error adding to history: ", error);
-// 		});
-// };
 export const addToHistory = (type, video, videoId, userId) => {
 	// Reference to the history path for the user and videoId
 	const historyRef = ref(db, `history/${type}/${userId}`);
@@ -67,19 +49,35 @@ export const addToHistory = (type, video, videoId, userId) => {
 			// If current history is null or does not exist, initialize with the new video data
 			return [video];
 		} else {
-			// Check if videoId exists in current history
-			const index = currentHistory.findIndex(
-				(item) => item.videoview === video.videoview
-			);
-			if (index === -1) {
-				// If videoId does not exist, prepend the new video data
-				currentHistory.unshift(video);
-			} else if (index > 0) {
-				// If videoId exists but is not the first item, move it to the first position
-				const videoToMove = currentHistory.splice(index, 1)[0];
-				currentHistory.unshift(videoToMove);
+			if(type==="shorts"){
+				// Check if videoId exists in current history
+				const index = currentHistory.findIndex(
+					(item) => item.id === video.id
+				);
+				if (index === -1) {
+					// If videoId does not exist, prepend the new video data
+					currentHistory.unshift(video);
+				} else if (index > 0) {
+					// If videoId exists but is not the first item, move it to the first position
+					const videoToMove = currentHistory.splice(index, 1)[0];
+					currentHistory.unshift(videoToMove);
+				}
+				return currentHistory;
+			}else{
+				// Check if videoId exists in current history
+				const index = currentHistory.findIndex(
+					(item) => item.videoview === video.videoview
+				);
+				if (index === -1) {
+					// If videoId does not exist, prepend the new video data
+					currentHistory.unshift(video);
+				} else if (index > 0) {
+					// If videoId exists but is not the first item, move it to the first position
+					const videoToMove = currentHistory.splice(index, 1)[0];
+					currentHistory.unshift(videoToMove);
+				}
+				return currentHistory;
 			}
-			return currentHistory;
 		}
 	})
 		.then(() => {
