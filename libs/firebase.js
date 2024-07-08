@@ -21,21 +21,21 @@ async function createAccount(email, password, name) {
 			email,
 			password
 		);
-		await sendEmailVerification(user.user);
+		await sendEmailVerification(user?.user);
 		try {
-			await updateProfile(user.user, { displayName: name });
+			await updateProfile(user?.user, { displayName: name });
 		} catch (error) {
 			console.log(error);
 		}
 
-		return user.user;
+		return user?.user;
 	} catch (error) {
 		// console.log(error.code)
 		throw error;
 	}
 }
 export function emailVerification(user) {
-	return user.emailVerified;
+	return user?.emailVerified;
 }
 export async function loginUser(email, password) {
 	try {
@@ -44,7 +44,7 @@ export async function loginUser(email, password) {
 			email,
 			password
 		);
-		return user.user;
+		return user?.user;
 	} catch (error) {
 		throw error;
 	}
@@ -53,11 +53,12 @@ export async function loginUser(email, password) {
 // 	const s = await authentication.signOut()
 // }
 export async function checkVerified(user) {
+	console.log(user);
 	onAuthStateChanged(authentication, (user) => {
-		console.log("verified: " + user?.emailVerified); //
-		console.log();
+		console.log("verified yh: " + user?.emailVerified); //
+		
 		if (!user?.emailVerified) {
-			user.reload();
+			user?.reload();
 		} else {
 			console.log(user?.displayName);
 			const image = avatars.getInitials(user?.displayName);
@@ -69,8 +70,8 @@ export async function checkVerified(user) {
 			});
 		}
 	});
-	console.log("here nowe: " + user.emailVerified);
-	return user.emailVerified;
+	console.log("here nowe: " + user?.emailVerified);
+	return user?.emailVerified;
 }
 
 export async function getUSerProfile(userId) {
@@ -192,6 +193,40 @@ export function getEncodedFirebaseUrl(originalUrl) {
 		console.error("Invalid URL", error);
 		return null;
 	}
+}
+
+
+export function fetchData(path) {
+	const locRef = ref(db, path);
+	// console.log(path)
+	return new Promise((resolve, reject) => {
+		onValue(
+			locRef,
+			(snapshot) => {
+				const data = [];
+				if (!Array.isArray(snapshot.val()))
+				{
+					snapshot.forEach((childSnapshot) => {
+						const childData = childSnapshot.val();
+						if (childData) {
+							data.push({
+								id: childSnapshot.key,
+								...childData,
+							});
+						}
+					});
+				}else{
+					snapshot.val().forEach((snap)=>{
+						data.push(snap)
+					})
+				}
+				resolve(data);
+			},
+			(error) => {
+				reject(error); // Handle potential errors
+			}
+		);
+	});
 }
 
 export { createAccount };

@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import InputFields from "../../components/InputFields";
-import { bgColor, borderPrimary, otherColor } from "../../constants/colors";
+import { bgColor, borderPrimary, buttonColor, otherColor } from "../../constants/colors";
 import { logo } from "../../constants/images";
 
 import Button from "../../components/Button";
@@ -21,6 +21,7 @@ import { getContext } from "../../context/GlobalContext";
 import { emailVerification, loginUser } from "../../libs/firebase";
 import { authentication } from "../../libs/config";
 import { getAuth } from "firebase/auth";
+import MoreButton from "../../components/MoreButton";
 const SignIn = () => {
 	const [form, setform] = useState({ email: "", password: "" });
 	const [isLoading, setIsLoading] = useState(false);
@@ -137,8 +138,18 @@ const SignIn = () => {
 					}}
 					value={form.password}
 				/>
-				<View style={{ marginTop: 30 }} />
-				<Button title="Sign In" isLoading={isLoading} handlePress={login} />
+				<View style={{ marginTop: 30, width: "100%" }} />
+				{/* <Button title="Sign In" isLoading={isLoading} handlePress={login} /> */}
+				<View style={{ width: "97%" }}>
+					<MoreButton
+						title={"Sign In"}
+						height={60}
+						color={buttonColor}
+						handlePress={login}
+						typeauth={"auth"}
+						isLoading={isLoading}
+					/>
+				</View>
 				<View
 					style={{
 						width: "100%",

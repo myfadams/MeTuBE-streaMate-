@@ -20,6 +20,7 @@ import CommentFooter from "./CommentFooter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
+import { formatSubs, getNumberSubs } from "../libs/videoUpdates";
 const windowHeight = Dimensions.get("window").height;
 const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 	// console.log(info)
@@ -28,7 +29,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 		((windowHeight - 250 - insets.bottom) / windowHeight) * 100;
 	const bottomSheetRef = useRef(null);
 	const [currentSnapPointIndex, setCurrentSnapPointIndex] = useState(-1);
-
+	const [noSubs, setNoSubs] = useState(0);
 	// Handle opening the bottom sheet when isVisible changes to true
 	React.useEffect(() => {
 		if (isVisible) {
@@ -67,7 +68,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 			const data = snapshot.val();
 			setViews(data || 0);
 		});
-
+		getNumberSubs(info.creator, setNoSubs)
 		// Cleanup listener on unmount
 		return () => unsubscribe();
 	}, [info.videoview]);
@@ -206,6 +207,8 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 							fontFamily: "Montserrat_400Regular",
 							flexWrap: "wrap",
 							flexDirection: "row",
+							paddingLeft:4,
+							paddingRight:4
 						}}
 					>
 						{info?.description !== ""
@@ -224,7 +227,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 					}}
 				>
 					<Image
-						source={{uri:info?.image}}
+						source={{ uri: info?.image }}
 						style={{
 							borderRadius: "50%",
 							width: 45,
@@ -250,7 +253,8 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 								fontFamily: "Montserrat_300Light",
 							}}
 						>
-							4.7M Subscribers
+							{formatSubs(noSubs)}{" "}
+							{formatSubs(noSubs) === 1 ? "Subscriber" : "Subscribers"}
 						</Text>
 					</View>
 				</TouchableOpacity>

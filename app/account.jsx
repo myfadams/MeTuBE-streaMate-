@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Image, ScrollView, Alert } from "react-native";
-import React from "react";
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert, SafeAreaView } from "react-native";
+import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { accountSetting, addAccount, close, signout } from "../constants/icons";
 import { bgColor, borderLight, buttonColor } from "../constants/colors";
@@ -8,9 +8,14 @@ import MoreButton from "../components/MoreButton";
 import ForYouButtons from "../components/ForYouButtons";
 import { signOut } from "firebase/auth";
 import { authentication } from "../libs/config";
+import { formatSubs, getNumberSubs } from "../libs/videoUpdates";
 
 const AccountInfo = () => {
 	const { user } = getContext();
+	const [noSubs, setNoSubs] = useState(0);
+	useEffect(()=>{
+		getNumberSubs(user?.uid, setNoSubs);
+	},[]);
 	const handleSignOut = () => {
     signOut(authentication)
       .then(() => {
@@ -23,7 +28,7 @@ const AccountInfo = () => {
       });
 	}
 	return (
-		<View
+		<SafeAreaView
 			style={{
 				flex: 1,
 				// alignItems: "center",
@@ -155,7 +160,8 @@ const AccountInfo = () => {
 										fontFamily: "Montserrat_300Light",
 									}}
 								>
-									77 subscribers
+									{formatSubs(noSubs)}{" "}
+									{formatSubs(noSubs) === 1 ? "Subscriber" : "Subscribers"}
 								</Text>
 							</View>
 							<TouchableOpacity
@@ -272,7 +278,11 @@ const AccountInfo = () => {
 				</View>
 				<View style={{ marginTop: 7, paddingLeft: "2%", paddingRight: "2%" }}>
 					<ForYouButtons sourceUrl={addAccount} title={"Add account"} />
-					<ForYouButtons sourceUrl={signout} title={"Use MeTuBE sign out"} handlePress={handleSignOut}/>
+					<ForYouButtons
+						sourceUrl={signout}
+						title={"Use MeTuBE sign out"}
+						handlePress={handleSignOut}
+					/>
 					<ForYouButtons
 						sourceUrl={accountSetting}
 						title={"Manage account on this device"}
@@ -280,7 +290,7 @@ const AccountInfo = () => {
 					{/* <MoreButton imageUrl={} title={} /> */}
 				</View>
 			</ScrollView>
-		</View>
+		</SafeAreaView>
 	);
 };
 

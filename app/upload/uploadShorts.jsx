@@ -79,7 +79,7 @@ const UploadShortsView = () => {
 					shortInfo.thumbnailUrl,
 					shortInfo.title.replaceAll(" ","")
 				);
-				await addShortToDB(shortInfo, thumbnailUrl, videoUrl, user.uid);
+				await addShortToDB(shortInfo, thumbnailUrl, videoUrl, user?.uid);
 				let toast = Toast.show("video uploaded", {
 					duration: Toast.durations.LONG,
 				});
@@ -228,7 +228,7 @@ const UploadShortsView = () => {
 						}}
 					>
 						<Image
-							source={{ uri: user.photoURL }}
+							source={{ uri: user?.photoURL }}
 							style={{
 								width: 60,
 								height: 60,
@@ -245,7 +245,7 @@ const UploadShortsView = () => {
 									fontSize: 18,
 								}}
 							>
-								{user.displayName}
+								{user?.displayName}
 							</Text>
 							<Text
 								style={{

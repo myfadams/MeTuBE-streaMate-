@@ -75,26 +75,45 @@ const History = ({data, type}) => {
 				onPress={() => {
 					if (data) {
 						const { trendingshort, ...passedData } = data;
-						console.log(data.id)
+						console.log(data.id);
 						// console.log(passedData);
-						router.push({ pathname: "shorts/" + data?.id, params: {...passedData, id:data.id} });
+						router.push({
+							pathname: "shorts/" + data?.id,
+							params: { ...passedData, id: data.id },
+						});
 					}
 				}}
 			>
-				<Image
+				<ImageBackground
+					imageStyle={{ opacity: 0.4, borderRadius: 8 }}
+					style={{
+						height: 135,
+						height: 80,
+
+						overflow: "hidden",
+					}}
 					source={{
 						uri: (data?.thumbnail).includes("shorts%2F")
 							? data?.thumbnail
 							: (data?.thumbnail).replace("shorts/", "shorts%2F"),
 					}}
-					style={{
-						backgroundColor: "#000",
-						width: 135,
-						height: 80,
-						borderRadius: 8,
-					}}
-					resizeMode="contain"
-				/>
+					resizeMode="cover"
+				>
+					<Image
+						source={{
+							uri: (data?.thumbnail).includes("shorts%2F")
+								? data?.thumbnail
+								: (data?.thumbnail).replace("shorts/", "shorts%2F"),
+						}}
+						style={{
+							// backgroundColor: "#000",
+							width: 135,
+							height: 80,
+							borderRadius: 8,
+						}}
+						resizeMode="contain"
+					/>
+				</ImageBackground>
 				<View style={{ marginTop: 8, position: "relative" }}>
 					<Text
 						numberOfLines={1}
@@ -109,7 +128,7 @@ const History = ({data, type}) => {
 					>
 						{data?.caption}
 					</Text>
-					
+
 					<TouchableOpacity style={{ position: "absolute", right: 0 }}>
 						<Image
 							source={options}

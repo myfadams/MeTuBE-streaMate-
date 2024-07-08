@@ -1,20 +1,28 @@
 import { View, Text, TouchableOpacity,Image} from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { borderLight, buttonColor, fieldColor, loadingColor } from "../constants/colors";
 import OtherViewButtons from "./OtherViewButtons";
 import BottomSheetComponent from "./CommentSection";
 import ScrollButtons from "./ScrollButtons";
 import { getContext } from "../context/GlobalContext";
-import { formatViews } from "../libs/videoUpdates";
+import { formatSubs, formatViews, getNumberSubs, getSubsriptions, setDisLikeStatus, setLikeStatus, subscribeToChannel } from "../libs/videoUpdates";
 
 import { ref, onValue } from "firebase/database";
 import { db } from "../libs/config";
+import { useFocusEffect } from "expo-router";
 
 const VidHeader = ({ comment, about,vidinfo}) => {
+	// console.log(vidinfo)
+	const { user } = getContext();
+	const [subscribed, setsubscribed] = useState(false);
+	const [noSubs,setNoSubs]=useState(0)
 	const [views, setViews] = useState(0);
+	const [like, setlike] = useState(false)
+	const [dislike, setdislike] = useState(false);
+	
 	useEffect(() => {
 		const videoRef = ref(db, `videosRef/${vidinfo.videoview}/views`);
-
+		getSubsriptions(user?.uid, setsubscribed, vidinfo.creator);
 		const unsubscribe = onValue(videoRef, (snapshot) => {
 			const data = snapshot.val();
 			setViews(data || 0);
@@ -23,11 +31,32 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 		// Cleanup listener on unmount
 		return () => unsubscribe();
 	}, [vidinfo.videoview]);
-	const { user } = getContext();
+	
+	useEffect(() => {
+		// const chSubsRef = ref(db, `subs/channel/${vidinfo.creator}/subscribers`);
+		// getSubsriptions(user.uid, setsubscribed, vidinfo.creator);
+		// const unsubscribe = onValue(chSubsRef, (snapshot) => {
+		// 	if(snapshot.exists()){
+		// 		const data = snapshot.val().length;
+		// 		setNoSubs(data);
+		// 	}else{
+		// 		setNoSubs(0);
+
+		// 	}
+		// });
+
+		// // Cleanup listener on unmount
+		// return () => unsubscribe();
+		getNumberSubs(vidinfo.creator, setNoSubs)
+		setLikeStatus(vidinfo.videoview, setlike, user?.uid, "videosRef");
+		setDisLikeStatus(vidinfo.videoview, setdislike, user?.uid, "videosRef");
+	}, [vidinfo.videoview]);
 	// console.log(vidinfo)
-	const [subscribed, setsubscribed] = useState(false)
+	// console.log("the namei s: "+like)
 	function handleSubscribe(){
-		setsubscribed(!subscribed)
+		subscribeToChannel(vidinfo?.creator, user?.uid);
+		getSubsriptions(user?.uid, setsubscribed, vidinfo.creator); 
+		// console.log("Get sub status: "+subscribed);
 	}
 	return (
 		<View
@@ -46,7 +75,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 				}}
 			>
 				<Text
-					numberOfLines={2}
+					numberOfLines={1}
 					style={{
 						color: "white",
 						fontSize: 20,
@@ -126,6 +155,9 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 							numberOfLines={1}
 							style={{
 								color: "white",
+								// width: "70%",
+								// flex:0.7,
+								flexShrink: 1,
 								fontSize: 14,
 								fontFamily: "Montserrat_600SemiBold",
 							}}
@@ -134,18 +166,21 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 						</Text>
 
 						<Text
+							numberOfLines={1}
 							style={{
 								color: "white",
+								flexShrink: 1,
 								fontSize: 14,
 								fontFamily: "Montserrat_300Light",
 							}}
 						>
-							4.7M
+							{/* 4.7M */}
+							{formatSubs(noSubs)}
 						</Text>
 					</View>
 				</TouchableOpacity>
 				<View>
-					{vidinfo.creator !== user.uid && (
+					{vidinfo.creator !== user?.uid && (
 						<OtherViewButtons
 							title={subscribed ? "Subscribed" : "Subscribe"}
 							handlePress={handleSubscribe}
@@ -164,7 +199,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 				</View>
 			</View>
 			{/* //my ScrollButtons */}
-			<ScrollButtons />
+			<ScrollButtons videoId={vidinfo.videoview} userId={user?.uid} likeStatus={like} disLikeStatus={dislike}/>
 			<TouchableOpacity
 				onPress={comment}
 				activeOpacity={0.6}

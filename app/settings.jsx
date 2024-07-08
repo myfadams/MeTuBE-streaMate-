@@ -5,6 +5,7 @@ import {
 	Image,
 	TouchableOpacity,
 	ScrollView,
+	SafeAreaView,
 } from "react-native";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -68,7 +69,7 @@ export default function Modal() {
 		);
 	}
 	return (
-		<View
+		<SafeAreaView
 			style={{
 				flex: 1,
 				// alignItems: "center",
@@ -120,6 +121,6 @@ export default function Modal() {
 					return <SettingButton title={buttonTxt} key={index}/>;
 				})}
 			</ScrollView>
-		</View>
+		</SafeAreaView>
 	);
 }

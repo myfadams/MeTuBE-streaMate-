@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import InputFields from "../../components/InputFields";
-import { bgColor, borderPrimary, otherColor } from "../../constants/colors";
+import { bgColor, borderPrimary, buttonColor, otherColor } from "../../constants/colors";
 import { logo } from "../../constants/images";
 
 import Button from "../../components/Button";
@@ -19,6 +19,7 @@ import { apple, google } from "../../constants/icons";
 import { Link, router } from "expo-router";
 import { createAccount, emailVerification } from "../../libs/firebase";
 import { getContext } from "../../context/GlobalContext";
+import MoreButton from "../../components/MoreButton";
 
 const SignUp = () => {
 	const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -152,7 +153,17 @@ const SignUp = () => {
 					value={form.password}
 				/>
 				<View style={{ marginTop: 30 }} />
-				<Button title="Sign Up" handlePress={signUp} isLoading={isLoading} />
+				{/* <Button title="Sign Up" handlePress={signUp} isLoading={isLoading} /> */}
+				<View style={{ width: "97%" }}>
+					<MoreButton
+						title={"Sign Up"}
+						height={60}
+						color={buttonColor}
+						handlePress={signUp}
+						typeauth={"auth"}
+						isLoading={isLoading}
+					/>
+				</View>
 				<View
 					style={{
 						width: "100%",

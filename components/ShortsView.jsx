@@ -23,7 +23,7 @@ import MoreButton from "./MoreButton";
 import { getContext } from "../context/GlobalContext";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
-import { addToHistory, incrementVideoViews } from "../libs/videoUpdates";
+import { addToHistory, getLikes, getSubsriptions, incrementVideoViews, likeUpadate, setDisLikeStatus, setLikeStatus, subscribeToChannel } from "../libs/videoUpdates";
 
 const ShortsView = ({
 	sourceUrl,
@@ -47,18 +47,22 @@ const ShortsView = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState();
 	// thumbnail={item.thumbnail} id={item.id}
+	const [likes, setlikes] = useState(0);
 	
 	const { user, isIcognito } = getContext();
 	const [subscribed, setsubscribed] = useState(false);
 	function handleSubscribe() {
-		setsubscribed(!subscribed);
+		// setsubscribed(!subscribed)
+		subscribeToChannel(creatorID, user?.uid);
+		getSubsriptions(user?.uid, setsubscribed, creatorID);
 	}
 	const [count, setCount] = useState(0)
 	useEffect(() => {
 		const fetchCreator = async () => {
 			try {
 				const users = await getCreatorInfo(creatorID);
-				// console.log(users)
+				getSubsriptions(user.uid, setsubscribed, creatorID)
+				// console.log(subscribed)
 				setCreator([...users]);
 			} catch (err) {
 				setError(err);
@@ -73,7 +77,7 @@ const ShortsView = ({
 	const [views, setViews] = useState(0);
 	useEffect(() => {
 		const videoRef = ref(db, `shortsRef/${videoId}/views`);
-
+		getLikes(videoId, setlikes, "shortsRef");
 		const unsubscribe = onValue(videoRef, (snapshot) => {
 			const data = snapshot.val();
 			setViews(data || 0);
@@ -94,11 +98,19 @@ const ShortsView = ({
 		setIsBottomSheetVisible(false);
 	};
 
+	useEffect(() => {
+		setLikeStatus(videoId, setLikeClicked, user?.uid, "shortsRef");
+		setDisLikeStatus(videoId, setDislikeClicked, user?.uid, "shortsRef");
+	}, [videoId]);
+
+	
 	function addLike() {
 		if (!likeClicked) {
 			setLikeClicked(true);
 			setDislikeClicked(false);
 		} else setLikeClicked(false);
+		likeUpadate(videoId, "like", "shortsRef", user?.uid);
+		getLikes(videoId, setlikes, "shortsRef");
 	}
 
 	function addDislike() {
@@ -107,6 +119,8 @@ const ShortsView = ({
 			setLikeClicked(false);
 			setDislikeClicked(true);
 		} else setDislikeClicked(false);
+		likeUpadate(videoId, "dislike", "shortsRef", user?.uid);
+		getLikes(videoId, setlikes, "shortsRef");
 	}
 	// console.log(shouldPlay);
 	const videoRef = useRef(null);
@@ -140,8 +154,8 @@ const ShortsView = ({
 					onPlaybackStatusUpdate={(video) => {
 						// console.log(count)
 						if (video.didJustFinish && play && count === 0 && !isIcognito) {
-							addToHistory("shorts", data, video.videoview, user.uid);
-							setCount(count+1);
+							addToHistory("shorts", data, video.videoview, user?.uid);
+							setCount(count + 1);
 						}
 						if (video.isLoaded && video.isPlaying) setHasStarted(true);
 						if (video.isBuffering && beFocused && shouldPlay)
@@ -174,7 +188,7 @@ const ShortsView = ({
 					}}
 				/>
 			)}
-			{(play && !hasStarted) && (
+			{play && !hasStarted && (
 				<ActivityIndicator
 					size="large"
 					color="#fff"
@@ -193,29 +207,74 @@ const ShortsView = ({
 					position: "absolute",
 					right: 15,
 					bottom: "20%",
-					gap: 35,
+					gap: 28,
 					justifyContent: "center",
 				}}
 			>
-				<TouchableOpacity onPress={addLike}>
+				<TouchableOpacity
+					onPress={addLike}
+					style={{ alignItems: "center", gap: 4 }}
+				>
 					<Image
 						source={like}
 						style={styles.button}
 						tintColor={likeClicked ? buttonColor : "#fff"}
 					/>
+					<Text
+						style={{
+							color: "white",
+							fontSize: 14,
+							fontFamily: "Montserrat_600SemiBold",
+						}}
+					>
+						{likes===0?"Like":likes}
+					</Text>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={addDislike}>
+				<TouchableOpacity
+					onPress={addDislike}
+					style={{ alignItems: "center", gap: 4 }}
+				>
 					<Image
 						source={dislike}
 						style={styles.button}
 						tintColor={dislikeClicked ? buttonColor : "#fff"}
 					/>
+					<Text
+						style={{
+							color: "white",
+							fontSize: 14,
+							fontFamily: "Montserrat_600SemiBold",
+						}}
+					>
+						{"Dislike"}
+					</Text>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={handleToggleBottomSheet}>
+				<TouchableOpacity
+					onPress={handleToggleBottomSheet}
+					style={{ alignItems: "center", gap: 4 }}
+				>
 					<Image source={comment} style={styles.button} />
+					<Text
+						style={{
+							color: "white",
+							fontSize: 14,
+							fontFamily: "Montserrat_600SemiBold",
+						}}
+					>
+						{"0"}
+					</Text>
 				</TouchableOpacity>
-				<TouchableOpacity>
+				<TouchableOpacity style={{ alignItems: "center", gap: 4 }}>
 					<Image source={share} style={styles.button} tintColor={"#fff"} />
+					<Text
+						style={{
+							color: "white",
+							fontSize: 14,
+							fontFamily: "Montserrat_600SemiBold",
+						}}
+					>
+						{"Share"}
+					</Text>
 				</TouchableOpacity>
 			</View>
 			<View style={{ position: "absolute", bottom: 50, left: 10 }}>
@@ -246,7 +305,7 @@ const ShortsView = ({
 						{creator[0]?.name}
 					</Text>
 
-					{creatorID !== user.uid && (
+					{creatorID !== user?.uid && (
 						<OtherViewButtons
 							title={subscribed ? "Subscribed" : "Subscribe"}
 							handlePress={handleSubscribe}
@@ -254,6 +313,7 @@ const ShortsView = ({
 								width: 100,
 								height: 35,
 								backgroundColor: subscribed ? fieldColor : buttonColor,
+								opacity: subscribed && 0.6,
 								borderWidth: subscribed && 0.6,
 								borderColor: borderLight,
 								justifyContent: "center",

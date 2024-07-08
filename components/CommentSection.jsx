@@ -89,7 +89,7 @@ const BottomSheetComponent = ({ isVisible, onClose,isActive }) => {
 				}}
 			/>
 
-			<CommentFooter profile={user.photoURL} />
+			<CommentFooter profile={user?.photoURL} />
 		</BottomSheet>
 	);
 };

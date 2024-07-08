@@ -26,7 +26,7 @@ import VideoView from "../../components/VideoView";
 import AboutVideo from "../../components/AboutVideo";
 import TrendingShorts from "../../components/TrendingShorts";
 import { fetchVideos } from "../../libs/firebase";
-import { addToHistory, incrementVideoViews } from "../../libs/videoUpdates";
+import { addToHistory, getSubsriptions, incrementVideoViews } from "../../libs/videoUpdates";
 import { getContext } from "../../context/GlobalContext";
 
 const VideoPlayer = () => {
@@ -39,7 +39,7 @@ const VideoPlayer = () => {
 	const [isFocused, setIsFocused] = useState(false);
 	const [subvideos, setSubvideos] = useState([]);
 	const [error, setError] = useState();
-
+	const [subscribed, setsubscribed]=useState(false)
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -52,16 +52,19 @@ const VideoPlayer = () => {
 		};
 
 		fetchData();
+		
 	}, []);
 	// console.log(subvideos)
 	useFocusEffect(
 		useCallback(() => {
 			setIsFocused(true);
+			
 			return () => {
 				setIsFocused(false);
 			};
 		}, [])
 	);
+	console.log(subscribed);
 	const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
 	const handleCloseBottomSheet = () => {
 		setIsBottomSheetVisible(false);
@@ -101,7 +104,7 @@ const VideoPlayer = () => {
 						setTimeout(() => {
 							incrementVideoViews(video.videoview, "videosRef");
 							if (!isIcognito)
-							addToHistory("videos", video, video.videoview, user.uid);
+								addToHistory("videos", video, video.videoview, user?.uid);
 						}, 4000);
 					}}
 					onPlaybackStatusUpdate={(vid) => {
@@ -117,7 +120,7 @@ const VideoPlayer = () => {
 					isMuted={false}
 					style={{ width: "100%", height: 250, backgroundColor: "#000" }}
 					source={{
-						uri: (video.video).replace("videos/", "videos%2F"),
+						uri: video.video.replace("videos/", "videos%2F"),
 					}}
 				/>
 				{isDone && (
@@ -154,6 +157,7 @@ const VideoPlayer = () => {
 							handleToggleAbout();
 						}}
 						vidinfo={video}
+						substatus={subscribed}
 					/>
 					// testData.length > 0 && (
 					// )

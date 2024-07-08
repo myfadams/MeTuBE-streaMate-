@@ -23,7 +23,7 @@ const VideoView = ({videoInfo,type}) => {
 	useEffect(()=>{
 		const fetchCreator = async () => {
 			try {
-				const users = await getCreatorInfo(videoInfo.creator);
+				const users = await getCreatorInfo(videoInfo?.creator);
 				setCreator([...users]);
 			} catch (err) {
 				setError(err);
@@ -36,7 +36,7 @@ const VideoView = ({videoInfo,type}) => {
 	},[])
 	const [views, setViews] = useState(0);
 	useEffect(() => {
-		const videoRef = ref(db, `videosRef/${videoInfo.id}/views`);
+		const videoRef = ref(db, `videosRef/${videoInfo?.id}/views`);
 
 		const unsubscribe = onValue(videoRef, (snapshot) => {
 			const data = snapshot.val();
@@ -45,19 +45,19 @@ const VideoView = ({videoInfo,type}) => {
 
 		// Cleanup listener on unmount
 		return () => unsubscribe();
-	}, [videoInfo.videoview]);
+	}, [videoInfo?.videoview]);
 	// console.log(creator)
 	return (
 		<TouchableWithoutFeedback
 			onPress={() => {
 				if (!type)
 					router.push({
-						pathname: "video/" + videoInfo.id,
+						pathname: "video/" + videoInfo?.id,
 						params: { ...videoInfo, ...creator[0] },
 					});
 				else
 					router.replace({
-						pathname: "video/" + videoInfo.id,
+						pathname: "video/" + videoInfo?.id,
 						params: { ...videoInfo, ...creator[0] },
 					});
 			}}
@@ -101,7 +101,7 @@ const VideoView = ({videoInfo,type}) => {
 								width: 50,
 								height: 50,
 								borderRadius: "50%",
-								borderColor: "#000",
+								borderColor: borderLight,
 								borderWidth: 1,
 								margin: 3,
 								backgroundColor: "#fff",

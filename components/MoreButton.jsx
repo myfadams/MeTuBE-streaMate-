@@ -3,21 +3,22 @@ import React from 'react'
 
 import { fieldColor } from '../constants/colors';
 
-const MoreButton = ({ title, imageUrl, handlePress,height,color }) => {
+const MoreButton = ({ title, imageUrl, handlePress,height,color,isLoading,typeauth }) => {
 	return (
 		<TouchableOpacity
 			onPress={handlePress}
+			disabled={isLoading}
 			style={{
-				height: height?height:35,
+				height: height ? height : 35,
 				gap: 3,
 				borderRadius: "50%",
-				backgroundColor: color?color:fieldColor,
+				backgroundColor: color ? color : fieldColor,
 				justifyContent: "center",
 				alignItems: "center",
 				minWidth: 80,
 				margin: 8,
 				flexDirection: "row",
-				
+				opacity: isLoading ? 0.7 : 1,
 			}}
 		>
 			{imageUrl && (
@@ -32,8 +33,8 @@ const MoreButton = ({ title, imageUrl, handlePress,height,color }) => {
 				style={{
 					color: "white",
 					marginRight: imageUrl && 14,
-					fontSize: 14,
-					fontFamily: "Montserrat_300Light",
+					fontSize: typeauth ? 18 : 14,
+					fontFamily: typeauth ? "Montserrat_500Medium" : "Montserrat_300Light",
 				}}
 			>
 				{title}

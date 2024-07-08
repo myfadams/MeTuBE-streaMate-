@@ -2,8 +2,9 @@ import { View, Text ,Image, ScrollView} from 'react-native'
 import Button from "../components/Button"
 import React from 'react'
 import { notfoundlogo } from '../constants/images';
-import { loadingColor } from '../constants/colors';
+import { buttonColor, loadingColor } from '../constants/colors';
 import { router } from 'expo-router';
+import MoreButton from './MoreButton';
 
 const NotFound = () => {
   return (
@@ -16,7 +17,7 @@ const NotFound = () => {
 					justifyContent: "center",
 					alignItems: "center",
 					borderColor: "black",
-                    marginTop:50
+					marginTop: 50,
 				}}
 			>
 				<View style={{ width: "100%", height: 300 }}>
@@ -51,12 +52,23 @@ const NotFound = () => {
 						Be the first to upload on MeTube
 					</Text>
 				</View>
-				<Button
+				{/* <Button
 					title={"Create A Video"}
 					handlePress={() => {
 						router.push("create");
 					}}
-				/>
+				/> */}
+				<View style={{ width: "97%" }}>
+					<MoreButton
+						title={"Create A Video"}
+						height={60}
+						color={buttonColor}
+						handlePress={() => {
+							router.push("create");
+						}}
+						typeauth={"auth"}
+					/>
+				</View>
 			</View>
 		</ScrollView>
 	);

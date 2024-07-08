@@ -1,7 +1,7 @@
 import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { bgColor, loadingColor } from "../../constants/colors";
+import { bgColor, borderLight, loadingColor } from "../../constants/colors";
 import HeaderApp from "../../components/HeaderApp";
 import { ScrollView } from "react-native-gesture-handler";
 import ForYouButtons from "../../components/ForYouButtons";
@@ -105,6 +105,8 @@ const profile = () => {
 								height: 70,
 								backgroundColor: "#000",
 								borderRadius: "50%",
+								borderColor: borderLight,
+								borderWidth: 1,
 							}}
 						/>
 						<View>
@@ -155,9 +157,13 @@ const profile = () => {
 					</View>
 				</TouchableOpacity>
 				<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-					<MoreButton imageUrl={switchAccount} title={"Switch Account"} handlePress={()=>{
-						router.push("account")
-					}}/>
+					<MoreButton
+						imageUrl={switchAccount}
+						title={"Switch Account"}
+						handlePress={() => {
+							router.push("account");
+						}}
+					/>
 					<MoreButton imageUrl={google} title={"Google Account"} />
 					<MoreButton
 						imageUrl={incoginito}
@@ -211,7 +217,7 @@ const profile = () => {
 							renderItem={({ item, index }) => {
 								// if(index===0)
 
-								return <History data={item} type={"shorts"}/>;
+								return <History data={item} type={"shorts"} />;
 							}}
 							keyExtractor={(item) => item?.id}
 						/>

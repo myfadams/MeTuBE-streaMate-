@@ -12,16 +12,31 @@ import {
 	shorts,
 } from "../constants/icons";
 import { buttonColor, fieldColor} from "../constants/colors";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { formatSubs, getLikes, likeUpadate } from "../libs/videoUpdates";
+import { onValue, ref } from "firebase/database";
+import { db } from "../libs/config";
 
-const ScrollButtons = () => {
+const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
+	// console.log(likeStatus)
 	const [likeClicked, setLikeClicked] = useState(false);
 	const [dislikeClicked, setDislikeClicked] = useState(false);
+	const [likes, setlikes] = useState(0);
+	useEffect(() => {
+		getLikes(videoId, setlikes,"videosRef");
+	}, [videoId]);
+
+	useEffect(() => {
+		setLikeClicked(likeStatus);
+		setDislikeClicked(disLikeStatus);
+	}, [likeStatus,disLikeStatus]);
 	function addLike() {
 		if (!likeClicked) {
 			setLikeClicked(true);
 			setDislikeClicked(false);
 		} else setLikeClicked(false);
+		likeUpadate(videoId, "like", "videosRef", userId);
+		getLikes(videoId, setlikes, "videosRef");
 	}
 
 	function addDislike() {
@@ -30,8 +45,11 @@ const ScrollButtons = () => {
 			setLikeClicked(false);
 			setDislikeClicked(true);
 		} else setDislikeClicked(false);
+		// console.log("kjfkdsaf: "+dislikeClicked)
+		likeUpadate(videoId, "dislike", "videosRef", userId);
+		getLikes(videoId, setlikes, "videosRef");
 	}
-  return (
+	return (
 		<ScrollView
 			horizontal
 			decelerationRate={"fast"}
@@ -76,7 +94,7 @@ const ScrollButtons = () => {
 						}}
 					>
 						{" "}
-						53K
+						{formatSubs(likes)}
 					</Text>
 				</TouchableOpacity>
 				<Text style={{ color: "#fff", fontSize: 18 }}>|</Text>
@@ -264,6 +282,6 @@ const ScrollButtons = () => {
 			</TouchableOpacity>
 		</ScrollView>
 	);
-}
+};
 
 export default ScrollButtons

@@ -61,7 +61,7 @@ const _layout = () => {
 								gestureEnabled: false,
 							}}
 						/>
-						
+
 						<Stack.Screen
 							name="upload/[uploadFeatures]"
 							options={{
@@ -72,10 +72,11 @@ const _layout = () => {
 						<Stack.Screen
 							name="settings"
 							options={{
-								gestureResponseDistance: { vertical: 0 },
+								// gestureResponseDistance: { vertical: 10 },
 								headerShown: false,
-								// gestureEnabled: false,
-								presentation: "modal",
+								gestureEnabled: true,
+								gestureDirection: "vertical",
+								presentation: "card",
 							}}
 						/>
 						<Stack.Screen
@@ -83,8 +84,17 @@ const _layout = () => {
 							options={{
 								gestureResponseDistance: { vertical: 0 },
 								headerShown: false,
-								// gestureEnabled: false,
-								presentation: "modal",
+								gestureDirection: "vertical",
+								presentation: "card",
+							}}
+						/>
+						<Stack.Screen
+							name="video/[videoview]"
+							options={{
+								gestureResponseDistance: { vertical: 0 },
+								headerShown: false,
+								gestureDirection: "vertical",
+								presentation: "card",
 							}}
 						/>
 					</Stack>

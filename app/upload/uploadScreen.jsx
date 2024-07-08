@@ -32,14 +32,14 @@ const UploadView = () => {
 	const { user } = getContext();
 	const videoUpload = useLocalSearchParams();
 	const { vidDescription } = getContext();
-	// console.log(vidDescription)mkmk
+	// console.log(vidDescription)
 	const [videoInfo, setVideoInfo] = useState({
 		title: "",
 		videoUrl: videoUpload.thumbnail,
 		description: vidDescription,
 		thumbnailUrl: videoUpload.thumbnailURL,
 	});
-	console.log(videoInfo.description)
+	// console.log(videoInfo.description)
 	async function openFilePicker(typeOfFile) {
 		const result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -79,6 +79,7 @@ const UploadView = () => {
 							style={{ margin: 3 }}
 							activeOpacity={0.7}
 							onPress={() => {
+								// setVideoInfo(...videoInfo)
 								router.push("../");
 							}}
 						>
@@ -103,6 +104,7 @@ const UploadView = () => {
 					<MoreButton
 						title={"Next"}
 						handlePress={() => {
+							// console.log(videoInfo)
 							if (videoInfo.title != "") router.push({
 								pathname: "upload/audience",
 								params: videoInfo,
@@ -154,7 +156,7 @@ const UploadView = () => {
 						}}
 					>
 						<Image
-							source={{ uri: user.photoURL }}
+							source={{ uri: user?.photoURL }}
 							style={{
 								width: 60,
 								height: 60,
@@ -171,7 +173,7 @@ const UploadView = () => {
 									fontSize: 18,
 								}}
 							>
-								{user.displayName}
+								{user?.displayName}
 							</Text>
 							<Text
 								style={{

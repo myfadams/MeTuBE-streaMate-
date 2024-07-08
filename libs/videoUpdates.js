@@ -1,5 +1,5 @@
 // updateViews.js
-import { get, ref, remove, runTransaction } from "firebase/database";
+import { get, onValue, ref, remove, runTransaction } from "firebase/database";
 import { db } from "./config";
 // import { database } from "./firebase";
 
@@ -39,6 +39,18 @@ export function formatViews(numViews) {
 
 	return `${formattedViews} ${submessage}`;
 }
+export function formatSubs(numSubs) {
+	if (numSubs >= 1e9) {
+		 return(numSubs / 1e9).toFixed(1) + "B";
+	} else if (numSubs >= 1e6) {
+		return (numSubs / 1e6).toFixed(1) + "M";
+	} else if (numSubs >= 1e3) {
+		return(numSubs / 1e3).toFixed(1) + "K";
+	}  else {
+		return numSubs
+	}
+
+}
 export const addToHistory = (type, video, videoId, userId) => {
 	// Reference to the history path for the user and videoId
 	const historyRef = ref(db, `history/${type}/${userId}`);
@@ -49,11 +61,9 @@ export const addToHistory = (type, video, videoId, userId) => {
 			// If current history is null or does not exist, initialize with the new video data
 			return [video];
 		} else {
-			if(type==="shorts"){
+			if (type === "shorts") {
 				// Check if videoId exists in current history
-				const index = currentHistory.findIndex(
-					(item) => item.id === video.id
-				);
+				const index = currentHistory.findIndex((item) => item.id === video.id);
 				if (index === -1) {
 					// If videoId does not exist, prepend the new video data
 					currentHistory.unshift(video);
@@ -63,7 +73,7 @@ export const addToHistory = (type, video, videoId, userId) => {
 					currentHistory.unshift(videoToMove);
 				}
 				return currentHistory;
-			}else{
+			} else {
 				// Check if videoId exists in current history
 				const index = currentHistory.findIndex(
 					(item) => item.videoview === video.videoview
@@ -88,7 +98,6 @@ export const addToHistory = (type, video, videoId, userId) => {
 		});
 };
 
-
 export const removeFromHistory = (type, video, videoId, userId) => {
 	const historyRef = ref(db, `history/${type}/${userId}/${videoId}`);
 	get(historyRef).then((snapshot) => {
@@ -98,4 +107,281 @@ export const removeFromHistory = (type, video, videoId, userId) => {
 			console.log("Reference does not exist.");
 		}
 	});
+};
+
+export const subscribeToChannel = (channelID, userID) => {
+	const channelSubRef = ref(db, `subs/channel/${channelID}/subscribers`);
+	const userSubRef = ref(db, `subs/users/${userID}/subscriptions`);
+	runTransaction(channelSubRef, (subscribers) => {
+		if (subscribers === null) {
+			return [userID]; // If views doesn't exist, initialize it to 1
+		} else {
+			if (subscribers.includes(userID)) {
+				console.log("lost a sub");
+				// setSubStatus(false);
+				return subscribers.filter((us) => {
+					return us !== userID;
+				});
+			} else {
+				console.log("got new sub");
+				// setSubStatus(true);
+				subscribers.push(userID);
+				return subscribers;
+			}
+		}
+	})
+		.then(() => {
+			console.log("Subscribed");
+		})
+		.catch((error) => {
+			console.error("Error incrementing subscribe: ", error);
+		});
+	// setSubStatus(true);
+	runTransaction(userSubRef, (subscriptions) => {
+		if (subscriptions === null) {
+			console.log("created new sub and subbed");
+			return [channelID]; // If views doesn't exist, initialize it to 1
+		} else {
+			if (subscriptions?.includes(channelID)) {
+				console.log("unsubbed");
+				// setSubStatus(false);
+				return subscriptions?.filter((ch) => {
+					return ch !== channelID;
+				});
+			} else {
+				console.log("existing sub and subbed");
+				// setSubStatus(true);
+				subscriptions?.push(channelID);
+				return subscriptions;
+			}
+		}
+	});
+};
+export function getSubsriptions(userId, setStatus, creatorId) {
+	// console.log("c: " + creatorId, "u: " + userId);
+	const userSubRef = ref(db, `subs/users/${userId}/subscriptions`);
+	
+	
+	let subbs = [];
+	onValue(
+    userSubRef,
+    (snapshot) => {
+      const value = snapshot.val();
+    //   console.log('Snapshot value:', value);
+
+      try {
+        if (snapshot.exists()) {
+          if (Array.isArray(value)) {
+            // Value is an array, check if it includes the creatorId
+            if (value.includes(creatorId)) {
+              setStatus(true);
+            } else {
+              setStatus(false);
+            }
+          } else if (typeof value === 'object' && value !== null) {
+            // Value is an object, check if any of its values include the creatorId
+            const ids = Object.values(value);
+            if (ids.includes(creatorId)) {
+              setStatus(true);
+            } else {
+              setStatus(false);
+            }
+          } else {
+            // Handle other types if necessary
+            setStatus(false);
+          }
+        } else {
+          setStatus(false);
+        }
+      } catch (error) {
+        console.log('Error checking subscriptions:', error);
+        setStatus(false);
+      }
+    },
+    (error) => {
+      console.log('Error reading subscriptions:', error);
+      setStatus(false); // Handle potential errors
+    }
+  );
+
+	// console.log(subbs)
+	
+}
+export function getNumberSubs(channelID,setSubNumber){
+	const chSubsRef = ref(db, `subs/channel/${channelID}/subscribers`);
+	// getSubsriptions(user.uid, setsubscribed, vidinfo.creator);
+	const unsubscribe = onValue(chSubsRef, (snapshot) => {
+		if (snapshot.exists()) {
+			const data = snapshot.val().length;
+			setSubNumber(data);
+		} else {
+			setSubNumber(0);
+		}
+	});
+
+	// Cleanup listener on unmount
+	return () => unsubscribe();
+
+}
+
+
+export const likeUpadate = (videoId,type, loc,userId) => {
+	// console.log(videoId)
+	const likesReff = ref(db, `${loc}/${videoId}/likes`);
+	const dislikesReff = ref(db, `${loc}/${videoId}/dislikes`);
+	runTransaction(likesReff, (currentLikes) => {
+		if (!Array.isArray(currentLikes)) {
+			return [];
+		}
+	});
+	if (type === "like") {
+		
+		runTransaction(likesReff, (currentLikes) => {
+			if (currentLikes === null) {
+				return [userId]
+			} else {
+				if (currentLikes?.includes(userId)) {
+					return currentLikes?.filter((l) => {
+						return l !== userId;
+					});
+				} else {
+					currentLikes.push(userId);
+					return currentLikes;
+				}
+			}
+		}).then(() => {
+			// console.log("Likes incremented successfully");
+		});
+		runTransaction(dislikesReff, (currentDislikes) => {
+			if (currentDislikes === null) {
+				return [];
+			} else {
+				if (currentDislikes?.includes(userId)) {
+					return currentDislikes?.filter((l) => {
+						return l !== userId;
+					});
+				}
+			}
+		}).then(() => {
+			// console.log("Likes incremented successfully");
+		});
+	}else{
+		runTransaction(dislikesReff, (currentDislikes) => {
+			if (currentDislikes === null) {
+				return [userId];
+			} else {
+				if (currentDislikes.includes(userId)) {
+					return currentDislikes?.filter((l) => {
+						return l !== userId;
+					});
+				}else{
+					currentDislikes.push(userId)
+					return currentDislikes
+				}
+			}
+		}).then(() => {
+			// console.log("Likes incremented successfully");
+		});
+		runTransaction(likesReff, (currenlikes) => {
+			if (currenlikes === null) {
+				return [];
+			} else {
+				if (currenlikes.includes(userId)) {
+					return currenlikes?.filter((l) => {
+						return l !== userId;
+					});
+				}
+			}
+		}).then(() => {
+			console.log("Likes incremented successfully");
+		});
+	}
+};
+
+export const getLikes= (videoId,setlikes,loc)=>{
+	const videoLikeRef = ref(db, `${loc}/${videoId}/likes`);
+		const unsubscribe = onValue(videoLikeRef, (snapshot) => {
+			const data = snapshot.val();
+			if (Array.isArray(snapshot.val())) setlikes(data.length);
+			else setlikes(0)
+		});
+
+		// Cleanup listener on unmount
+		return () => unsubscribe();
+}
+
+export const setLikeStatus = (videoId, setStatus,userId,loc) => {
+	const videoLikeRef = ref(db, `${loc}/${videoId}/likes`);
+	const unsubscribe = onValue(videoLikeRef, (snapshot) => {
+		const likesArr =snapshot.val()
+		try {
+			if (snapshot.exists()) {
+				if (Array.isArray(likesArr)) {
+					// likesArr is an array, check if it includes the creatorId
+					if (likesArr.includes(userId)) {
+						setStatus(true);
+					} else {
+						setStatus(false);
+					}
+				} else if (typeof likesArr === "object" && likesArr !== null) {
+					// Value is an object, check if any of its values include the creatorId
+					const ids = Object.values(likesArr);
+					if (ids.includes(userId)) {
+						setStatus(true);
+					} else {
+						setStatus(false);
+					}
+				} else {
+					// Handle other types if necessary
+					setStatus(false);
+				}
+			} else {
+				setStatus(false);
+			}
+		} catch (error) {
+			console.log("Error checking likes:", error);
+			setStatus(false);
+		}
+	});
+
+	// Cleanup listener on unmount
+	return () => unsubscribe();
+};
+
+export const setDisLikeStatus = (videoId, setStatus, userId,loc) => {
+	const videoLikeRef = ref(db, `${loc}/${videoId}/dislikes`);
+	const unsubscribe = onValue(videoLikeRef, (snapshot) => {
+		const dislikesArr = snapshot.val();
+		try {
+			if (snapshot.exists()) {
+				if (Array.isArray(dislikesArr)) {
+					// likesArr is an array, check if it includes the creatorId
+					if (dislikesArr.includes(userId)) {
+						setStatus(true);
+					} else {
+						setStatus(false);
+					}
+				} else if (typeof dislikesArr === "object" && dislikesArr !== null) {
+					// Value is an object, check if any of its values include the creatorId
+					const ids = Object.values(dislikesArr);
+					if (ids.includes(userId)) {
+						setStatus(true);
+					} else {
+						setStatus(false);
+					}
+				} else {
+					// Handle other types if necessary
+					setStatus(false);
+				}
+			} else {
+				setStatus(false);
+			}
+		} catch (error) {
+			console.log("Error checking likes:", error);
+			setStatus(false);
+		}
+	});
+
+	// Cleanup listener on unmount
+	return () => unsubscribe();
 };

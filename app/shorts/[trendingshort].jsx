@@ -14,6 +14,7 @@ import ShortsView from "../../components/ShortsView";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { back, search } from "../../constants/icons";
 import { fetchShorts, getEncodedFirebaseUrl } from "../../libs/firebase";
+import { shuffleArray } from "../../libs/sound";
 
 const windowHeight = Dimensions.get("window").height;
 
@@ -28,7 +29,8 @@ const TrendingShort = () => {
 			try {
 				const shortsData = await fetchShorts();
 				// console.log(shortsData);
-				setShorts([...shortsData]);
+				const tempdata = shuffleArray (shortsData?.slice());
+				setShorts([...tempdata]);
 			} catch (err) {
 				setError(err);
 			}

@@ -19,11 +19,16 @@ import MoreButton from "../../components/MoreButton";
 import { addVideoToDB, uploadFiles } from "../../libs/uploadFirebase";
 const UploadFeatures = () => {
 	const { uploadFeatures: type } = useLocalSearchParams();
-	const {user}=getContext()
+	const { user} = getContext();
+	const { vidDescription, setVidDescription } = getContext();
+	const [text, setText] = useState(vidDescription);
 	let videoInfo
 	if(type==="audience")
-		videoInfo=useLocalSearchParams();
-	console.log(videoInfo)
+	{	videoInfo=useLocalSearchParams();
+		videoInfo.description = vidDescription
+	}
+	
+	// console.log(videoInfo)
 	const uploadMetubeVideo = async () => {
 		try {
 				router.push("home");
@@ -54,14 +59,14 @@ const UploadFeatures = () => {
     const [heading, setHeading] = useState("Is this video made for kids?");
     const [isDisabled, setIsDisabled] = useState(false);
 
-	const { vidDescription, setVidDescription } = getContext();
-	const [text, setText] = useState(vidDescription);
+	
 	const inputRef = useRef(null);
 	useEffect(() => {
 		if (inputRef.current) {
 			inputRef.current.focus();
 		}
 	}, []);
+	
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
 			<View
@@ -86,6 +91,7 @@ const UploadFeatures = () => {
 							style={{ margin: 3 }}
 							activeOpacity={0.7}
 							onPress={() => {
+								// console.log(text);
 								setVidDescription(text);
 								router.push("../");
 							}}
