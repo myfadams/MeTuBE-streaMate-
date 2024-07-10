@@ -11,17 +11,19 @@ const ShortComponent = ({title,short,marginVid}) => {
 			style={{ width: 0.48 * width, height: 250, margin: marginVid }}
 			activeOpacity={0.7}
 			onPress={() => {
-				router.push({pathname:"shorts/" + short.id, params:short});
+				router.push({ pathname: "shorts/" + short.id, params: short });
 			}}
 		>
-			<View style={{ position: "relative", borderRadius:10,overflow:'hidden' }}>
+			<View
+				style={{ position: "relative", borderRadius: 10, overflow: "hidden" }}
+			>
 				<ImageBackground
 					source={{ uri: short.thumbnail }}
 					style={{
 						width: "100%",
 						height: "100%",
 						borderRadius: 10,
-						backgroundColor: "#000",
+						backgroundColor: "#1A1818",
 					}}
 					resizeMode="cover"
 				/>

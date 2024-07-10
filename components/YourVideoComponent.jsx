@@ -6,6 +6,7 @@ import {
 	globe,
 	likeOutline,
 	options,
+	shortLogo,
 } from "../constants/icons";
 import { borderLight, loadingColor } from "../constants/colors";
 import { formatSubs, formatViews } from "../libs/videoUpdates";
@@ -31,25 +32,45 @@ const YourVideoComponent = ({ video }) => {
 	return (
 		<TouchableOpacity
 			onPress={() => {
-				router.push({
-					pathname: "video/" + video?.id,
-					params: { ...video, ...creator[0] },
-				});
+				if (!video?.caption)
+					router.push({
+						pathname: "video/" + video?.id,
+						params: { ...video, ...creator[0] },
+					});
+				else {
+					router.push({ pathname: "shorts/" + video.id, params: video });
+				}
 			}}
 			activeOpacity={0.6}
 			style={{ margin: 10 }}
 		>
 			<View style={{ flexDirection: "row", alignItems: "center", gap: 17 }}>
-				<Image
-					source={{ uri: video?.thumbnail.replace("videos/", "videos%2F") }}
-					style={{
-						backgroundColor: "#fff",
-						width: 150,
-						height: 85,
-						borderRadius: 8,
-					}}
-					resizeMode="cover"
-				/>
+				<View>
+					<Image
+						source={{ uri: video?.thumbnail.replace("videos/", "videos%2F") }}
+						style={{
+							backgroundColor: "#1A1818",
+							width: 150,
+							height: 85,
+							borderRadius: 8,
+						}}
+						resizeMode="cover"
+					/>
+					{video?.caption && (
+						<Image
+							// tintColor={"#fff"}
+							source={shortLogo}
+							style={{
+								width: 20,
+								height: 20,
+								position: "absolute",
+								bottom: 5,
+								right: 5,
+							}}
+							resizeMode="contain"
+						/>
+					)}
+				</View>
 				<View style={{ gap: 4 }}>
 					<Text
 						numberOfLines={2}
@@ -62,16 +83,17 @@ const YourVideoComponent = ({ video }) => {
 							flexDirection: "row",
 						}}
 					>
-						{video?.title}
+						{video?.title ?? video?.caption}
 					</Text>
 					<Text
 						numberOfLines={1}
 						style={{
 							color: borderLight,
-							fontSize: 11,
+							fontSize: 10,
 							fontFamily: "Montserrat_400Regular",
-							width: "80%",
+							width: "100%",
 							flexWrap: "wrap",
+							// flexShrink:1,
 							flexDirection: "row",
 						}}
 					>

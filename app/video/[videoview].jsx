@@ -118,7 +118,7 @@ const VideoPlayer = () => {
 						// if(vid.is)
 					}}
 					isMuted={false}
-					style={{ width: "100%", height: 250, backgroundColor: "#000" }}
+					style={{ width: "100%", height: 250, backgroundColor: "#1A1818" }}
 					source={{
 						uri: video.video.replace("videos/", "videos%2F"),
 					}}

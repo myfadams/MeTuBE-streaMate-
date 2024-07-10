@@ -13,7 +13,7 @@ import {
     Image,
 } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { bgColor, fieldColor, loadingColor } from "../constants/colors";
+import { bgColor, borderLight, fieldColor, loadingColor } from "../constants/colors";
 import { FlatList } from "react-native-gesture-handler";
 import CommentsHeader from "./CommentsHeader";
 import CommentFooter from "./CommentFooter";
@@ -84,7 +84,9 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 			snapPoints={["2%", `${commentHeight}%`]}
 			enablePanDownToClose={false}
 			onChange={handleSheetChanges}
-			backgroundStyle={{ backgroundColor: bgColor }}
+			backgroundStyle={{
+				backgroundColor: bgColor,
+			}}
 		>
 			<CommentsHeader handleClose={handleClosePress} text={"Description"} />
 			<ScrollView
@@ -211,8 +213,8 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 							fontFamily: "Montserrat_400Regular",
 							flexWrap: "wrap",
 							flexDirection: "row",
-							paddingLeft:4,
-							paddingRight:4
+							paddingLeft: 4,
+							paddingRight: 4,
 						}}
 					>
 						{info?.description !== ""
@@ -236,6 +238,8 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 							borderRadius: "50%",
 							width: 45,
 							height: 45,
+							borderWidth: 0.7,
+							borderColor: borderLight,
 							backgroundColor: "#000",
 						}}
 					/>

@@ -1,12 +1,12 @@
 import { View, Text ,Image, ScrollView} from 'react-native'
 import Button from "../components/Button"
 import React from 'react'
-import { notfoundlogo } from '../constants/images';
+import { notAvailable, notfoundlogo } from '../constants/images';
 import { buttonColor, loadingColor } from '../constants/colors';
 import { router } from 'expo-router';
 import MoreButton from './MoreButton';
 
-const NotFound = () => {
+const NotFound = ({type}) => {
   return (
 		<ScrollView
 			contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
@@ -22,8 +22,8 @@ const NotFound = () => {
 			>
 				<View style={{ width: "100%", height: 300 }}>
 					<Image
-						source={notfoundlogo}
-						tintColor={"#fff"}
+						source={type?notAvailable:notfoundlogo}
+						tintColor={!type&&"#fff"}
 						style={{ width: "100%", height: 300 }}
 						resizeMode="contain"
 					/>
@@ -38,7 +38,7 @@ const NotFound = () => {
 							fontWeight: "600",
 						}}
 					>
-						No videos found
+						{!type&&"No videos found"}
 					</Text>
 					<Text
 						style={{
@@ -49,7 +49,7 @@ const NotFound = () => {
 							textAlign: "center",
 						}}
 					>
-						Be the first to upload on MeTube
+						{type?"Share your videos with anyone or everyone":"Be the first to upload on MeTube"}
 					</Text>
 				</View>
 				{/* <Button
@@ -64,7 +64,11 @@ const NotFound = () => {
 						height={60}
 						color={buttonColor}
 						handlePress={() => {
-							router.push("create");
+							if(!type)
+								router.push("create");
+							else{
+								router.replace("create");
+							}
 						}}
 						typeauth={"auth"}
 					/>

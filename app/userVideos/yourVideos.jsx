@@ -10,24 +10,32 @@ import {
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { bgColor, borderLight, fieldColor } from "../../constants/colors";
-import { back, search } from "../../constants/icons";
+import { back, chromecast, options, search } from "../../constants/icons";
 import OtherViewButtons from "../../components/OtherViewButtons";
 import YourVideoComponent from "../../components/YourVideoComponent";
-import { fetchVideos } from "../../libs/firebase";
+import { fetchShorts, fetchVideos } from "../../libs/firebase";
 import { shuffleArray } from "../../libs/sound";
 import { getContext } from "../../context/GlobalContext";
+import { router } from "expo-router";
+import NotFound from "../../components/NotFound";
 
 const yourVideos = () => {
 	const [isActive, setIsActive] = useState(0);
+	
     const [videos, setVideos] = useState([]);
+	const [shorts, setShorts] = useState([]);
+	const [live, setLive] = useState([]);
+	
+	
     const { setRefreshing, refereshing,user } = getContext();
     const [isRefreshing, setIsRefreshing] = useState(false);
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const videoData = await fetchVideos();
-			
+				const shortsData = await fetchShorts()
 				setVideos([...videoData]);
+				setShorts([...shortsData]);
 			} catch (err) {
 				// setError(err);
                 console.log(err)
@@ -38,21 +46,31 @@ const yourVideos = () => {
 	}, [refereshing]);
     
     const vids = videos.filter((v) => {
-			return v.creator==user.uid;
+			return v.creator==user?.uid;
 		});
-    // console.log(vids)
-
+	const short = shorts.filter((s) => {
+		return s.creator == user?.uid;
+	});
+   
+	let data=shuffleArray([...vids,...short])
+	const [dataTodisplay, setDataTodisplay] = useState();
 	function handleShorts() {
         setIsActive(3);
+		setDataTodisplay([...short]);
+		
 	}
 	function handleVideos() {
-        setIsActive(2);
+		setIsActive(2);
+        setDataTodisplay([...vids])
+		
 	}
 	function handleLive() {
         setIsActive(4);
+		 setDataTodisplay(live);
+		 
 	}
 	function handleSort() {
-        setIsActive(1);
+        // setIsActive(1);
 	}
 
 	const HeaderVid = () => {
@@ -63,7 +81,7 @@ const yourVideos = () => {
 					justifyContent: "center",
 					width: "100%",
 					alignItems: "center",
-                    marginBottom:14
+					marginBottom: 14,
 				}}
 			>
 				<View style={{ width: "94%" }}>
@@ -97,7 +115,9 @@ const yourVideos = () => {
 						/>
 						<OtherViewButtons
 							title={"Videos"}
+							isActive={isActive}
 							handlePress={handleVideos}
+							id={2}
 							styles={{
 								width: 70,
 								height: 31,
@@ -112,6 +132,8 @@ const yourVideos = () => {
 						/>
 						<OtherViewButtons
 							title={"Shorts"}
+							isActive={isActive}
+							id={3}
 							handlePress={handleShorts}
 							styles={{
 								width: 70,
@@ -128,6 +150,8 @@ const yourVideos = () => {
 						<OtherViewButtons
 							title={"Live"}
 							handlePress={handleLive}
+							isActive={isActive}
+							id={4}
 							styles={{
 								width: 70,
 								height: 31,
@@ -153,65 +177,92 @@ const yourVideos = () => {
 	// console.log("header: " + isHeaderVisible);
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
-			<View
-				style={{
-					width: "90%",
+			<View style={{ alignItems: "center" ,width:"100%"}}>
+				<View
+					style={{
+						width: "97%",
 
-					flexDirection: "row",
-					justifyContent: "space-between",
-				}}
-			>
-				<View style={{ flexDirection: "row", alignItems: "center" }}>
-					<TouchableOpacity
-						style={{ margin: 10 }}
-						activeOpacity={0.7}
-						onPress={() => {
-							router.push("../");
-						}}
-					>
-						<Image
-							source={back}
-							resizeMode="contain"
-							style={{ width: 35, height: 35 }}
-						/>
-					</TouchableOpacity>
-					{!isHeaderVisible && (
-						<Text
-							style={{
-								color: "#fff",
-								fontFamily: "Montserrat_600SemiBold",
-								fontSize: 20,
-							}}
-						>
-							Your videos
-						</Text>
-					)}
-				</View>
-				<TouchableOpacity
-					style={{ margin: 10 }}
-					activeOpacity={0.7}
-					onPress={() => {
-						router.push("search/SearchPage");
+						flexDirection: "row",
+						justifyContent: "space-between",
+						alignItems: "center",
 					}}
 				>
-					<Image
-						source={search}
-						resizeMode="contain"
-						style={{ width: 24, height: 24 }}
-					/>
-				</TouchableOpacity>
+					<View style={{ flexDirection: "row", alignItems: "center" }}>
+						<TouchableOpacity
+							style={{ margin: 10 }}
+							activeOpacity={0.7}
+							onPress={() => {
+								router.push("../");
+							}}
+						>
+							<Image
+								source={back}
+								resizeMode="contain"
+								style={{ width: 35, height: 35 }}
+							/>
+						</TouchableOpacity>
+						{!isHeaderVisible && (
+							<Text
+								style={{
+									color: "#fff",
+									fontFamily: "Montserrat_600SemiBold",
+									fontSize: 20,
+								}}
+							>
+								Your videos
+							</Text>
+						)}
+					</View>
+
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							gap: 30,
+						}}
+					>
+						<TouchableOpacity>
+							<Image
+								source={chromecast}
+								style={{ width: 21, height: 21 }}
+								resizeMode="contain"
+							/>
+						</TouchableOpacity>
+
+						<TouchableOpacity
+							onPress={() => {
+								router.push("/search/SearchPage");
+							}}
+						>
+							<Image
+								source={search}
+								style={{ width: 21, height: 21 }}
+								resizeMode="contain"
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity>
+							<Image
+								source={options}
+								style={{ width: 21, height: 21 }}
+								resizeMode="contain"
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 			</View>
 
 			<FlatList
-				data={vids}
+				data={data&&!dataTodisplay?data:dataTodisplay}
+				
 				viewabilityConfig={{ viewAreaCoveragePercentThreshold: 100 }}
 				onViewableItemsChanged={onViewableItemsChanged}
 				renderItem={({ item, index }) => {
 					return <YourVideoComponent video={item} />;
 				}}
-                keyExtractor={(item)=>{
-                    return item.id
-                }}
+				keyExtractor={(item) => {
+					return item.id;
+				}}
+				ListEmptyComponent={<NotFound type={"yourVideos"}/>}
 				ListHeaderComponent={<HeaderVid />}
 				refreshControl={
 					<RefreshControl
@@ -227,7 +278,9 @@ const yourVideos = () => {
 						}}
 					/>
 				}
+				l
 			/>
+			
 		</SafeAreaView>
 	);
 };
