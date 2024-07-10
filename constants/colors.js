@@ -1,4 +1,5 @@
-const bgColor = "#1F2544";
+// const bgColor = "#1F2544";
+const bgColor = "#0A0A0A";
 const borderPrimary = "#5BBCFF";
 const fieldColor = "#474F7A";
 const otherColor = "#FFD0EC";

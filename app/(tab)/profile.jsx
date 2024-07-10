@@ -1,5 +1,5 @@
 import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor, borderLight, loadingColor } from "../../constants/colors";
 import HeaderApp from "../../components/HeaderApp";
@@ -24,10 +24,13 @@ import { getContext } from "../../context/GlobalContext";
 import Toast from "react-native-root-toast";
 import { onValue, ref } from "firebase/database";
 import { db } from "../../libs/config";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { fetchData } from "../../libs/firebase";
+import PlaylistView from "../../components/PlaylistView";
 const profile = () => {
 	const [isActivated, setIsActivated] = useState(false);
 	const { user, isIcognito, setIsIncognito } = getContext();
+	const [playList, setplayList] = useState([])
 	const incognitoMode = () => {
 		setIsIncognito(!isIcognito);
 		setIsActivated(!isActivated);
@@ -48,8 +51,15 @@ const profile = () => {
 		}
 	};
 	const [history, setHistory] = useState([]);
+	const {addedToplaylist, setAddedToplaylist}=getContext();
 	const [historyShorts, setHistoryShorts] = useState([]);
 	useEffect(() => {
+		async function getD(){
+			const tempdata = await fetchData("playlist/" + user?.uid);
+			// console.log(tempdata);
+			setplayList([...tempdata])
+		}
+		getD();
 		const videoRef = ref(db, `history/videos/${user?.uid}`);
 
 		const unsubscribe = onValue(videoRef, (snapshot) => {
@@ -81,6 +91,7 @@ const profile = () => {
 	}, [user?.uid]);
 	// console.log(historyShorts)
 	// history.reverse();
+	
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
 			<ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
@@ -251,15 +262,21 @@ const profile = () => {
 							horizontal
 							decelerationRate={"fast"}
 							showsHorizontalScrollIndicator={false}
-							data={[1, 2, 3, 4, 5, 6]}
+							data={playList}
 							renderItem={({ item, index }) => {
-								return <History />;
+								return <PlaylistView data={item} />
+							}}
+							keyExtractor={(item)=>{
+								
+								return item.id
 							}}
 						/>
 					</View>
 				</View>
 				<View style={{ borderColor: loadingColor, borderBottomWidth: 0.9 }}>
-					<ForYouButtons sourceUrl={yourVideos} title={"Your videos"} />
+					<ForYouButtons sourceUrl={yourVideos} title={"Your videos"} handlePress={()=>{
+						router.push("userVideos/yourVideos")
+					}}/>
 					<ForYouButtons sourceUrl={download} title={"Downloads"} />
 					<ForYouButtons sourceUrl={lightbulb} title={"Your courses"} />
 					<View style={{ marginBottom: 10 }}></View>

@@ -37,22 +37,14 @@ const Index = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView
-				contentContainerStyle={styles.vewStyle}
-				automaticallyAdjustKeyboardInsets
+			<View
+				style={styles.vewStyle}
+				
 			>
-				<View
-					style={{
-						
-						alignItems: "center",
-						justifyContent: "center",
-						
-					}}
-				>
 					<View
 						style={{
 							flexDirection: "row",
-							width: "92%",
+				
 							alignItems: "center",
 							justifyContent: "center",
 							marginBottom: 30,
@@ -96,7 +88,7 @@ const Index = () => {
 						</Animatable.Text>
 					</View>
 				</View>
-			</ScrollView>
+			
 		</SafeAreaView>
 	);
 };
@@ -104,14 +96,13 @@ const Index = () => {
 export default Index;
 
 const styles = StyleSheet.create({
-	lottie: {
-		width: 130,
-		height: 130,
-	},
+	
 	container: {
 		justifyContent: "center",
 		alignItems: "center",
 		flex: 1,
+		width:"100%",
+		height:"100%",
 		backgroundColor: bgColor,
 	},
 	image: {

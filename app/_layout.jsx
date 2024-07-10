@@ -97,6 +97,7 @@ const _layout = () => {
 								presentation: "card",
 							}}
 						/>
+						
 					</Stack>
 				</RootSiblingParent>
 			</GestureHandlerRootView>

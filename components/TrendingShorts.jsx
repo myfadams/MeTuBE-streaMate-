@@ -20,7 +20,7 @@ const ShortView = ({shorts}) => {
 		
 	});
 };
-const TrendingShorts = ({ type }) => {
+const TrendingShorts = ({ type,data,subs }) => {
 	const { refereshing } = getContext();
 	const [shorts, setShorts] = useState([]);
 	const [error, setError] = useState();
@@ -40,6 +40,12 @@ const TrendingShorts = ({ type }) => {
 
 		fetchData();
 	}, [refereshing]);
+	// console.log(subs)
+	const subsShorts = shorts.filter((sh)=>{
+		return subs?.includes(sh.creator)
+	})
+
+	// console.log(subsShorts)
 	if (shorts.length > 0)
 		return (
 			<View style={{ gap: 20, marginTop: 25, marginBottom: 20 }}>
@@ -79,7 +85,7 @@ const TrendingShorts = ({ type }) => {
 				{type === "suggested" && (
 					<FlatList
 						horizontal
-						data={shorts}
+						data={data ? subsShorts :shorts}
 						keyExtractor={(item)=>(item.id)}
 						showsHorizontalScrollIndicator={false}
 						decelerationRate={"fast"}

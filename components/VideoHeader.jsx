@@ -146,6 +146,8 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 						style={{
 							borderRadius: "50%",
 							width: 45,
+							borderWidth:0.7,
+							borderColor:borderLight,
 							height: 45,
 							backgroundColor: "#000",
 						}}

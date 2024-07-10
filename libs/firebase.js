@@ -204,9 +204,11 @@ export function fetchData(path) {
 			locRef,
 			(snapshot) => {
 				const data = [];
+				// console.log(Array.isArray(snapshot.val()));
 				if (!Array.isArray(snapshot.val()))
 				{
 					snapshot.forEach((childSnapshot) => {
+						// console.log(childSnapshot.val())
 						const childData = childSnapshot.val();
 						if (childData) {
 							data.push({

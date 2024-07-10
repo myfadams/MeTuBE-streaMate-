@@ -23,7 +23,7 @@ import MoreButton from "./MoreButton";
 import { getContext } from "../context/GlobalContext";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
-import { addToHistory, getLikes, getSubsriptions, incrementVideoViews, likeUpadate, setDisLikeStatus, setLikeStatus, subscribeToChannel } from "../libs/videoUpdates";
+import { addToHistory, getLikes, getSubsriptions, incrementVideoViews, likeUpadate, playList, setDisLikeStatus, setLikeStatus, subscribeToChannel } from "../libs/videoUpdates";
 
 const ShortsView = ({
 	sourceUrl,
@@ -111,6 +111,7 @@ const ShortsView = ({
 		} else setLikeClicked(false);
 		likeUpadate(videoId, "like", "shortsRef", user?.uid);
 		getLikes(videoId, setlikes, "shortsRef");
+		playList(videoId, "likedShorts", user?.uid)
 	}
 
 	function addDislike() {

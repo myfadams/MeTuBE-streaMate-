@@ -20,10 +20,9 @@ import CommentFooter from "./CommentFooter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
-import { formatSubs, getNumberSubs } from "../libs/videoUpdates";
+import { formatSubs, getLikes, getNumberSubs } from "../libs/videoUpdates";
 const windowHeight = Dimensions.get("window").height;
 const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
-	// console.log(info)
 	const insets = useSafeAreaInsets();
 	const commentHeight =
 		((windowHeight - 250 - insets.bottom) / windowHeight) * 100;
@@ -60,6 +59,11 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 		},
 		[onClose]
 	);
+	const [likes, setlikes] = useState(0);
+	useEffect(() => {
+		getLikes(info?.videoview, setlikes, "videosRef");
+	}, [info?.videoview]);
+
 	const [views, setViews] = useState(0);
 	useEffect(() => {
 		const videoRef = ref(db, `videosRef/${info.videoview}/views`);
@@ -125,7 +129,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 								// flex:1
 							}}
 						>
-							3,678
+							{formatSubs(likes)}
 						</Text>
 						<Text
 							style={{

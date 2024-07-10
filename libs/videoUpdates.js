@@ -41,15 +41,14 @@ export function formatViews(numViews) {
 }
 export function formatSubs(numSubs) {
 	if (numSubs >= 1e9) {
-		 return(numSubs / 1e9).toFixed(1) + "B";
+		return (numSubs / 1e9).toFixed(1) + "B";
 	} else if (numSubs >= 1e6) {
 		return (numSubs / 1e6).toFixed(1) + "M";
 	} else if (numSubs >= 1e3) {
-		return(numSubs / 1e3).toFixed(1) + "K";
-	}  else {
-		return numSubs
+		return (numSubs / 1e3).toFixed(1) + "K";
+	} else {
+		return numSubs;
 	}
-
 }
 export const addToHistory = (type, video, videoId, userId) => {
 	// Reference to the history path for the user and videoId
@@ -160,54 +159,52 @@ export const subscribeToChannel = (channelID, userID) => {
 export function getSubsriptions(userId, setStatus, creatorId) {
 	// console.log("c: " + creatorId, "u: " + userId);
 	const userSubRef = ref(db, `subs/users/${userId}/subscriptions`);
-	
-	
+
 	let subbs = [];
 	onValue(
-    userSubRef,
-    (snapshot) => {
-      const value = snapshot.val();
-    //   console.log('Snapshot value:', value);
+		userSubRef,
+		(snapshot) => {
+			const value = snapshot.val();
+			//   console.log('Snapshot value:', value);
 
-      try {
-        if (snapshot.exists()) {
-          if (Array.isArray(value)) {
-            // Value is an array, check if it includes the creatorId
-            if (value.includes(creatorId)) {
-              setStatus(true);
-            } else {
-              setStatus(false);
-            }
-          } else if (typeof value === 'object' && value !== null) {
-            // Value is an object, check if any of its values include the creatorId
-            const ids = Object.values(value);
-            if (ids.includes(creatorId)) {
-              setStatus(true);
-            } else {
-              setStatus(false);
-            }
-          } else {
-            // Handle other types if necessary
-            setStatus(false);
-          }
-        } else {
-          setStatus(false);
-        }
-      } catch (error) {
-        console.log('Error checking subscriptions:', error);
-        setStatus(false);
-      }
-    },
-    (error) => {
-      console.log('Error reading subscriptions:', error);
-      setStatus(false); // Handle potential errors
-    }
-  );
+			try {
+				if (snapshot.exists()) {
+					if (Array.isArray(value)) {
+						// Value is an array, check if it includes the creatorId
+						if (value.includes(creatorId)) {
+							setStatus(true);
+						} else {
+							setStatus(false);
+						}
+					} else if (typeof value === "object" && value !== null) {
+						// Value is an object, check if any of its values include the creatorId
+						const ids = Object.values(value);
+						if (ids.includes(creatorId)) {
+							setStatus(true);
+						} else {
+							setStatus(false);
+						}
+					} else {
+						// Handle other types if necessary
+						setStatus(false);
+					}
+				} else {
+					setStatus(false);
+				}
+			} catch (error) {
+				console.log("Error checking subscriptions:", error);
+				setStatus(false);
+			}
+		},
+		(error) => {
+			console.log("Error reading subscriptions:", error);
+			setStatus(false); // Handle potential errors
+		}
+	);
 
 	// console.log(subbs)
-	
 }
-export function getNumberSubs(channelID,setSubNumber){
+export function getNumberSubs(channelID, setSubNumber) {
 	const chSubsRef = ref(db, `subs/channel/${channelID}/subscribers`);
 	// getSubsriptions(user.uid, setsubscribed, vidinfo.creator);
 	const unsubscribe = onValue(chSubsRef, (snapshot) => {
@@ -221,11 +218,9 @@ export function getNumberSubs(channelID,setSubNumber){
 
 	// Cleanup listener on unmount
 	return () => unsubscribe();
-
 }
 
-
-export const likeUpadate = (videoId,type, loc,userId) => {
+export const likeUpadate = (videoId, type, loc, userId) => {
 	// console.log(videoId)
 	const likesReff = ref(db, `${loc}/${videoId}/likes`);
 	const dislikesReff = ref(db, `${loc}/${videoId}/dislikes`);
@@ -235,10 +230,9 @@ export const likeUpadate = (videoId,type, loc,userId) => {
 		}
 	});
 	if (type === "like") {
-		
 		runTransaction(likesReff, (currentLikes) => {
 			if (currentLikes === null) {
-				return [userId]
+				return [userId];
 			} else {
 				if (currentLikes?.includes(userId)) {
 					return currentLikes?.filter((l) => {
@@ -265,7 +259,7 @@ export const likeUpadate = (videoId,type, loc,userId) => {
 		}).then(() => {
 			// console.log("Likes incremented successfully");
 		});
-	}else{
+	} else {
 		runTransaction(dislikesReff, (currentDislikes) => {
 			if (currentDislikes === null) {
 				return [userId];
@@ -274,9 +268,9 @@ export const likeUpadate = (videoId,type, loc,userId) => {
 					return currentDislikes?.filter((l) => {
 						return l !== userId;
 					});
-				}else{
-					currentDislikes.push(userId)
-					return currentDislikes
+				} else {
+					currentDislikes.push(userId);
+					return currentDislikes;
 				}
 			}
 		}).then(() => {
@@ -298,22 +292,22 @@ export const likeUpadate = (videoId,type, loc,userId) => {
 	}
 };
 
-export const getLikes= (videoId,setlikes,loc)=>{
-	const videoLikeRef = ref(db, `${loc}/${videoId}/likes`);
-		const unsubscribe = onValue(videoLikeRef, (snapshot) => {
-			const data = snapshot.val();
-			if (Array.isArray(snapshot.val())) setlikes(data.length);
-			else setlikes(0)
-		});
-
-		// Cleanup listener on unmount
-		return () => unsubscribe();
-}
-
-export const setLikeStatus = (videoId, setStatus,userId,loc) => {
+export const getLikes = (videoId, setlikes, loc) => {
 	const videoLikeRef = ref(db, `${loc}/${videoId}/likes`);
 	const unsubscribe = onValue(videoLikeRef, (snapshot) => {
-		const likesArr =snapshot.val()
+		const data = snapshot.val();
+		if (Array.isArray(snapshot.val())) setlikes(data.length);
+		else setlikes(0);
+	});
+
+	// Cleanup listener on unmount
+	return () => unsubscribe();
+};
+
+export const setLikeStatus = (videoId, setStatus, userId, loc) => {
+	const videoLikeRef = ref(db, `${loc}/${videoId}/likes`);
+	const unsubscribe = onValue(videoLikeRef, (snapshot) => {
+		const likesArr = snapshot.val();
 		try {
 			if (snapshot.exists()) {
 				if (Array.isArray(likesArr)) {
@@ -348,7 +342,7 @@ export const setLikeStatus = (videoId, setStatus,userId,loc) => {
 	return () => unsubscribe();
 };
 
-export const setDisLikeStatus = (videoId, setStatus, userId,loc) => {
+export const setDisLikeStatus = (videoId, setStatus, userId, loc) => {
 	const videoLikeRef = ref(db, `${loc}/${videoId}/dislikes`);
 	const unsubscribe = onValue(videoLikeRef, (snapshot) => {
 		const dislikesArr = snapshot.val();
@@ -384,4 +378,41 @@ export const setDisLikeStatus = (videoId, setStatus, userId,loc) => {
 
 	// Cleanup listener on unmount
 	return () => unsubscribe();
+};
+
+export const playList = (videoId, loc, userId) => {
+	// console.log(videoId)
+	const playlistReff = ref(db, `playlist/${userId}/${loc}`);
+
+	runTransaction(playlistReff, (currentPlaylist) => {
+		if (currentPlaylist === null) {
+			return [videoId];
+		} else {
+			if (loc !== "watchLater") {
+				if (currentPlaylist?.includes(videoId)) {
+					return currentPlaylist?.filter((l) => {
+						return l !== videoId;
+					});
+				} else {
+					currentPlaylist.push(videoId);
+					return currentPlaylist;
+				}
+			} else {
+				if (currentPlaylist?.includes(videoId)) {
+					const temp = currentPlaylist?.filter((l) => {
+						return l !== videoId;
+					});
+					temp.push(videoId)
+					currentPlaylist=temp
+					// return temp;
+				}else{
+					currentPlaylist.push(videoId)
+				}
+				return currentPlaylist;
+
+			}
+		}
+	}).then(() => {
+		// console.log("Likes incremented successfully");
+	});
 };

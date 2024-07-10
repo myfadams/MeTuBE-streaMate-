@@ -13,7 +13,7 @@ import {
 } from "../constants/icons";
 import { buttonColor, fieldColor} from "../constants/colors";
 import React, { useEffect, useState } from 'react'
-import { formatSubs, getLikes, likeUpadate } from "../libs/videoUpdates";
+import { formatSubs, getLikes, likeUpadate, playList } from "../libs/videoUpdates";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
 
@@ -37,6 +37,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 		} else setLikeClicked(false);
 		likeUpadate(videoId, "like", "videosRef", userId);
 		getLikes(videoId, setlikes, "videosRef");
+		playList(videoId,"likedVideos",userId)
 	}
 
 	function addDislike() {

@@ -15,7 +15,8 @@ import { dot, options } from "../constants/icons";
 import { getCreatorInfo } from "../libs/firebase";
 import { db } from "../libs/config";
 import { formatViews } from "../libs/videoUpdates";
-const VideoView = ({videoInfo,type}) => {
+const VideoView = ({videoInfo,type,menu}) => {
+	// console.log(videoInfo)
 	const [creator, setCreator] = useState([])
 	const [isLoading, setIsLoading] = useState(false);
 	const [error,setError]=useState()
@@ -170,7 +171,7 @@ const VideoView = ({videoInfo,type}) => {
 									1 day ago
 								</Text>
 							</View>
-							<TouchableOpacity>
+							<TouchableOpacity onPress={menu} >
 								<Image
 									source={options}
 									style={{ width: 15, height: 15 }}

@@ -56,8 +56,16 @@ import dot from "../assets/icons/dot.png";
 import signout from "../assets/icons/signout.png";
 import accountSetting from "../assets/icons/setting.png";
 import addAccount from "../assets/icons/addAccount.png";
+import clock from "../assets/icons/clock.png";
+import forbidden from "../assets/icons/forbidden.png";
+import dontRecommend from "../assets/icons/dontRecommend.png";
+import commentOutline from "../assets/icons/commentOutline.png";
 
 export {
+	commentOutline,
+	dontRecommend,
+	forbidden,
+	clock,
 	signout,
 accountSetting,
 addAccount,

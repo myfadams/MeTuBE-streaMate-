@@ -1,25 +1,34 @@
-import { View, Text, FlatList, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { bgColor, buttonColor } from '../../constants/colors';
-import HeaderApp from '../../components/HeaderApp';
-import HomeHeader from '../../components/HomeHeader';
-import TrendingShorts from '../../components/TrendingShorts';
-import VideoView from '../../components/VideoView';
-import SubcriptionsHeader from '../../components/SubcriptionsHeader';
-import { fetchData, fetchVideos } from '../../libs/firebase';
-import { shuffleArray } from '../../libs/sound';
-import { getContext } from '../../context/GlobalContext';
+import {
+	View,
+	Text,
+	FlatList,
+	ScrollView,
+	Image,
+	TouchableOpacity,
+	RefreshControl,
+	Platform,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { bgColor, buttonColor } from "../../constants/colors";
+import HeaderApp from "../../components/HeaderApp";
+import HomeHeader from "../../components/HomeHeader";
+import TrendingShorts from "../../components/TrendingShorts";
+import VideoView from "../../components/VideoView";
+import SubcriptionsHeader from "../../components/SubcriptionsHeader";
+import { fetchData, fetchVideos } from "../../libs/firebase";
+import { shuffleArray } from "../../libs/sound";
+import { getContext } from "../../context/GlobalContext";
 
 const subcription = () => {
-	const {user} = getContext()
+	const { user } = getContext();
 	const { setRefreshing, refereshing } = getContext();
-	const [users, setUsers] = useState([])
+	const [users, setUsers] = useState([]);
 	const [subscriptions, setSubscriptions] = useState([]);
 	const [error, setError] = useState([]);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-	const [videos,setVideos]= useState([])
+	const [videos, setVideos] = useState([]);
 	useEffect(() => {
 		const fetchUsers = async () => {
 			try {
@@ -47,8 +56,6 @@ const subcription = () => {
 		fetchSubscriptions();
 	}, [refereshing]);
 
-	
-	
 	useEffect(() => {
 		const fetchDataVids = async () => {
 			try {
@@ -66,21 +73,31 @@ const subcription = () => {
 		fetchDataVids();
 	}, [refereshing]);
 
-	
 	// console.log(users)
-	const subscr =  users.filter((ch)=>{
+	const subscr = users.filter((ch) => {
 		return subscriptions.includes(ch.id);
-	})
+	});
 	// console.log(subscr)
-	const subVideos=videos.filter((vid)=>{
-		return subscriptions.includes(vid.creator)
-	})
+	const subVideos = videos.filter((vid) => {
+		return subscriptions.includes(vid.creator);
+	});
 	// console.log(subVideos)
-  return (
+	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
 			<FlatList
 				data={subVideos}
-				renderItem={({ item }) => {
+				renderItem={({ item, index }) => {
+					if (index === 0)
+						return (
+							<>
+								<VideoView videoInfo={item} />
+								<TrendingShorts
+									type={"suggested"}
+									data={"subs"}
+									subs={subscriptions}
+								/>
+							</>
+						);
 					return <VideoView videoInfo={item} />;
 				}}
 				ListHeaderComponent={<SubcriptionsHeader channel={subscr} />}
@@ -94,11 +111,13 @@ const subcription = () => {
 								setIsRefreshing(false);
 							}, 1500);
 						}}
+						colors={Platform.OS === "android" && ["#fff"]}
+						tintColor={Platform.OS === "ios" && "#fff"}
 					/>
 				}
 			/>
 		</SafeAreaView>
 	);
-}
+};
 
-export default subcription
+export default subcription;

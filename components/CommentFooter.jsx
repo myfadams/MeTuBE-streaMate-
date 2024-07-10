@@ -1,19 +1,45 @@
-import { View, Text, TouchableOpacity, Image,KeyboardAvoidingView, Platform } from "react-native";
-import React from "react";
+import { View, Text, TouchableOpacity, Image,KeyboardAvoidingView, Platform, Keyboard } from "react-native";
+import React, { useEffect, useState } from "react";
 import ChatInput from "./ChatInput";
 import { useKeyboard } from "@react-native-community/hooks";
 import { bgColor } from "../constants/colors";
 import { send } from "../constants/icons";
 
 const CommentFooter = ({profile}) => {
-	const keyboard = useKeyboard();
+	const [keyboardHeight, setKeyboardHeight] = useState(0);
+	const [keyboardOpen, setKeyboardOpen] = useState(false);
 
-	// console.log("keyboard isKeyboardShow: ", keyboard.keyboardShown);
-	// console.log("keyboard keyboardHeight: ", keyboard.keyboardHeight);
+	const keyboard = useKeyboard();
+	// const keyboardHeight = keyboard.keyboardHeight;
+	
+	useEffect(() => {
+		const keyboardDidShowListener = Keyboard.addListener(
+			Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow",
+			(event) => {
+				setKeyboardOpen(true);
+				setKeyboardHeight(event.endCoordinates.height);
+			}
+		);
+
+		const keyboardDidHideListener = Keyboard.addListener(
+			Platform.OS === "android" ? "keyboardDidHide" : "keyboardWillHide",
+			() => {
+				setKeyboardOpen(false);
+				setKeyboardHeight(0);
+			}
+		);
+
+		// Clean up listeners
+		return () => {
+			keyboardDidShowListener.remove();
+			keyboardDidHideListener.remove();
+		};
+	}, []);
+
 	return (
 		// <></>
 		<KeyboardAvoidingView
-			keyboardVerticalOffset={keyboard.keyboardHeight}
+			keyboardVerticalOffset={keyboardHeight}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			enabled
 		>
@@ -24,8 +50,7 @@ const CommentFooter = ({profile}) => {
 						flexDirection: "row",
 						marginBottom: 16,
 						backgroundColor: bgColor,
-						// position: keyboard.keyboardShown && "absolute",
-						// bottom: keyboard.keyboardShown && keyboard.keyboardHeight - 80,
+						
 					}}
 				>
 					<Image

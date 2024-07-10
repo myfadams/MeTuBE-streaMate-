@@ -56,7 +56,7 @@ const SubcriptionsHeader = ({channel}) => {
 			<View style={{ flexDirection: "row" }}>
 				<ScrollView
 					horizontal
-					contentContainerStyle={{ gap: 10 }}
+					contentContainerStyle={{ gap: 5 }}
 					showsHorizontalScrollIndicator={false}
 				>
 					<SubView info={channel} />

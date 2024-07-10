@@ -80,7 +80,7 @@ const UploadShortsView = () => {
 					shortInfo.title.replaceAll(" ","")
 				);
 				await addShortToDB(shortInfo, thumbnailUrl, videoUrl, user?.uid);
-				let toast = Toast.show("video uploaded", {
+				let toast = Toast.show("Short uploaded", {
 					duration: Toast.durations.LONG,
 				});
 				setTimeout(function hideToast() {
