@@ -41,6 +41,25 @@ const home = () => {
 	};
 	useEffect(() => {
 		const fetchData = async () => {
+			setIsLoading(true);
+			try {
+				const videoData = await fetchVideos();
+				const tempdata = shuffleArray(videoData?.slice());
+				// console.log(videoData)
+				setVideos([...tempdata]);
+				
+			} catch (err) {
+				setError(err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchData();
+	}, [refereshing]);
+	useEffect(() => {
+		const fetchData = async () => {
+			setIsLoading(true);
 			try {
 				const videoData = await fetchVideos();
 				const tempdata = shuffleArray(videoData?.slice());
@@ -53,16 +72,22 @@ const home = () => {
 			}
 		};
 
-		fetchData();
-	}, [refereshing]);
+		if(isConnected)
+			fetchData();
+	}, [isConnected]);
+	
 	// console.log(videos); // Videos are now available here
 
-	const { user, setUsrInfo, usrInfo } = getContext();
+	const { user,isConnected } = getContext();
+	// console.log(user)
 	if (!user || (user && !user?.emailVerified))
 		return <Redirect href="sign-in" />;
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
 			<FlatList
+				scrollEnabled={
+					(isConnected && videos.length !== 0) || videos.length !== 0
+				}
 				showsVerticalScrollIndicator={false}
 				data={videos}
 				keyExtractor={(item) => {
@@ -71,8 +96,8 @@ const home = () => {
 				refreshControl={
 					<RefreshControl
 						refreshing={isRefreshing}
-						colors={Platform.OS === 'android'&& ['#fff']}
-						 tintColor={Platform.OS === 'ios'&& '#fff'}
+						colors={Platform.OS === "android" && ["#fff"]}
+						tintColor={Platform.OS === "ios" && "#fff"}
 						onRefresh={() => {
 							setIsRefreshing(true);
 							setTimeout(() => {
@@ -80,7 +105,6 @@ const home = () => {
 								setIsRefreshing(false);
 							}, 1500);
 						}}
-						
 					/>
 				}
 				renderItem={({ item, index }) => {
@@ -109,13 +133,20 @@ const home = () => {
 				ListEmptyComponent={
 					// mfnjefrjek
 					<>
-						{isLoading && (
+						{isLoading && !isConnected && (
 							<>
 								<VideosLoading />
 								<VideosLoading />
 							</>
 						)}
-						{!isLoading && <NotFound />}
+						{!isLoading && !isConnected && (
+							<>
+								<VideosLoading />
+								<VideosLoading />
+							</>
+						)}
+
+						{!isLoading && isConnected && <NotFound />}
 					</>
 				}
 			/>

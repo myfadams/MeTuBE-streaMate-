@@ -11,6 +11,7 @@ import { app, db, ref, set, usersRef } from "./config";
 import { avatars } from "./appwrite";
 import { get, onValue } from "firebase/database";
 import { collection } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const authentication = getAuth();
 // let user;
@@ -53,7 +54,7 @@ export async function loginUser(email, password) {
 // 	const s = await authentication.signOut()
 // }
 export async function checkVerified(user) {
-	console.log(user);
+	// console.log(user);
 	onAuthStateChanged(authentication, (user) => {
 		console.log("verified yh: " + user?.emailVerified); //
 		
@@ -231,4 +232,16 @@ export function fetchData(path) {
 	});
 }
 
+export async function getAuthToken(){
+	try {
+		const token = await AsyncStorage.getItem(
+			"firebase:authUser:AIzaSyAyIaVgZroxNOsCD9OobVPz9UmFLhYc0Hg:[DEFAULT]"
+		);
+		console.log(token);
+		return token
+	} catch (error) {
+		console.log(error)
+	}
+}
+getAuthToken()
 export { createAccount };
