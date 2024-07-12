@@ -1,4 +1,4 @@
-import { View, Text,Image } from 'react-native'
+import { View, Text,Image, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Tabs } from 'expo-router';
 import { add, home, shorts, subsription} from '../../constants/icons';
@@ -50,7 +50,7 @@ function TabIcon({ icon, color, name, focused }) {
 						width: 26,
 						height: 26,
 						borderWidth: 1,
-						borderRadius: "50%",
+						borderRadius: Platform.OS === "ios" ? "50%" : 50,
 						borderColor: "#fff",
 						backgroundColor: color,
 					}}

@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet } from 'react-native'
+import { View, Text,StyleSheet, Platform } from 'react-native'
 import React from 'react'
 import { loadingColor } from '../constants/colors';
 import * as Animatable from "react-native-animatable";
@@ -20,7 +20,6 @@ const VideosLoading = () => {
 				animation={customAnimation}
 				duration={3200}
 				iterationCount="infinite"
-				
 			>
 				<View
 					style={{
@@ -43,7 +42,7 @@ const VideosLoading = () => {
 							style={{
 								width: 50,
 								height: 50,
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 								borderColor: "#000",
 								borderWidth: 1,
 								margin: 3,

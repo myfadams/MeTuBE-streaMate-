@@ -5,6 +5,7 @@ import {
 	Image,
 	TouchableWithoutFeedback,
 	TouchableOpacity,
+	Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
@@ -36,6 +37,7 @@ const VideoView = ({videoInfo,type,menu}) => {
 		fetchCreator();
 	},[])
 	const [views, setViews] = useState(0);
+	// console.log(creator)
 	useEffect(() => {
 		const videoRef = ref(db, `videosRef/${videoInfo?.id}/views`);
 
@@ -96,18 +98,33 @@ const VideoView = ({videoInfo,type,menu}) => {
 							justifyContent: "center",
 						}}
 					>
+						<TouchableOpacity onPress={
+							()=>{
+								router.push({
+									pathname: "userVideos/aboutVids",
+									params: {
+										uid: creator[0]?.id,
+										photoURL: creator[0]?.image,
+										displayName: creator[0]?.name,
+										otherChannel: "OtherChannel",
+									},
+								});
+							}
+						}>
+
 						<Image
 							source={{ uri: creator[0]?.image }}
 							style={{
 								width: 50,
 								height: 50,
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 								borderColor: borderLight,
 								borderWidth: 1,
 								margin: 3,
 								backgroundColor: "#fff",
 							}}
 						/>
+						</TouchableOpacity>
 						<View
 							style={{
 								flex: 1,
@@ -135,7 +152,7 @@ const VideoView = ({videoInfo,type,menu}) => {
 								</Text>
 								<Text
 									style={{
-										flexWrap: 1,
+										flexWrap: "wrap",
 										fontSize: 12,
 										color: borderLight,
 									}}
@@ -171,7 +188,7 @@ const VideoView = ({videoInfo,type,menu}) => {
 									1 day ago
 								</Text>
 							</View>
-							<TouchableOpacity onPress={menu} >
+							<TouchableOpacity onPress={menu}>
 								<Image
 									source={options}
 									style={{ width: 15, height: 15 }}

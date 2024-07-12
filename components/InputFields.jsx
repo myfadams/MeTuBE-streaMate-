@@ -1,5 +1,6 @@
 import {
 	Image,
+	Platform,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -21,7 +22,7 @@ const InputFields = ({ text, placeholderText, handleChange }) => {
 						width: "100%",
 						height: "100%",
 						color: "white",
-						fontSize: "19%",
+						fontSize: Platform.OS === "ios" ? "19%" : 19,
 						fontFamily: "Montserrat_500Medium",
 						textAlign: "center",
 						flex: 1,
@@ -71,7 +72,7 @@ export default InputFields;
 const styles = StyleSheet.create({
 	text: {
 		color: "#fff",
-		fontSize: "16%",
+		fontSize: Platform.OS === "ios" ? "16%" : 16,
 		marginBottom: 5,
 		fontFamily: "Montserrat_500Medium",
 	},

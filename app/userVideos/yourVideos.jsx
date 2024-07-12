@@ -262,7 +262,7 @@ const yourVideos = () => {
 				keyExtractor={(item) => {
 					return item.id;
 				}}
-				ListEmptyComponent={<NotFound type={"yourVideos"}/>}
+				ListEmptyComponent={<NotFound type={"yourVideos"} />}
 				ListHeaderComponent={<HeaderVid />}
 				refreshControl={
 					<RefreshControl

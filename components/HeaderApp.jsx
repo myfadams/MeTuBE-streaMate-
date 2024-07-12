@@ -1,4 +1,4 @@
-import { View, Text,Image,TouchableOpacity } from 'react-native'
+import { View, Text,Image,TouchableOpacity, Platform } from 'react-native'
 import React from 'react'
 import { logo } from '../constants/images';
 import { chromecast, gear, message, search, sub } from '../constants/icons';
@@ -64,7 +64,7 @@ const HeaderApp = ({ screenName, disable,type }) => {
 								style={{
 									height: 7,
 									width: 7,
-									borderRadius: "50%",
+									borderRadius: Platform.OS === "ios" ? "50%" : 50,
 									position: "absolute",
 									backgroundColor: "red",
 									right: 0,
@@ -89,7 +89,7 @@ const HeaderApp = ({ screenName, disable,type }) => {
 							style={{
 								height: 7,
 								width: 7,
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 								position: "absolute",
 								backgroundColor: "red",
 								right: 0,
@@ -108,9 +108,11 @@ const HeaderApp = ({ screenName, disable,type }) => {
 						/>
 					</TouchableOpacity>
 					{screenName === "you" && (
-						<TouchableOpacity onPress={()=>{
-							router.push("settings");
-						}}>
+						<TouchableOpacity
+							onPress={() => {
+								router.push("settings");
+							}}
+						>
 							<Image
 								source={gear}
 								style={{ width: 21, height: 21 }}
@@ -120,7 +122,17 @@ const HeaderApp = ({ screenName, disable,type }) => {
 					)}
 				</View>
 			</View>
-			{type==="home"&&<HomeHeader text={["Gaming","Football","Call of Duty: Mobile","Music","Combat sports"]} />}
+			{type === "home" && (
+				<HomeHeader
+					text={[
+						"Gaming",
+						"Football",
+						"Call of Duty: Mobile",
+						"Music",
+						"Combat sports",
+					]}
+				/>
+			)}
 		</>
 	);
 };

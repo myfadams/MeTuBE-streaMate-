@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Platform } from 'react-native'
 import React from 'react'
 
 import { fieldColor } from '../constants/colors';
@@ -11,7 +11,7 @@ const MoreButton = ({ title, imageUrl, handlePress,height,color,isLoading,typeau
 			style={{
 				height: height ? height : 35,
 				gap: 3,
-				borderRadius: "50%",
+				borderRadius: Platform.OS === "ios" ? "50%" : 50,
 				backgroundColor: color ? color : fieldColor,
 				justifyContent: "center",
 				alignItems: "center",

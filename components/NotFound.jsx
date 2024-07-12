@@ -9,7 +9,7 @@ import MoreButton from './MoreButton';
 const NotFound = ({type}) => {
   return (
 		<ScrollView
-			contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+			contentContainerStyle={{ flexGrow: 1, justifyContent: "center", height:"100%"}}
 		>
 			<View
 				style={{

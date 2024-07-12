@@ -6,6 +6,7 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 	Pressable,
+	Platform,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import BottomSheetComponent from "./CommentSection";
@@ -24,6 +25,7 @@ import { getContext } from "../context/GlobalContext";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
 import { addToHistory, getLikes, getSubsriptions, incrementVideoViews, likeUpadate, playList, setDisLikeStatus, setLikeStatus, subscribeToChannel } from "../libs/videoUpdates";
+import { router } from "expo-router";
 
 const ShortsView = ({
 	sourceUrl,
@@ -73,7 +75,7 @@ const ShortsView = ({
 
 		fetchCreator();
 	}, [creatorID]);
-
+	// console.log(creator)
 	const [views, setViews] = useState(0);
 	useEffect(() => {
 		const videoRef = ref(db, `shortsRef/${videoId}/views`);
@@ -228,7 +230,7 @@ const ShortsView = ({
 							fontFamily: "Montserrat_600SemiBold",
 						}}
 					>
-						{likes===0?"Like":likes}
+						{likes === 0 ? "Like" : likes}
 					</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -287,24 +289,44 @@ const ShortsView = ({
 						width: "70%",
 					}}
 				>
-					<Image
-						source={{ uri: creator[0]?.image }}
-						style={{
-							width: 45,
-							height: 45,
-							backgroundColor: "#fff",
-							borderRadius: "50%",
+					<TouchableOpacity
+						onPress={()=>{
+							router.push({
+								pathname: "userVideos/aboutVids",
+								params: {
+									uid: creator[0]?.id,
+									photoURL: creator[0]?.image,
+									displayName: creator[0]?.name,
+									otherChannel:"OtherChannel"
+								},
+							});
 						}}
-					/>
-					<Text
 						style={{
-							color: "white",
-							fontSize: 18,
-							fontFamily: "Montserrat_600SemiBold",
+							flexDirection: "row",
+							alignItems: "center",
+							gap: 15,
+							// =
 						}}
 					>
-						{creator[0]?.name}
-					</Text>
+						<Image
+							source={{ uri: creator[0]?.image }}
+							style={{
+								width: 45,
+								height: 45,
+								backgroundColor: "#fff",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
+							}}
+						/>
+						<Text
+							style={{
+								color: "white",
+								fontSize: 18,
+								fontFamily: "Montserrat_600SemiBold",
+							}}
+						>
+							{creator[0]?.name}
+						</Text>
+					</TouchableOpacity>
 
 					{creatorID !== user?.uid && (
 						<OtherViewButtons

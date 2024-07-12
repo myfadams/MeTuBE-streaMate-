@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, ScrollView, Alert, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert, SafeAreaView, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { accountSetting, addAccount, close, signout } from "../constants/icons";
@@ -126,7 +126,7 @@ const AccountInfo = () => {
 								backgroundColor: "#000",
 								borderColor: borderLight,
 								borderWidth: 1,
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							}}
 						/>
 						<View>
@@ -245,7 +245,7 @@ const AccountInfo = () => {
 									backgroundColor: "#000",
 									borderColor: borderLight,
 									borderWidth: 1,
-									borderRadius: "50%",
+									borderRadius: Platform.OS === "ios" ? "50%" : 50,
 								}}
 							/>
 							<View style={{ gap: 8 }}>

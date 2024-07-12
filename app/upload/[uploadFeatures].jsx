@@ -144,7 +144,8 @@ const UploadFeatures = () => {
 								width: "96%",
 								alignItems: "center",
 								margin: "2%",
-								flexWrap: 1,
+								//change
+								flexWrap: "wrap",
 								fontSize: 18,
 								fontWeight: "500",
 								color: "#fff",
@@ -157,7 +158,7 @@ const UploadFeatures = () => {
 								width: "96%",
 								alignItems: "center",
 								margin: "2%",
-								flexWrap: 1,
+								flexWrap: "wrap",
 								color: "#fff",
 							}}
 						>
@@ -198,7 +199,7 @@ const UploadFeatures = () => {
 									alignItems: "center",
 									margin: "2%",
 									// marginBottom:10.
-									flexWrap: 1,
+									flexWrap: "wrap",
 									fontSize: 16,
 									fontWeight: "500",
 									color: "#fff",
@@ -233,7 +234,7 @@ const UploadFeatures = () => {
 										// margin: "2%",
 										marginTop: 20,
 										marginBottom: 20,
-										flexWrap: 1,
+										flexWrap: "wrap",
 										fontSize: 18,
 										// fontWeight: "500",
 										color: "#fff",
@@ -272,7 +273,7 @@ const UploadFeatures = () => {
 											// margin: "2%",
 											marginTop: 20,
 											marginBottom: 20,
-											flexWrap: 1,
+											flexWrap: "wrap",
 											fontSize: 18,
 											// fontWeight: "500",
 											color: "#fff",
@@ -285,7 +286,7 @@ const UploadFeatures = () => {
 											width: "96%",
 											alignItems: "center",
 											margin: "2%",
-											flexWrap: 1,
+											flexWrap: "wrap",
 											color: borderLight,
 										}}
 									>
@@ -316,7 +317,7 @@ const UploadFeatures = () => {
 											alignItems: "center",
 											margin: "2%",
 											// marginBottom:10.
-											flexWrap: 1,
+											flexWrap: "wrap",
 											fontSize: 16,
 											fontWeight: "500",
 											color: "#fff",

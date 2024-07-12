@@ -11,6 +11,7 @@ import {
 	ScrollView,
     TouchableOpacity,
     Image,
+	Platform,
 } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { bgColor, borderLight, fieldColor, loadingColor } from "../constants/colors";
@@ -235,7 +236,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 					<Image
 						source={{ uri: info?.image }}
 						style={{
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							width: 45,
 							height: 45,
 							borderWidth: 0.7,

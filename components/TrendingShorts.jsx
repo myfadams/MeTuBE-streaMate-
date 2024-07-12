@@ -73,7 +73,7 @@ const TrendingShorts = ({ type,data,subs }) => {
 								flexDirection: "row",
 								
 								gap:10,
-								flexWrap: 1,
+								flexWrap: "wrap",
 							}}
 						>
 							<ShortView shorts={shorts}/>

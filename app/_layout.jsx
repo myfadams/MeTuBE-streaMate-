@@ -3,9 +3,9 @@ import React, { useEffect } from 'react'
 import {SplashScreen, Stack} from "expo-router"
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { RootSiblingParent } from "react-native-root-siblings";
-// import { useFonts } from 'expo-font';
+import { useFonts } from 'expo-font';
 import {
-	useFonts,
+	// useFonts,
 	Montserrat_100Thin,
 	Montserrat_200ExtraLight,
 	Montserrat_300Light,

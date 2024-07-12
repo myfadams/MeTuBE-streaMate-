@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Platform } from "react-native";
 import React from "react";
 import { loadingColor } from "../constants/colors";
 import * as Animatable from "react-native-animatable";
@@ -46,7 +46,7 @@ const VidScreenLoad = () => {
 					>
 						<View
 							style={{
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 								width: 45,
 								height: 45,
 								backgroundColor: loadingColor,
@@ -63,7 +63,7 @@ const VidScreenLoad = () => {
 					</View>
 					<View
 						style={{
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							// alignSelf: "flex-end",
 							width: "35%",
 							height: 45,
@@ -83,7 +83,7 @@ const VidScreenLoad = () => {
 						style={{
 							width: "37%",
 							height: 35,
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							backgroundColor: loadingColor,
 						}}
 					></View>
@@ -92,7 +92,7 @@ const VidScreenLoad = () => {
 						style={{
 							width: "20%",
 							height: 35,
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							backgroundColor: loadingColor,
 						}}
 					></View>
@@ -100,7 +100,7 @@ const VidScreenLoad = () => {
 						style={{
 							width: "20%",
 							height: 35,
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							backgroundColor: loadingColor,
 						}}
 					></View>
@@ -108,7 +108,7 @@ const VidScreenLoad = () => {
 						style={{
 							width: "20%",
 							height: 35,
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							backgroundColor: loadingColor,
 						}}
 					></View>
@@ -120,7 +120,7 @@ const VidScreenLoad = () => {
 
 						backgroundColor: loadingColor,
 						marginTop: 10,
-						borderRadius: "25%",
+						borderRadius: Platform.OS === "ios" ? "25%" : 25,
 					}}
 				></View>
 				<View

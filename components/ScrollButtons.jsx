@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView,Image } from "react-native"
+import { View, Text, TouchableOpacity, ScrollView,Image, Platform } from "react-native"
 import {
 	clip,
 	dislikOutline,
@@ -65,7 +65,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				style={{
 					// gap: 5,
 					height: 35,
-					borderRadius: "50%",
+					borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					backgroundColor: fieldColor,
 					alignItems: "center",
 
@@ -121,7 +121,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				style={{
 					height: 35,
 					gap: 3,
-					borderRadius: "50%",
+					borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					backgroundColor: fieldColor,
 					justifyContent: "center",
 					alignItems: "center",
@@ -148,7 +148,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				style={{
 					height: 35,
 					gap: 3,
-					borderRadius: "50%",
+					borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					backgroundColor: fieldColor,
 					justifyContent: "center",
 					alignItems: "center",
@@ -176,7 +176,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				style={{
 					height: 35,
 					gap: 3,
-					borderRadius: "50%",
+					borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					backgroundColor: fieldColor,
 					justifyContent: "center",
 					alignItems: "center",
@@ -203,7 +203,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				style={{
 					height: 35,
 					gap: 3,
-					borderRadius: "50%",
+					borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					backgroundColor: fieldColor,
 					justifyContent: "center",
 					alignItems: "center",
@@ -231,7 +231,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				style={{
 					height: 35,
 					gap: 3,
-					borderRadius: "50%",
+					borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					backgroundColor: fieldColor,
 					justifyContent: "center",
 					alignItems: "center",
@@ -258,7 +258,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				style={{
 					height: 35,
 					gap: 3,
-					borderRadius: "50%",
+					borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					backgroundColor: fieldColor,
 					justifyContent: "center",
 					alignItems: "center",

@@ -50,15 +50,14 @@ const CommentFooter = ({profile}) => {
 						flexDirection: "row",
 						marginBottom: 16,
 						backgroundColor: bgColor,
-						
 					}}
 				>
 					<Image
-					source={{uri:profile}}
+						source={{ uri: profile }}
 						style={{
 							width: 40,
 							height: 40,
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							backgroundColor: "white",
 							// opacity: 0.6,
 						}}

@@ -1,15 +1,28 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image, Platform } from "react-native";
 import React from "react";
 import HeaderApp from "./HeaderApp";
 import HomeHeader from "./HomeHeader";
 import { bgColor, borderLight, buttonColor } from "../constants/colors";
+import { router } from "expo-router";
 
 const SubcriptionsHeader = ({channel}) => {
     function SubView({ info }) {
-            // console.log(info.name)
+            // console.log(info)
 			return info?.map((channel, id) => {
 				return (
-					<View
+					<TouchableOpacity
+						onPress={() => {
+							router.push({
+								pathname: "userVideos/aboutVids",
+								params: {
+									uid: channel.id,
+									photoURL: channel.image,
+									displayName: channel.name,
+									otherChannel: "OtherChannel",
+								},
+							});
+						}}
+						activeOpacity={0.6}
 						style={{
 							width: 100,
 							height: 120,
@@ -23,7 +36,7 @@ const SubcriptionsHeader = ({channel}) => {
 							style={{
 								width: 60,
 								height: 60,
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 								backgroundColor: "#000",
 								borderColor: borderLight,
 								borderWidth: 1,
@@ -45,7 +58,7 @@ const SubcriptionsHeader = ({channel}) => {
 						>
 							{channel?.name}
 						</Text>
-					</View>
+					</TouchableOpacity>
 				);
 			});
 		}

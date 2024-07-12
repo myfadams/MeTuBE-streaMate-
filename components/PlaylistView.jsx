@@ -58,7 +58,7 @@ const PlaylistView = ({ data }) => {
 					style={{
 						backgroundColor: "#000",
 						width: 140,
-						height: 90,
+						height: 100,
 						borderRadius: 8,
 						opacity: 0.5,
 					}}

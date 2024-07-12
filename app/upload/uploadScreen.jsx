@@ -6,6 +6,7 @@ import {
 	TouchableOpacity,
 	TextInput,
 	Alert,
+	Platform,
 } from "react-native";
 import React, { useState } from "react";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
@@ -105,10 +106,11 @@ const UploadView = () => {
 						title={"Next"}
 						handlePress={() => {
 							// console.log(videoInfo)
-							if (videoInfo.title != "") router.push({
-								pathname: "upload/audience",
-								params: videoInfo,
-							});
+							if (videoInfo.title != "")
+								router.push({
+									pathname: "upload/audience",
+									params: videoInfo,
+								});
 							else Alert.alert("Please give your video a title");
 						}}
 					/>
@@ -129,7 +131,7 @@ const UploadView = () => {
 							backgroundColor: fieldColor,
 							width: 40,
 							height: 40,
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							justifyContent: "center",
 							alignItems: "center",
 							position: "absolute",
@@ -161,7 +163,7 @@ const UploadView = () => {
 								width: 60,
 								height: 60,
 								backgroundColor: "black",
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							}}
 							resizeMode="contain"
 						/>

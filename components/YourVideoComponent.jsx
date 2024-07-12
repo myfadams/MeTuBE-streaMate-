@@ -13,7 +13,7 @@ import { formatSubs, formatViews } from "../libs/videoUpdates";
 import { router } from "expo-router";
 import { getCreatorInfo } from "../libs/firebase";
 
-const YourVideoComponent = ({ video }) => {
+const YourVideoComponent = ({ video,type }) => {
 	// console.log(video.views)
 	const [creator, setCreator] = useState([]);
 
@@ -71,14 +71,14 @@ const YourVideoComponent = ({ video }) => {
 						/>
 					)}
 				</View>
-				<View style={{ gap: 4 }}>
+				<View style={{ gap:type?9: 4 }}>
 					<Text
 						numberOfLines={2}
 						style={{
 							color: "white",
 							fontSize: 13,
 							fontFamily: "Montserrat_500Medium",
-							width: "45%",
+							width: type?"90%":"45%",
 							flexWrap: "wrap",
 							flexDirection: "row",
 						}}

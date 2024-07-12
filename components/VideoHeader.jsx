@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity,Image} from "react-native";
+import { View, Text, TouchableOpacity,Image, Platform} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { borderLight, buttonColor, fieldColor, loadingColor } from "../constants/colors";
 import OtherViewButtons from "./OtherViewButtons";
@@ -9,7 +9,7 @@ import { formatSubs, formatViews, getNumberSubs, getSubsriptions, setDisLikeStat
 
 import { ref, onValue } from "firebase/database";
 import { db } from "../libs/config";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 const VidHeader = ({ comment, about,vidinfo}) => {
 	// console.log(vidinfo)
@@ -71,7 +71,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 				style={{
 					width: "96%",
 					marginTop: 15,
-					borderRadius: "5%",
+					borderRadius: Platform.OS === "ios" ? "5%" : 5,
 				}}
 			>
 				<Text
@@ -134,6 +134,12 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 				}}
 			>
 				<TouchableOpacity
+					onPress={()=>{
+						router.push({
+							pathname: "userVideos/aboutVids",
+							params: { uid: vidinfo.id, photoURL:vidinfo.image,displayName:vidinfo.name},
+						});
+					}}
 					style={{
 						width: "50%",
 						flexDirection: "row",
@@ -144,10 +150,10 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 					<Image
 						source={{ uri: vidinfo?.image }}
 						style={{
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							width: 45,
-							borderWidth:0.7,
-							borderColor:borderLight,
+							borderWidth: 0.7,
+							borderColor: borderLight,
 							height: 45,
 							backgroundColor: "#000",
 						}}
@@ -201,7 +207,12 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 				</View>
 			</View>
 			{/* //my ScrollButtons */}
-			<ScrollButtons videoId={vidinfo.videoview} userId={user?.uid} likeStatus={like} disLikeStatus={dislike}/>
+			<ScrollButtons
+				videoId={vidinfo.videoview}
+				userId={user?.uid}
+				likeStatus={like}
+				disLikeStatus={dislike}
+			/>
 			<TouchableOpacity
 				onPress={comment}
 				activeOpacity={0.6}
@@ -211,7 +222,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 
 					backgroundColor: fieldColor,
 					marginTop: 10,
-					borderRadius: "10%",
+					borderRadius: Platform.OS === "ios" ? "10%" : 10,
 				}}
 			>
 				<View
@@ -261,7 +272,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 							height: 40,
 							backgroundColor: "#000",
 
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 						}}
 					/>
 					<Text

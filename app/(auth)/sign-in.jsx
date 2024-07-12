@@ -187,7 +187,7 @@ const SignIn = () => {
 					<Text
 						style={{
 							color: "#fff",
-							fontSize: "16%",
+							fontSize: Platform.OS === "ios" ? "16%" : 16,
 							marginBottom: 5,
 							fontFamily: "Montserrat_500Medium",
 						}}
@@ -198,7 +198,7 @@ const SignIn = () => {
 						href="sign-up"
 						style={{
 							color: otherColor,
-							fontSize: "16%",
+							fontSize: Platform.OS === "ios" ? "16%" : 16,
 							marginBottom: 5,
 							fontFamily: "Montserrat_600SemiBold",
 						}}

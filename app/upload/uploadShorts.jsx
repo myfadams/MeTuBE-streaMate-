@@ -6,6 +6,7 @@ import {
 	TouchableOpacity,
 	TextInput,
 	Alert,
+	Platform,
 } from "react-native";
 import React, { useState } from "react";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
@@ -183,7 +184,7 @@ const UploadShortsView = () => {
 								height: "50%",
 								color: "#fff",
 								fontSize: 17,
-								flexWrap: 1,
+								flexWrap:  "wrap",
 								justifyContent: "center",
 								alignItems: "center",
 							}}
@@ -200,7 +201,7 @@ const UploadShortsView = () => {
 							backgroundColor: fieldColor,
 							width: 40,
 							height: 40,
-							borderRadius: "50%",
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							justifyContent: "center",
 							alignItems: "center",
 							position: "absolute",
@@ -233,7 +234,7 @@ const UploadShortsView = () => {
 								width: 60,
 								height: 60,
 								backgroundColor: "black",
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							}}
 							resizeMode="contain"
 						/>
@@ -281,7 +282,7 @@ const UploadShortsView = () => {
 							width: "96%",
 							alignItems: "center",
 							margin: "2%",
-							flexWrap: 1,
+							flexWrap: "wrap",
 							color: "#fff",
 						}}
 					>

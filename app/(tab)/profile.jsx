@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, Image, TouchableOpacity, Platform } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor, borderLight, loadingColor } from "../../constants/colors";
@@ -97,6 +97,10 @@ const profile = () => {
 			<ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
 				<HeaderApp screenName="you" disable={true} />
 				<TouchableOpacity
+					onPress={() => {
+						// console.log(user)
+						router.push({ pathname: "userVideos/aboutVids" ,params:user});
+					}}
 					style={{ width: "100%", alignItems: "center", marginTop: 30 }}
 				>
 					<View
@@ -115,7 +119,7 @@ const profile = () => {
 								width: 70,
 								height: 70,
 								backgroundColor: "#000",
-								borderRadius: "50%",
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 								borderColor: borderLight,
 								borderWidth: 1,
 							}}
@@ -264,19 +268,22 @@ const profile = () => {
 							showsHorizontalScrollIndicator={false}
 							data={playList}
 							renderItem={({ item, index }) => {
-								return <PlaylistView data={item} />
+								return <PlaylistView data={item} />;
 							}}
-							keyExtractor={(item)=>{
-								
-								return item.id
+							keyExtractor={(item) => {
+								return item.id;
 							}}
 						/>
 					</View>
 				</View>
 				<View style={{ borderColor: loadingColor, borderBottomWidth: 0.9 }}>
-					<ForYouButtons sourceUrl={yourVideos} title={"Your videos"} handlePress={()=>{
-						router.push("userVideos/yourVideos")
-					}}/>
+					<ForYouButtons
+						sourceUrl={yourVideos}
+						title={"Your videos"}
+						handlePress={() => {
+							router.push("userVideos/yourVideos");
+						}}
+					/>
 					<ForYouButtons sourceUrl={download} title={"Downloads"} />
 					<ForYouButtons sourceUrl={lightbulb} title={"Your courses"} />
 					<View style={{ marginBottom: 10 }}></View>
