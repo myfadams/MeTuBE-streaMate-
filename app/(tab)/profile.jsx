@@ -29,20 +29,30 @@ import { fetchData } from "../../libs/firebase";
 import PlaylistView from "../../components/PlaylistView";
 const profile = () => {
 	const [isActivated, setIsActivated] = useState(false);
-	const { user, isIcognito, setIsIncognito } = getContext();
+
+	const { user, isIcognito, setIsIncognito, isConnected } = getContext();
 	const [playList, setplayList] = useState([])
 	const incognitoMode = () => {
-		setIsIncognito(!isIcognito);
-		setIsActivated(!isActivated);
-		if (!isActivated) {
-			let toast = Toast.show("Videos will not be in your history", {
-				duration: Toast.durations.LONG,
-			});
-			setTimeout(function hideToast() {
-				Toast.hide(toast);
-			}, 3000);
-		} else {
-			let toast = Toast.show("Incognito mode turned off", {
+		if(isConnected){
+			setIsIncognito(!isIcognito);
+			setIsActivated(!isActivated);
+			if (!isActivated) {
+				let toast = Toast.show("Videos will not be in your history", {
+					duration: Toast.durations.LONG,
+				});
+				setTimeout(function hideToast() {
+					Toast.hide(toast);
+				}, 3000);
+			} else {
+				let toast = Toast.show("Incognito mode turned off", {
+					duration: Toast.durations.LONG,
+				});
+				setTimeout(function hideToast() {
+					Toast.hide(toast);
+				}, 3000);
+			}
+		}else{
+			let toast = Toast.show("You need an internet connection to change account settings", {
 				duration: Toast.durations.LONG,
 			});
 			setTimeout(function hideToast() {
@@ -176,7 +186,19 @@ const profile = () => {
 						imageUrl={switchAccount}
 						title={"Switch Account"}
 						handlePress={() => {
-							router.push("account");
+							if(isConnected)
+								router.push("account");
+							else{
+								let toast = Toast.show(
+									"Connect to internet to change account",
+									{
+										duration: Toast.durations.LONG,
+									}
+								);
+								setTimeout(function hideToast() {
+									Toast.hide(toast);
+								}, 3000);
+							}
 						}}
 					/>
 					<MoreButton imageUrl={google} title={"Google Account"} />

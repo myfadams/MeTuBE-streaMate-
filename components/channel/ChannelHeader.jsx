@@ -36,7 +36,7 @@ const ChannelHeader = ({userInfo,act}) => {
 		getSubsriptions(user?.uid, setsubscribed, userInfo.uid);
 		
 	}, []);
-	console.log("subbed: "+subscribed)
+	// console.log("subbed: "+subscribed)
     function AboutBtn({ icon, handlepress }) {
 			return (
 				<TouchableOpacity

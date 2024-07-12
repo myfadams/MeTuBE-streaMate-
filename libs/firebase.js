@@ -237,7 +237,7 @@ export async function getAuthToken(){
 		const token = await AsyncStorage.getItem(
 			"firebase:authUser:AIzaSyAyIaVgZroxNOsCD9OobVPz9UmFLhYc0Hg:[DEFAULT]"
 		);
-		console.log(token);
+		// console.log(token);
 		return token
 	} catch (error) {
 		console.log(error)

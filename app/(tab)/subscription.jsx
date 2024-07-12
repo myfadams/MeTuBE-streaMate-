@@ -19,9 +19,10 @@ import SubcriptionsHeader from "../../components/SubcriptionsHeader";
 import { fetchData, fetchVideos } from "../../libs/firebase";
 import { shuffleArray } from "../../libs/sound";
 import { getContext } from "../../context/GlobalContext";
+import Offline from "../../components/Offline";
 
 const subcription = () => {
-	const { user } = getContext();
+	const { user,isConnected } = getContext();
 	const { setRefreshing, refereshing } = getContext();
 	const [users, setUsers] = useState([]);
 	const [subscriptions, setSubscriptions] = useState([]);
@@ -82,6 +83,7 @@ const subcription = () => {
 		return subscriptions.includes(vid.creator);
 	});
 	// console.log(subVideos)
+	if(isConnected)
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
 			<FlatList
@@ -118,6 +120,8 @@ const subcription = () => {
 			/>
 		</SafeAreaView>
 	);
+	else
+		return <Offline/>
 };
 
 export default subcription;

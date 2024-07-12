@@ -21,13 +21,13 @@ const GlobalContext = ({ children }) => {
 		// Check initial connectivity state
 		const fetchInitialState = async () => {
 			const state = await NetInfo.fetch();
-			setIsConnected(state.isConnected);
+			setIsConnected(state.isConnected && state.isInternetReachable);
 		};
 		fetchInitialState();
 
 		// Subscribe to network state updates
 		const unsubscribe = NetInfo.addEventListener((state) => {
-			setIsConnected(state.isConnected);
+			setIsConnected(state.isConnected && state.isInternetReachable);
 		});
 
 		// Unsubscribe on cleanup

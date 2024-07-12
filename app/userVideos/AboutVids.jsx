@@ -17,6 +17,8 @@ import { ScrollView } from "react-native";
 import HorizontalHeaderScrollView from "../../components/channel/HorizontalHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OptionsHeader from "../../components/channel/OptionsHeader";
+import { getContext } from "../../context/GlobalContext";
+import Offline from "../../components/Offline";
 
 const { height: windowHeight } = Dimensions.get("window");
 
@@ -31,6 +33,7 @@ const isItemVisible = (itemLayout, scrollY) => {
 export default function MyPager() {
 	const userInfo = useLocalSearchParams();
 	// console.log(userInfo.uid)
+	const {isConnected} = getContext();
 	const scrollViewRef = useRef(null);
 	const [flatListAtEnd, setFlatListAtEnd] = useState(false);
 	const [flatListAtStart, setFlatListAtStart] = useState(true);
@@ -76,36 +79,37 @@ export default function MyPager() {
 	}
 	 const insets = useSafeAreaInsets();
 	// console.log();
-	return (
-		<SafeAreaView style={{ backgroundColor: bgColor }}>
-			{!isItemVisible(specialItemLayout, scrollY) && (
-				<View style={{ position: "absolute", top: insets.top, zIndex: 1 }}>
-					<OptionsHeader userInfo={userInfo} />
-					<HorizontalHeaderScrollView
-						activePage={activePage}
-						pages={pages}
-						setActivePage={setActivePage}
+	if (isConnected)
+		return (
+			<SafeAreaView style={{ backgroundColor: bgColor }}>
+				{!isItemVisible(specialItemLayout, scrollY) && (
+					<View style={{ position: "absolute", top: insets.top, zIndex: 1 }}>
+						<OptionsHeader userInfo={userInfo} />
+						<HorizontalHeaderScrollView
+							activePage={activePage}
+							pages={pages}
+							setActivePage={setActivePage}
+						/>
+					</View>
+				)}
+				<ScrollView
+					ref={scrollViewRef}
+					scrollEnabled={flatListAtStart}
+					onScroll={handleScroll}
+					scrollEventThrottle={16}
+				>
+					<MyCarousel
+						data={userInfo}
+						onScroll={handleFlatListScroll}
+						scrollEnabled={!flatListAtEnd}
+						onLayout={handleSpecialItemLayout}
+						isVisible={isItemVisible(specialItemLayout, scrollY)}
+						act={handleActivePage}
 					/>
-				</View>
-			)}
-			<ScrollView
-				ref={scrollViewRef}
-				scrollEnabled={flatListAtStart}
-				onScroll={handleScroll}
-				scrollEventThrottle={16}
-			>
-				<MyCarousel
-					data={userInfo}
-					onScroll={handleFlatListScroll}
-					scrollEnabled={!flatListAtEnd}
-					onLayout={handleSpecialItemLayout}
-					isVisible={isItemVisible(specialItemLayout, scrollY)}
-					act={handleActivePage}
-				
-				/>
-			</ScrollView>
-		</SafeAreaView>
-	);
+				</ScrollView>
+			</SafeAreaView>
+		);
+	else return <Offline type={"prof"}/>;
 }
 
 const styles = StyleSheet.create({
