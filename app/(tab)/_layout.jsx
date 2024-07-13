@@ -45,13 +45,13 @@ function TabIcon({ icon, color, name, focused }) {
 				// userInfo?.image
 				<Image
 					source={{ uri: user?.photoURL }}
-					resizeMode="contain"
+					resizeMode="cover"
 					style={{
 						width: 26,
 						height: 26,
-						borderWidth: 1,
+						borderWidth: 1.3,
 						borderRadius: Platform.OS === "ios" ? "50%" : 50,
-						borderColor: "#fff",
+						borderColor: color,
 						backgroundColor: color,
 					}}
 				/>

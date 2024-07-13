@@ -58,3 +58,18 @@ export const addVideoToDB = async (file, thumnailUrl, videoUrl, userId) => {
 		likes: 0,
 	});
 };
+
+
+export async function uploadProfileAndCover(fileUri,userID,type) {
+	const response = await fetch(fileUri);
+	const blob = await response.blob();
+	// .replace(/^.*?\./,   "cover.")
+	const filename = fileUri.replace(/^.*?\./, userID+type+".");
+	const fileRef = ref(storage, `ChannelsInfo/${filename}`);
+
+	await uploadBytesResumable(fileRef, blob);
+	const downloadURL = await getDownloadURL(fileRef);
+	console.log(`File available at: ${downloadURL}`);
+	
+	return downloadURL;
+}

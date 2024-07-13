@@ -43,7 +43,7 @@ const GlobalContext = ({ children }) => {
 		}
 		return () => unsubscribe();
 	}, []);
-	console.log("connnection: "+isConnected)
+	// console.log("connnection: "+isConnected)
 	return (
 		<MyContext.Provider
 			value={{

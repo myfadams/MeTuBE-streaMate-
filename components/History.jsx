@@ -1,28 +1,51 @@
 import { View, Text, ImageBackground, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { loadingColor } from '../constants/colors';
 import { options } from '../constants/icons';
 import { router } from 'expo-router';
+import { get, ref } from 'firebase/database';
+import { db } from '../libs/config';
 
 const History = ({data, type}) => {
-	// console.log(data?.video)
+	// console.log(data)
+	const [his,setHis]=useState();
+	useEffect(()=>{
+		async function getHis(){
+			let temp;
+			if(type!=="shorts"){
+				const vidRef = ref(db, `videosRef/${data.videoview}`);
+				temp = await get(vidRef);
+			}else{
+				const vidRef = ref(db, `shortsRef/${data.videoview}`);
+				temp = await get(vidRef);
+			}
+			
+			const crRef = ref(db, `usersref/${temp.val().creator}`);
+			let creator = await get(crRef);
+			setHis({...temp.val(),...creator.val()})
+			// console.log(creator)
+		}
+		getHis()
+	},[])
+	// console.log(his);
 	if(type!=="shorts")
   return (
 		<TouchableOpacity
 			style={{ margin: 4 }}
 			onPress={() => {
 				if (data) {
-					const { videoview, ...passedData } = data;
+					// const { videoview, ...passedData } = data;
 					// console.log(passedData)
 					router.push({
 						pathname: "video/" + data.videoview,
-						params: { ...passedData},
+						params:his
+						//  { ...passedData},
 					});
 				}
 			}}
 		>
 			<Image
-				source={{ uri: data?.thumbnail.replace("videos/", "videos%2F") }}
+				source={{ uri: his?.thumbnail.replace("videos/", "videos%2F") }}
 				style={{
 					backgroundColor: "#000",
 					width: 130,
@@ -39,13 +62,15 @@ const History = ({data, type}) => {
 						fontSize: 15,
 						fontFamily: "Montserrat_500Medium",
 						width: 120,
+						height:30,
 						flexWrap: "wrap",
 						flexDirection: "row",
 					}}
 				>
-					{data?.title}
+					{his?.title}
 				</Text>
 				<Text
+					numberOfLines={1}
 					style={{
 						color: loadingColor,
 						fontSize: 14,
@@ -56,7 +81,7 @@ const History = ({data, type}) => {
 						flexDirection: "row",
 					}}
 				>
-					{data?.name}
+					{his?.name}
 				</Text>
 				<TouchableOpacity style={{ position: "absolute", right: 0 }}>
 					<Image
@@ -74,12 +99,12 @@ const History = ({data, type}) => {
 				style={{ margin: 4 }}
 				onPress={() => {
 					if (data) {
-						const { trendingshort, ...passedData } = data;
-						console.log(data.id);
+						// const { trendingshort, ...passedData } = data;
+						// console.log(data.id);
 						// console.log(passedData);
 						router.push({
 							pathname: "shorts/" + data?.id,
-							params: { ...passedData, id: data.id },
+							params: { ...his, id: data.id },
 						});
 					}
 				}}
@@ -93,17 +118,17 @@ const History = ({data, type}) => {
 						overflow: "hidden",
 					}}
 					source={{
-						uri: (data?.thumbnail).includes("shorts%2F")
-							? data?.thumbnail
-							: (data?.thumbnail).replace("shorts/", "shorts%2F"),
+						uri: (his?.thumbnail)?.includes("shorts%2F")
+							? his?.thumbnail
+							: (his?.thumbnail)?.replace("shorts/", "shorts%2F"),
 					}}
 					resizeMode="cover"
 				>
 					<Image
 						source={{
-							uri: (data?.thumbnail).includes("shorts%2F")
-								? data?.thumbnail
-								: (data?.thumbnail).replace("shorts/", "shorts%2F"),
+							uri: (his?.thumbnail)?.includes("shorts%2F")
+								? his?.thumbnail
+								: (his?.thumbnail)?.replace("shorts/", "shorts%2F"),
 						}}
 						style={{
 							// backgroundColor: "#000",
@@ -126,7 +151,7 @@ const History = ({data, type}) => {
 							flexDirection: "row",
 						}}
 					>
-						{data?.caption}
+						{his?.caption}
 					</Text>
 
 					<TouchableOpacity style={{ position: "absolute", right: 0 }}>

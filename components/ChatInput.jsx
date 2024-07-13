@@ -13,6 +13,7 @@ import { hide, search, show } from "../constants/icons";
 import { router } from "expo-router";
 
 const ChatInput = ({ text, placeholderText, handleChange, name }) => {
+	// console.log(name)
 	const [isHidden, setIsHidden] = useState(true);
 	const [SearchWord, setSearchWord] = useState("");
 	const [searches, setSearches] = useState([]);
@@ -25,6 +26,7 @@ const ChatInput = ({ text, placeholderText, handleChange, name }) => {
 		<View>
 			<View style={styles.fieldStyle}>
 				<TextInput
+					autoFocus={name==="name"}
 					style={{
 						width: "100%",
 						height: "100%",
@@ -39,10 +41,10 @@ const ChatInput = ({ text, placeholderText, handleChange, name }) => {
 					returnKeyType="send"
 					// onSubmitEditing={submit}
 					onChangeText={(word) => {
-						setSearchWord(word);
-						handleChange;
+						// setSearchWord(word);
+						handleChange(word);
 					}}
-					value={SearchWord}
+					value={text}
 				/>
 
 				

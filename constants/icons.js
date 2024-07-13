@@ -60,8 +60,14 @@ import clock from "../assets/icons/clock.png";
 import forbidden from "../assets/icons/forbidden.png";
 import dontRecommend from "../assets/icons/dontRecommend.png";
 import commentOutline from "../assets/icons/commentOutline.png";
+import camera from "../assets/icons/camera.png"
+import copy from "../assets/icons/copy.png";
+import info from "../assets/icons/information.png";
 
 export {
+	info,
+	copy,
+	camera,
 	commentOutline,
 	dontRecommend,
 	forbidden,

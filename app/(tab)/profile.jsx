@@ -23,14 +23,36 @@ import History from "../../components/History";
 import { getContext } from "../../context/GlobalContext";
 import Toast from "react-native-root-toast";
 import { onValue, ref } from "firebase/database";
-import { db } from "../../libs/config";
+import { authentication, db } from "../../libs/config";
 import { router, useFocusEffect } from "expo-router";
 import { fetchData } from "../../libs/firebase";
 import PlaylistView from "../../components/PlaylistView";
 const profile = () => {
 	const [isActivated, setIsActivated] = useState(false);
 
-	const { user, isIcognito, setIsIncognito, isConnected } = getContext();
+	const {
+		user,
+		setUser,
+		isIcognito,
+		setIsIncognito,
+		refereshing, setRefreshing,
+		isConnected,
+	} = getContext();
+	const [isFocused, setIsFocused] = useState(false)
+	useFocusEffect(useCallback(()=>{
+		// console.log(authentication.currentUser);c
+		
+		setIsFocused(true)
+		setRefreshing(!refereshing)
+		return ()=>{
+			// setUser(authentication.currentUser);
+			setIsFocused(false);
+		}
+	},[]))
+	useEffect(()=>{
+		setUser(authentication.currentUser);
+	},[isFocused])
+	// console.log(user)
 	const [playList, setplayList] = useState([])
 	const incognitoMode = () => {
 		if(isConnected){
@@ -83,7 +105,7 @@ const profile = () => {
 
 		// Cleanup listener on unmount
 		return () => unsubscribe();
-	}, [user?.uid]);
+	}, [user?.uid,refereshing]);
 	useEffect(() => {
 		const shortsRef = ref(db, `history/shorts/${user?.uid}`);
 
@@ -98,7 +120,7 @@ const profile = () => {
 
 		// Cleanup listener on unmount
 		return () => unsubscribe();
-	}, [user?.uid]);
+	}, [user?.uid,refereshing]);
 	// console.log(historyShorts)
 	// history.reverse();
 	
@@ -124,7 +146,7 @@ const profile = () => {
 					>
 						<Image
 							source={{ uri: user?.photoURL }}
-							resizeMode="contain"
+							resizeMode="cover"
 							style={{
 								width: 70,
 								height: 70,
@@ -164,7 +186,7 @@ const profile = () => {
 										fontFamily: "Montserrat_300Light",
 										alignItems: "center",
 										justifyContent: "center",
-										// flexDirection:"row"
+										// flexDirection:"row"lk
 									}}
 								>
 									view channel{" "}
@@ -208,7 +230,7 @@ const profile = () => {
 						handlePress={incognitoMode}
 					/>
 				</ScrollView>
-				<View style={{ marginBottom: 25 }}>
+				{isConnected&&<View style={{ marginBottom: 25 }}>
 					<View style={{ marginTop: 25 }}>
 						<View
 							style={{
@@ -297,29 +319,29 @@ const profile = () => {
 							}}
 						/>
 					</View>
-				</View>
-				<View style={{ borderColor: loadingColor, borderBottomWidth: 0.9 }}>
-					<ForYouButtons
+				</View>}
+				<View style={{ borderColor: loadingColor, borderBottomWidth:isConnected? 0.9:0 }}>
+					{isConnected&&<ForYouButtons
 						sourceUrl={yourVideos}
 						title={"Your videos"}
 						handlePress={() => {
 							router.push("userVideos/yourVideos");
 						}}
-					/>
+					/>}
 					<ForYouButtons sourceUrl={download} title={"Downloads"} />
-					<ForYouButtons sourceUrl={lightbulb} title={"Your courses"} />
+					{isConnected&&<ForYouButtons sourceUrl={lightbulb} title={"Your courses"} />}
 					<View style={{ marginBottom: 10 }}></View>
 				</View>
-				<View style={{ borderColor: loadingColor, borderBottomWidth: 0.9 }}>
+				{isConnected&&<View style={{ borderColor: loadingColor, borderBottomWidth: 0.9 }}>
 					<ForYouButtons sourceUrl={clapper} title={"Your movies"} />
 					<ForYouButtons sourceUrl={getPremium} title={"Get MeTuBE premium"} />
 					<View style={{ marginBottom: 10 }}></View>
-				</View>
-				<View style={{}}>
+				</View>}
+				{isConnected&&<View style={{}}>
 					<ForYouButtons sourceUrl={watchtime} title={"Time Watched"} />
 					<ForYouButtons sourceUrl={help} title={"Help & feedback"} />
 					<View style={{ marginBottom: 10 }}></View>
-				</View>
+				</View>}
 			</ScrollView>
 		</SafeAreaView>
 	);

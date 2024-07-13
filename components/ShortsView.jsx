@@ -318,6 +318,7 @@ const ShortsView = ({
 							}}
 						/>
 						<Text
+							numberOfLines={2}
 							style={{
 								color: "white",
 								fontSize: 18,
@@ -337,7 +338,7 @@ const ShortsView = ({
 								height: 35,
 								backgroundColor: subscribed ? fieldColor : buttonColor,
 								opacity: subscribed && 0.6,
-								borderWidth: subscribed && 0.6,
+								borderWidth: subscribed ? 0.6:0,
 								borderColor: borderLight,
 								justifyContent: "center",
 								alignItems: "center",

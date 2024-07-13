@@ -19,11 +19,13 @@ import { FlatList } from "react-native-gesture-handler";
 import CommentsHeader from "./CommentsHeader";
 import CommentFooter from "./CommentFooter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { onValue, ref } from "firebase/database";
+import { get, onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
 import { formatSubs, getLikes, getNumberSubs } from "../libs/videoUpdates";
 const windowHeight = Dimensions.get("window").height;
 const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
+	// console.log(info)
+	const [creator, setcreator] = useState()
 	const insets = useSafeAreaInsets();
 	const commentHeight =
 		((windowHeight - 250 - insets.bottom) / windowHeight) * 100;
@@ -31,6 +33,16 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 	const [currentSnapPointIndex, setCurrentSnapPointIndex] = useState(-1);
 	const [noSubs, setNoSubs] = useState(0);
 	// Handle opening the bottom sheet when isVisible changes to true
+	// const [creator, setcreator] = useState();
+	// useEffect(()=>{
+	// 	async function getCre(){
+	// 		const crRef = ref(db, `usersref/${info.creator}`);
+	// 		let temp = await get(crRef);
+	// 		setcreator(temp)
+	// 		console.log(temp)
+	// 	}
+	// 	getCre()
+	// },[])
 	React.useEffect(() => {
 		if (isVisible) {
 			bottomSheetRef.current?.expand();

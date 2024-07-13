@@ -50,9 +50,41 @@ export function formatSubs(numSubs) {
 		return numSubs;
 	}
 }
-export const addToHistory = (type, video, videoId, userId) => {
+export const addToHistory = async (type, video, videoId, userId) => {
+	// console.log(video)
 	// Reference to the history path for the user and videoId
 	const historyRef = ref(db, `history/${type}/${userId}`);
+	
+	let temp;
+	let creator;
+	if (type !== "shorts") {
+		const vidRef = ref(db, `videosRef/${video.videoview}`);
+		temp = await get(vidRef);
+		const crRef = ref(db, `usersref/${temp.val().creator}`);  
+		creator=(await get(crRef))
+	}else{
+		const vidRef = ref(db, `shortsRef/${video.id}`);
+		temp = await get(vidRef);
+		const crRef = ref(db, `usersref/${temp.val().creator}`);
+		creator = (await get(crRef))
+	}
+	if (type !== "shorts")
+		video = {
+			...temp.val(),
+			...creator.val(),
+			videoview: video.videoview,
+			email: "",
+		};
+	else{
+		video = {
+			...temp.val(),
+			...creator.val(),
+			id: video.id,
+			videoview: video.id,
+			email: "",
+		};
+	}
+	// console.log(video)
 
 	// Run transaction to ensure latest addition appears first
 	runTransaction(historyRef, (currentHistory) => {

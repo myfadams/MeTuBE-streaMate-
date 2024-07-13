@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { app, db, ref, set, usersRef } from "./config";
 import { avatars } from "./appwrite";
-import { get, onValue } from "firebase/database";
+import { get, onValue, update } from "firebase/database";
 import { collection } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -57,7 +57,7 @@ export async function checkVerified(user) {
 	// console.log(user);
 	onAuthStateChanged(authentication, (user) => {
 		console.log("verified yh: " + user?.emailVerified); //
-		
+
 		if (!user?.emailVerified) {
 			user?.reload();
 		} else {
@@ -196,7 +196,6 @@ export function getEncodedFirebaseUrl(originalUrl) {
 	}
 }
 
-
 export function fetchData(path) {
 	const locRef = ref(db, path);
 	// console.log(path)
@@ -206,8 +205,7 @@ export function fetchData(path) {
 			(snapshot) => {
 				const data = [];
 				// console.log(Array.isArray(snapshot.val()));
-				if (!Array.isArray(snapshot.val()))
-				{
+				if (!Array.isArray(snapshot.val())) {
 					snapshot.forEach((childSnapshot) => {
 						// console.log(childSnapshot.val())
 						const childData = childSnapshot.val();
@@ -218,10 +216,10 @@ export function fetchData(path) {
 							});
 						}
 					});
-				}else{
-					snapshot.val().forEach((snap)=>{
-						data.push(snap)
-					})
+				} else {
+					snapshot.val().forEach((snap) => {
+						data.push(snap);
+					});
 				}
 				resolve(data);
 			},
@@ -232,16 +230,35 @@ export function fetchData(path) {
 	});
 }
 
-export async function getAuthToken(){
+export async function getAuthToken() {
 	try {
 		const token = await AsyncStorage.getItem(
 			"firebase:authUser:AIzaSyAyIaVgZroxNOsCD9OobVPz9UmFLhYc0Hg:[DEFAULT]"
 		);
 		// console.log(token);
-		return token
+		return token;
 	} catch (error) {
-		console.log(error)
+		console.log(error);
 	}
 }
-getAuthToken()
+getAuthToken();
+
+export async function changeUserDetails(type, value) {
+	const cUser = authentication.currentUser;
+	const userRef = ref(db, "usersref/" + cUser.uid);
+	if (type === "displayName") {
+		await updateProfile(cUser, { displayName: value });
+		console.log(cUser.displayName)
+		await update(userRef, { name: cUser.displayName });
+	}
+	if (type === "photoURL") {
+		await updateProfile(cUser, { photoURL: value });
+		await update(userRef, { image: cUser.photoURL });
+	}
+	if(type==="desc"){
+		update(userRef, { descripition: value });
+	}
+	// console.log(cUser)
+}
+// console.log(authentication.currentUser);
 export { createAccount };

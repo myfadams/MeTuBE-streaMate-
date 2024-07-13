@@ -86,8 +86,13 @@ const ChannelHeader = ({userInfo,act}) => {
 						}}
 					>
 						<Image
-							source={{ uri: userInfo?.photoURL }}
-							resizeMode="contain"
+							source={{
+								uri: userInfo?.photoURL.replace(
+									"ChannelsInfo/",
+									"ChannelsInfo%2F"
+								),
+							}}
+							resizeMode="cover"
 							style={{
 								width: 70,
 								height: 70,
@@ -180,16 +185,20 @@ const ChannelHeader = ({userInfo,act}) => {
 									}}
 								/>
 							</View>
-							<AboutBtn icon={edit} />
+							<AboutBtn
+								icon={edit}
+								handlepress={() => {
+									router.push("userVideos/channelSettings");
+								}}
+							/>
 							<AboutBtn icon={watchtime} />
 						</>
 					) : (
-						
 						<OtherViewButtons
 							title={subscribed ? "Subscribed" : "Subscribe"}
 							handlePress={handleSubscribe}
 							styles={{
-								flex:1,
+								flex: 1,
 								height: 40,
 								backgroundColor: subscribed ? fieldColor : buttonColor,
 								borderWidth: subscribed && 0.6,

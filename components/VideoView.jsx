@@ -16,12 +16,14 @@ import { dot, options } from "../constants/icons";
 import { getCreatorInfo } from "../libs/firebase";
 import { db } from "../libs/config";
 import { formatViews } from "../libs/videoUpdates";
+import { getContext } from "../context/GlobalContext";
 const VideoView = ({videoInfo,type,menu}) => {
 	// console.log(videoInfo)
 	const [creator, setCreator] = useState([])
 	const [isLoading, setIsLoading] = useState(false);
 	const [error,setError]=useState()
 	// thumbnail={item.thumbnail} id={item.id} 
+	const { setRefreshing, refereshing } = getContext();
 	useEffect(()=>{
 		const fetchCreator = async () => {
 			try {
@@ -35,7 +37,7 @@ const VideoView = ({videoInfo,type,menu}) => {
 		};
 
 		fetchCreator();
-	},[])
+	},[refereshing])
 	const [views, setViews] = useState(0);
 	// console.log(creator)
 	useEffect(() => {

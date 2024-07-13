@@ -28,10 +28,12 @@ import TrendingShorts from "../../components/TrendingShorts";
 import { fetchVideos } from "../../libs/firebase";
 import { addToHistory, getSubsriptions, incrementVideoViews } from "../../libs/videoUpdates";
 import { getContext } from "../../context/GlobalContext";
+import { get, ref } from "firebase/database";
+import { db } from "../../libs/config";
 
 const VideoPlayer = () => {
 	const { user, isIcognito } = getContext();
-	const video = useLocalSearchParams();
+	let video = useLocalSearchParams();
 	// console.log(video.video)
 	const [isDone, setIsDone] = useState(false);
 	const videoRef = useRef(null);
@@ -40,6 +42,18 @@ const VideoPlayer = () => {
 	const [subvideos, setSubvideos] = useState([]);
 	const [error, setError] = useState();
 	const [subscribed, setsubscribed]=useState(false)
+	const [creator, setcreator] = useState();
+	useEffect(() => {
+		async function getCre() {
+			const crRef = ref(db, `usersref/${video.creator}`);
+			let temp = await get(crRef);
+			setcreator(temp.val());
+			// console.log(temp);
+		}
+		getCre();
+	}, []);
+	video={...video,...creator}
+	// console.log(video);
 	useEffect(() => {
 		const fetchData = async () => {
 			try {

@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
-import { StyleSheet, View, Text, SafeAreaView, Dimensions } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { StyleSheet, View, Text, SafeAreaView, Dimensions, Platform } from "react-native";
 
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import {
 	bgColor,
 	borderLight,
@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OptionsHeader from "../../components/channel/OptionsHeader";
 import { getContext } from "../../context/GlobalContext";
 import Offline from "../../components/Offline";
+import { authentication } from "../../libs/config";
 
 const { height: windowHeight } = Dimensions.get("window");
 
@@ -32,7 +33,8 @@ const isItemVisible = (itemLayout, scrollY) => {
 
 export default function MyPager() {
 	const userInfo = useLocalSearchParams();
-	// console.log(userInfo.uid)
+	// console.log(userInfo)
+	const {user,setUser}=getContext()
 	const {isConnected} = getContext();
 	const scrollViewRef = useRef(null);
 	const [flatListAtEnd, setFlatListAtEnd] = useState(false);
@@ -40,6 +42,21 @@ export default function MyPager() {
 
 	const [specialItemLayout, setSpecialItemLayout] = useState(null);
 	const [scrollY, setScrollY] = useState(0);
+	const [isFocused, setIsFocused] = useState(false);
+	useFocusEffect(
+		useCallback(() => {
+			// console.log(authentication.currentUser);c
+
+			setIsFocused(true);
+			return () => {
+				// setUser(authentication.currentUser);
+				setIsFocused(false);
+			};
+		}, [])
+	);
+	useEffect(() => {
+		setUser(authentication.currentUser);
+	}, [isFocused]);
 
 	const handleSpecialItemLayout = (event) => {
 		setSpecialItemLayout(event.nativeEvent.layout);
@@ -83,7 +100,7 @@ export default function MyPager() {
 		return (
 			<SafeAreaView style={{ backgroundColor: bgColor }}>
 				{!isItemVisible(specialItemLayout, scrollY) && (
-					<View style={{ position: "absolute", top: insets.top, zIndex: 1 }}>
+					<View style={{ position: "absolute", top:Platform.OS==="ios" &&insets.top, zIndex: 1 }}>
 						<OptionsHeader userInfo={userInfo} />
 						<HorizontalHeaderScrollView
 							activePage={activePage}
@@ -99,7 +116,7 @@ export default function MyPager() {
 					scrollEventThrottle={16}
 				>
 					<MyCarousel
-						data={userInfo}
+						data={user.uid===userInfo.uid?user:userInfo}
 						onScroll={handleFlatListScroll}
 						scrollEnabled={!flatListAtEnd}
 						onLayout={handleSpecialItemLayout}

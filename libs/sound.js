@@ -1,5 +1,5 @@
 import { Audio } from "expo-av";
-
+import * as ImagePicker from "expo-image-picker";
 export const configureAudio = async () => {
 	try {
 		await Audio.setAudioModeAsync({
@@ -22,4 +22,17 @@ export function shuffleArray(array) {
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 	return array;
+}
+
+ export  async function OpenImageView(){
+	const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+
+			aspect: [4, 3],
+			quality: 1,
+		});
+		if (!result.canceled) {
+			// console.log(result.assets[0]);
+			return result.assets[0].uri;
+		}
 }
