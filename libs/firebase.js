@@ -258,6 +258,9 @@ export async function changeUserDetails(type, value) {
 	if(type==="desc"){
 		update(userRef, { descripition: value });
 	}
+	if (type === "cover") {
+		await update(userRef, { coverPhoto: value });
+	}
 	// console.log(cUser)
 }
 // console.log(authentication.currentUser);

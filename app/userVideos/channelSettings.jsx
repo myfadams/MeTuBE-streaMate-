@@ -5,7 +5,7 @@ import {
 	TouchableOpacity,
 	Image,
 	Platform,
-    Switch,
+	Switch,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
@@ -17,7 +17,12 @@ import {
 	options,
 	search,
 } from "../../constants/icons";
-import { bgColor, borderLight, buttonColor, videoColor } from "../../constants/colors";
+import {
+	bgColor,
+	borderLight,
+	buttonColor,
+	videoColor,
+} from "../../constants/colors";
 import { getContext } from "../../context/GlobalContext";
 import { OpenImageView } from "../../libs/sound";
 import { uploadProfileAndCover } from "../../libs/uploadFirebase";
@@ -29,16 +34,14 @@ import { changeUserDetails } from "../../libs/firebase";
 import Toast from "react-native-root-toast";
 
 const channelSettings = () => {
-    const [isEnabled, setIsEnabled] = useState(false)
-     const [isModalVisible, setIsModalVisible] = useState(false);
-     const [type, setType] = useState(false)
+	const [isEnabled, setIsEnabled] = useState(false);
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [type, setType] = useState(false);
 
-    function handleSwitch(){
-        setIsEnabled(!isEnabled)
-        
-
-    }
-	const ChannelEditButtons = ({ sourceUrl, title, handlePress, subtitle, }) => {
+	function handleSwitch() {
+		setIsEnabled(!isEnabled);
+	}
+	const ChannelEditButtons = ({ sourceUrl, title, handlePress, subtitle }) => {
 		return (
 			<TouchableOpacity
 				onPress={handlePress}
@@ -48,7 +51,7 @@ const channelSettings = () => {
 					flexDirection: "row",
 					justifyContent: "space-evenly",
 					borderColor: borderLight,
-					borderBottomWidth: 0.7 
+					borderBottomWidth: 0.7,
 				}}
 			>
 				<View
@@ -57,8 +60,7 @@ const channelSettings = () => {
 						gap: 10,
 						margin: "3%",
 						alignItems: "center",
-                        width:"80%"
-                        
+						width: "80%",
 					}}
 				>
 					<View style={{ gap: 7 }}>
@@ -78,7 +80,7 @@ const channelSettings = () => {
 								color: "#C5C5C5",
 								fontFamily: "Montserrat_500Medium",
 								fontSize: 13,
-                                // width:
+								// width:
 							}}
 						>
 							{subtitle}
@@ -94,9 +96,13 @@ const channelSettings = () => {
 			</TouchableOpacity>
 		);
 	};
-	const { user, refereshing, setRefreshing,setUser } = getContext();
+	const { user, refereshing, setRefreshing, setUser } = getContext();
 	const [profileImg, setProfileImg] = useState();
-    const [userDetails, setUserDetails] = useState({name:"",handle:"",descr:""});
+	const [userDetails, setUserDetails] = useState({
+		name: "",
+		handle: "",
+		descr: "",
+	});
 	const [cover, setCover] = useState();
 	const [userData, setUserData] = useState(null);
 
@@ -113,32 +119,47 @@ const channelSettings = () => {
 			return () => unsubscribe();
 		}
 	}, [refereshing]);
-    useEffect(()=>{
-        setUserDetails({...userDetails,name:userData?.name})
-    },[refereshing])
+	useEffect(() => {
+		setUserDetails({ ...userDetails, name: userData?.name });
+	}, [refereshing]);
 	// console.log("new name"+user.);
 	async function handleChangeProfile() {
-		let toast = Toast.show("Updating Profile photp", {
-			duration: Toast.durations.LONG,
-		});
 		const data = await OpenImageView();
-		const profUrl = await uploadProfileAndCover(data, user.uid, "profile");
-		changeUserDetails("photoURL", profUrl);
-		setProfileImg(profUrl);
-		toast = Toast.show("Profile updated successfuly", {
-			duration: Toast.durations.LONG,
-		});
-        setRefreshing(!refereshing)
-		setTimeout(function hideToast() {
-			Toast.hide(toast);
-		}, 3000);
+		if (data) {
+			let toast = Toast.show("Updating Profile photo", {
+				duration: Toast.durations.LONG,
+			});
+			const profUrl = await uploadProfileAndCover(data, user.uid, "profile");
+			changeUserDetails("photoURL", profUrl);
+			setProfileImg(profUrl);
+			toast = Toast.show("Profile updated successfuly", {
+				duration: Toast.durations.LONG,
+			});
+			setRefreshing(!refereshing);
+			setTimeout(function hideToast() {
+				Toast.hide(toast);
+			}, 3000);
+		}
 		// console.log(data.replace(/^.*?\./,   "cover."));
 	}
 	async function handleChangeCover() {
 		const data = await OpenImageView();
-		const profUrl = await uploadProfileAndCover(data, user.uid, "cover");
-		setCover(profUrl);
-        setRefreshing(!refereshing);
+		if(data){
+			let toast = Toast.show("Updating Cover photo", {
+				duration: Toast.durations.LONG,
+			});
+			const coverPhotoUrl = await uploadProfileAndCover(data, user.uid, "cover");
+			changeUserDetails("cover", coverPhotoUrl);
+			setCover(coverPhotoUrl);
+			setRefreshing(!refereshing);
+			toast = Toast.show("Cover photo updated successfuly", {
+				duration: Toast.durations.LONG,
+			});
+			setRefreshing(!refereshing);
+			setTimeout(function hideToast() {
+				Toast.hide(toast);
+			}, 3000);
+		}
 	}
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor }}>
@@ -220,6 +241,7 @@ const channelSettings = () => {
 					<View>
 						<TouchableOpacity onPress={handleChangeCover}>
 							<Image
+								source={{uri:userData?.coverPhoto}}
 								style={{
 									backgroundColor: videoColor,
 									width: "100%",
@@ -259,7 +281,7 @@ const channelSettings = () => {
 							onPress={handleChangeProfile}
 						>
 							<Image
-								source={{ uri: (userData?.image) }}
+								source={{ uri: userData?.image }}
 								style={{
 									margin: 3,
 									backgroundColor: "white",
@@ -288,7 +310,7 @@ const channelSettings = () => {
 						handlePress={() => {
 							setIsModalVisible(!isModalVisible);
 							setType("name");
-                            setUserDetails({...userDetails,name:userData?.name})
+							setUserDetails({ ...userDetails, name: userData?.name });
 						}}
 					/>
 					<ChannelEditButtons
@@ -387,8 +409,8 @@ const channelSettings = () => {
 				modalVisible={isModalVisible}
 				setModalVisible={setIsModalVisible}
 				type={type}
-                setVal={setUserDetails}
-                val={userDetails}
+				setVal={setUserDetails}
+				val={userDetails}
 				setRef={setRefreshing}
 				refe={refereshing}
 			/>

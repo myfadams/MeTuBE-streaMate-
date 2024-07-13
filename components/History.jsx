@@ -22,7 +22,7 @@ const History = ({data, type}) => {
 			
 			const crRef = ref(db, `usersref/${temp.val().creator}`);
 			let creator = await get(crRef);
-			setHis({...temp.val(),...creator.val()})
+			setHis({...temp.val(),...creator.val(),uid:temp.val().creator})
 			// console.log(creator)
 		}
 		getHis()

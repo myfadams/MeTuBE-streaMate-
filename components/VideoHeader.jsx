@@ -137,7 +137,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 					onPress={()=>{
 						router.push({
 							pathname: "userVideos/aboutVids",
-							params: { uid: vidinfo.id, photoURL:vidinfo.image,displayName:vidinfo.name},
+							params: { uid: (vidinfo.id??vidinfo.creator), photoURL:vidinfo.image,displayName:vidinfo.name},
 						});
 					}}
 					style={{

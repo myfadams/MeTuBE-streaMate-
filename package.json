@@ -17,23 +17,23 @@
     "@react-native-firebase/app": "^20.1.0",
     "@react-native-firebase/auth": "^20.1.0",
     "@react-native-firebase/crashlytics": "^20.1.0",
-    "expo": "~51.0.17",
+    "expo": "~51.0.20",
     "expo-av": "~14.0.6",
     "expo-constants": "~16.0.2",
     "expo-firebase": "^0.0.0-alpha.0",
-    "expo-font": "~12.0.7",
+    "expo-font": "~12.0.8",
     "expo-image-picker": "~15.0.7",
     "expo-linking": "~6.3.1",
     "expo-media-library": "~16.0.4",
     "expo-permissions": "^14.4.0",
-    "expo-router": "~3.5.17",
+    "expo-router": "~3.5.18",
     "expo-status-bar": "~1.12.1",
     "expo-video-thumbnails": "~8.0.0",
-    "firebase": "^10.12.2",
+    "firebase": "^10.12.3",
     "radio-buttons-react-native": "^1.0.4",
     "react": "18.2.0",
     "react-animatable": "^0.15.2",
-    "react-native": "0.74.2",
+    "react-native": "0.74.3",
     "react-native-animatable": "^1.4.0",
     "react-native-animated-loader": "^1.0.0",
     "react-native-appwrite": "^0.4.0",
@@ -55,7 +55,7 @@
     "@react-native-community/netinfo": "11.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.24.8"
   },
   "private": true
 }

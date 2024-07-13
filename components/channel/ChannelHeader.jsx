@@ -22,9 +22,23 @@ import OptionsHeader from './OptionsHeader';
 import { getContext } from '../../context/GlobalContext';
 import { getSubsriptions, subscribeToChannel } from '../../libs/videoUpdates';
 import OtherViewButtons from '../OtherViewButtons';
+import { get, ref } from 'firebase/database';
+import { db } from '../../libs/config';
+import { defaultCover } from '../../constants/images';
 const ChannelHeader = ({userInfo,act}) => {
+	const { user, refereshing } = getContext();
+	const [cover,setCover]=useState()
 	// console.log(userInfo)
-	const {user} = getContext();
+	useEffect(() => {
+		async function getCover() {
+			const coverPhoto = ref(db, "usersref/" + userInfo?.uid);
+			const res = await get(coverPhoto);
+			setCover(res.val().coverPhoto);
+		}
+		getCover();
+	}, [refereshing]);
+	// console.log(cover)
+	
 	const [subscribed, setsubscribed] = useState(false);
 	function handleSubscribe() {
 		subscribeToChannel(userInfo?.uid, user?.uid);
@@ -68,10 +82,11 @@ const ChannelHeader = ({userInfo,act}) => {
 			<OptionsHeader userInfo={userInfo} />
 			<View style={{ alignItems: "center" }}>
 				<Image
+					source={cover ? { uri: cover } : defaultCover}
 					style={{
 						backgroundColor: videoColor,
 						width: "94%",
-						height: 100,
+						height: 120,
 						borderRadius: 10,
 					}}
 				/>

@@ -15,6 +15,7 @@ import ChannelHeader from "./channel/ChannelHeader";
 import HorizontalHeaderScrollView from "./channel/HorizontalHeader";
 
 const MyCarousel = ({ data, onScroll, scrollEnabled, onLayout, isVisible,act }) => {
+	// console.log(data)
 	const [videos, setVideos] = useState([]);
 	const [shorts, setShorts] = useState([]);
 	const [live, setLive] = useState([]);

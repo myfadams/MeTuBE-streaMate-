@@ -116,7 +116,8 @@ export default function MyPager() {
 					scrollEventThrottle={16}
 				>
 					<MyCarousel
-						data={user.uid===userInfo.uid?user:userInfo}
+						// user.uid===userInfo.uid?user:userInfo
+						data={userInfo}
 						onScroll={handleFlatListScroll}
 						scrollEnabled={!flatListAtEnd}
 						onLayout={handleSpecialItemLayout}
