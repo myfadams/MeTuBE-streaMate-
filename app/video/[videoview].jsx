@@ -7,13 +7,7 @@ import {
 	ActivityIndicator,
 	Dimensions,
 } from "react-native";
-import React, {
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor, loadingColor } from "../../constants/colors";
@@ -26,71 +20,75 @@ import VideoView from "../../components/VideoView";
 import AboutVideo from "../../components/AboutVideo";
 import TrendingShorts from "../../components/TrendingShorts";
 import { fetchVideos } from "../../libs/firebase";
-import { addToHistory, getSubsriptions, incrementVideoViews } from "../../libs/videoUpdates";
+import { addToHistory, incrementVideoViews } from "../../libs/videoUpdates";
 import { getContext } from "../../context/GlobalContext";
 import { get, ref } from "firebase/database";
 import { db } from "../../libs/config";
+import Offline from "../../components/Offline";
+import { shuffleArray } from "../../libs/sound";
 
 const VideoPlayer = () => {
-	const { user, isIcognito } = getContext();
+	const { user, isIcognito, isConnected } = getContext();
 	let video = useLocalSearchParams();
-	// console.log(video.video)
+	const [vidLoad, setVidLoad] = useState(false);
 	const [isDone, setIsDone] = useState(false);
-	const videoRef = useRef(null);
 	const [hasStarted, setHasStarted] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
 	const [subvideos, setSubvideos] = useState([]);
 	const [error, setError] = useState();
-	const [subscribed, setsubscribed]=useState(false)
+	const [subscribed, setsubscribed] = useState(false);
 	const [creator, setcreator] = useState();
+	const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+	const [isAboutVisible, setIsAboutVisible] = useState(false);
+	const [videoPlaying, setVideoPlaying] = useState(false); // Track if video is playing
+	const videoRef = useRef(null);
+	// console.log(video)
 	useEffect(() => {
 		async function getCre() {
 			const crRef = ref(db, `usersref/${video.creator}`);
 			let temp = await get(crRef);
 			setcreator(temp.val());
-			// console.log(temp);
 		}
 		getCre();
 	}, []);
-	video={...video,...creator}
-	// console.log(video);
+
+	video = { ...video, ...creator };
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const videoData = await fetchVideos();
-				// console.log(videoData)
-				setSubvideos([...videoData]);
+				setSubvideos([...shuffleArray(videoData)]);
 			} catch (err) {
 				setError(err);
 			}
 		};
 
 		fetchData();
-		
 	}, []);
-	// console.log(subvideos)
+
 	useFocusEffect(
 		useCallback(() => {
 			setIsFocused(true);
-			
+
 			return () => {
 				setIsFocused(false);
 			};
 		}, [])
 	);
-	console.log(subscribed);
-	const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+
 	const handleCloseBottomSheet = () => {
 		setIsBottomSheetVisible(false);
 	};
+
 	const handleToggleBottomSheet = () => {
 		setIsBottomSheetVisible(!isBottomSheetVisible);
 	};
 
-	const [isAboutVisible, setIsAboutVisible] = useState(false);
 	const handleCloseAbout = () => {
 		setIsAboutVisible(false);
 	};
+
 	const handleToggleAbout = () => {
 		setIsAboutVisible(!isBottomSheetVisible);
 	};
@@ -102,7 +100,17 @@ const VideoPlayer = () => {
 		}
 		setIsDone(false);
 	};
-	// console.log(videoID)
+
+	useEffect(() => {
+		// Update videoPlaying based on network status
+		if (isConnected) {
+			setVideoPlaying(videoRef.current?.status?.isPlaying || false);
+		}
+	}, [isConnected]);
+
+	if (!isConnected && !videoPlaying) {
+		return <Offline type={"video"} />;
+	}
 
 	return (
 		<SafeAreaView
@@ -124,18 +132,13 @@ const VideoPlayer = () => {
 					onPlaybackStatusUpdate={(vid) => {
 						if (vid.isLoaded) {
 							setHasStarted(true);
+							setVideoPlaying(true); // Mark video as playing
 						}
-						if (video.isBuffering) setHasStarted(false);
-						else setHasStarted(true);
-
 						if (vid.didJustFinish) setIsDone(true);
-						// if(vid.is)
 					}}
 					isMuted={false}
 					style={{ width: "100%", height: 250, backgroundColor: "#1A1818" }}
-					source={{
-						uri: video.video.replace("videos/", "videos%2F"),
-					}}
+					source={{ uri: video.video.replace("videos/", "videos%2F") }}
 				/>
 				{isDone && (
 					<TouchableOpacity
@@ -154,27 +157,19 @@ const VideoPlayer = () => {
 				)}
 			</View>
 			<FlatList
-				data={subvideos.filter((vid) => {
-					// console.log(vid)
-					return vid.id !== video.videoview;
-				})}
-				// removeClippedSubviews
+				data={subvideos
+					.filter((vid) => vid.id !== video?.videoview)
+					.slice(0, 10)}
 				key={(item) => item.id}
 				initialNumToRender={3}
 				decelerationRate={0.94}
 				ListHeaderComponent={
 					<VidHeader
-						comment={() => {
-							handleToggleBottomSheet();
-						}}
-						about={() => {
-							handleToggleAbout();
-						}}
+						comment={() => handleToggleBottomSheet()}
+						about={() => handleToggleAbout()}
 						vidinfo={video}
 						substatus={subscribed}
 					/>
-					// testData.length > 0 && (
-					// )
 				}
 				renderItem={({ item, index }) => {
 					if (index === 1)
@@ -189,10 +184,11 @@ const VideoPlayer = () => {
 				showsVerticalScrollIndicator={false}
 				ListEmptyComponent={<VidScreenLoad />}
 			/>
-			{/* <View></View> */}
 			<BottomSheetComponent
 				isVisible={isBottomSheetVisible}
 				onClose={handleCloseBottomSheet}
+				videoID={video?.videoview}
+				creatorID={video?.creator}
 			/>
 			<AboutVideo
 				isVisible={isAboutVisible}
@@ -202,4 +198,5 @@ const VideoPlayer = () => {
 		</SafeAreaView>
 	);
 };
+
 export default VideoPlayer;

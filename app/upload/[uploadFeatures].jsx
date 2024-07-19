@@ -1,7 +1,7 @@
 import {
 	View,
 	Text,
-	SafeAreaView,
+	// SafeAreaView,
 	TouchableOpacity,
 	Image,
 	TextInput,
@@ -17,6 +17,7 @@ import { getContext } from "../../context/GlobalContext";
 import RadioButtonRN from "radio-buttons-react-native";
 import MoreButton from "../../components/MoreButton";
 import { addVideoToDB, uploadFiles } from "../../libs/uploadFirebase";
+import { SafeAreaView } from "react-native-safe-area-context";
 const UploadFeatures = () => {
 	const { uploadFeatures: type } = useLocalSearchParams();
 	const { user} = getContext();
@@ -29,7 +30,7 @@ const UploadFeatures = () => {
 	}
 	
 	// console.log(videoInfo)
-	const uploadMetubeVideo = async () => {
+	const uploadStreaMateVideo = async () => {
 		try {
 				router.push("home");
 				const videoUrl = await uploadFiles(
@@ -42,7 +43,7 @@ const UploadFeatures = () => {
 					videoInfo.thumbnailUrl,
 					videoInfo.title.replaceAll(" ","")
 				);
-				await addVideoToDB(videoInfo, thumbnailUrl, videoUrl, user?.uid);
+				await addVideoToDB(videoInfo, thumbnailUrl, videoUrl, user?.uid, videoInfo.duration);
 				// Alert.alert("Video Uploaded");
 				
 				let toast = Toast.show("video uploaded", {
@@ -117,7 +118,7 @@ const UploadFeatures = () => {
 					</View>
 				</View>
 				{type === "description" && (
-					<View style={{ width: "96%" }}>
+					<View style={{ width: "96%",height:"100%" }}>
 						<TextInput
 							multiline={true}
 							ref={inputRef}
@@ -186,10 +187,10 @@ const UploadFeatures = () => {
 								selectedBtn={(e) => {
 									if (e.type === "yes") {
 										setHeading("This video is set to made for kids");
-                                        setIsDisabled(true)
+										setIsDisabled(true);
 									} else {
 										setHeading("This video is set not to made for kids");
-                                        setIsDisabled(false)
+										setIsDisabled(false);
 									}
 								}}
 								box={false}
@@ -295,7 +296,13 @@ const UploadFeatures = () => {
 										monetization.
 									</Text>
 								</View>
-								<View style={{ marginTop: 20, marginBottom: 25, opacity:isDisabled?0.5:1 }}>
+								<View
+									style={{
+										marginTop: 20,
+										marginBottom: 25,
+										opacity: isDisabled ? 0.5 : 1,
+									}}
+								>
 									<RadioButtonRN
 										data={[
 											{
@@ -329,11 +336,24 @@ const UploadFeatures = () => {
 					</ScrollView>
 				)}
 			</View>
-			
-				<View style={{ alignSelf: "baseline", width: "100%", position:"absolute",bottom:"3%"}}>
-					<MoreButton title={"Upload video"} height={45} color={buttonColor} handlePress={uploadMetubeVideo}/>
+
+			{type === "audience" && (
+				<View
+					style={{
+						alignSelf: "baseline",
+						width: "100%",
+						position: "absolute",
+						bottom: "3%",
+					}}
+				>
+					<MoreButton
+						title={"Upload video"}
+						height={45}
+						color={buttonColor}
+						handlePress={uploadStreaMateVideo}
+					/>
 				</View>
-			
+			)}
 		</SafeAreaView>
 	);
 };

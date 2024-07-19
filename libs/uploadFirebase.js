@@ -32,7 +32,7 @@ export async function uploadFiles(type, fileUri,title) {
     }
 	return downloadURL;
 }
-export const addShortToDB = async (file, thumnailUrl, videoUrl, userId) => {
+export const addShortToDB = async (file, thumnailUrl, videoUrl, userId,duration) => {
 	const d = new Date();
 
 	await set(ShortsRef(uuidv4()), {
@@ -40,12 +40,13 @@ export const addShortToDB = async (file, thumnailUrl, videoUrl, userId) => {
 		thumbnail: thumnailUrl,
 		video: (""+videoUrl),
 		creator: userId,
+		duration:duration,
 		views: 0,
 		likes: 0,
 	});
 };
 
-export const addVideoToDB = async (file, thumnailUrl, videoUrl, userId) => {
+export const addVideoToDB = async (file, thumnailUrl, videoUrl, userId,duration) => {
 	// const d = new Date();
 
 	await set(VideosRef(uuidv4()), {
@@ -54,6 +55,7 @@ export const addVideoToDB = async (file, thumnailUrl, videoUrl, userId) => {
 		video:(""+ videoUrl),
 		creator: userId,
 		description: file.description,
+		duration:duration,
 		views: 0,
 		likes: 0,
 	});

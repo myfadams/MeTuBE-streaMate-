@@ -14,6 +14,7 @@ const GlobalContext = ({ children }) => {
 	const [usrInfo, setUsrInfo] = useState("");
 	const [refereshing, setRefreshing] = useState(false);
 	const [vidDescription, setVidDescription] = useState(null);
+	const [chDescription, setChDescription] = useState(null);
 	const [isIcognito, setIsIncognito] = useState(false);
 	const [isConnected, setIsConnected] = useState(true);
 
@@ -43,10 +44,11 @@ const GlobalContext = ({ children }) => {
 		}
 		return () => unsubscribe();
 	}, []);
-	// console.log("connnection: "+isConnected)
+	// console.log(user)
 	return (
 		<MyContext.Provider
 			value={{
+				chDescription, setChDescription,
 				isConnected,
 				isIcognito,
 				setIsIncognito,

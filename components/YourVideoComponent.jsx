@@ -1,5 +1,5 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
+import React, { memo, useEffect, useState } from "react";
 import {
 	commentOutline,
 	dot,
@@ -9,36 +9,68 @@ import {
 	shortLogo,
 } from "../constants/icons";
 import { borderLight, loadingColor } from "../constants/colors";
-import { formatSubs, formatViews } from "../libs/videoUpdates";
+import {
+	calculateTimePassed,
+	formatSubs,
+	formatViews,
+	getUploadTimestamp,
+} from "../libs/videoUpdates";
 import { router } from "expo-router";
 import { getCreatorInfo } from "../libs/firebase";
+import { getContext } from "../context/GlobalContext";
 
-const YourVideoComponent = ({ video,type }) => {
-	// console.log(video.views)
+const YourVideoComponent = ({ video, type }) => {
+	// console.log(video)
 	const [creator, setCreator] = useState([]);
-
+	const [timePassed, setTimePassed] = useState();
+	const { isConnected } = getContext();
 	useEffect(() => {
 		const fetchCreator = async () => {
 			try {
 				const users = await getCreatorInfo(video?.creator);
 				setCreator([...users]);
 			} catch (err) {
-				console.log(err)
+				console.log(err);
 			}
 		};
 
 		fetchCreator();
+		if (isConnected)
+			if (!video?.caption)
+				getUploadTimestamp(video?.thumbnail, "videoUploads").then((data) => {
+					let time = calculateTimePassed(data);
+					setTimePassed(time);
+				});
+			else {
+				getUploadTimestamp(video?.thumbnail, "shortsUploads").then((data) => {
+					let time = calculateTimePassed(data);
+					setTimePassed(time);
+				});
+			}
 	}, []);
 	return (
 		<TouchableOpacity
 			onPress={() => {
+				// console.log("me now :"+video.description);
 				if (!video?.caption)
 					router.push({
 						pathname: "video/" + video?.id,
-						params: { ...video, ...creator[0] },
+						params: {
+							...video,
+							...creator[0],
+							timePassed: timePassed,
+							videoDescription: video.description,
+						},
 					});
 				else {
-					router.push({ pathname: "shorts/" + video.id, params: video });
+					router.push({
+						pathname: "shorts/" + video.id,
+						params: {
+							...video,
+							timePassed: timePassed,
+							
+						},
+					});
 				}
 			}}
 			activeOpacity={0.6}
@@ -71,19 +103,21 @@ const YourVideoComponent = ({ video,type }) => {
 						/>
 					)}
 				</View>
-				<View style={{ gap:type?9: 4 }}>
+				<View style={{ gap: type ? 9 : 4 }}>
 					<Text
-						numberOfLines={2}
+						numberOfLines={1}
 						style={{
 							color: "white",
 							fontSize: 13,
 							fontFamily: "Montserrat_500Medium",
-							width: type?"90%":"45%",
-							flexWrap: "wrap",
+							width: 0.44*Dimensions.get("window").width,
+							// flexWrap: "wrap",
+							flexShrink: 1,
 							flexDirection: "row",
 						}}
 					>
 						{video?.title ?? video?.caption}
+						{/* fkafnkjdsa jdsafnjd fda fdiufndajifn fasdjfndsa */}
 					</Text>
 					<Text
 						numberOfLines={1}
@@ -111,7 +145,7 @@ const YourVideoComponent = ({ video,type }) => {
 								resizeMode="contain"
 							/>
 						</View>{" "}
-						3 months ago
+						{timePassed} ago
 					</Text>
 					<View style={{ flexDirection: "row", gap: 15 }}>
 						<Image
@@ -173,4 +207,4 @@ const YourVideoComponent = ({ video,type }) => {
 	);
 };
 
-export default YourVideoComponent;
+export default memo(YourVideoComponent);

@@ -1,0 +1,20 @@
+{
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal"
+		},
+		"preview": {
+			"distribution": "internal"
+		},
+		"production": {
+			"distribution": "store"
+		},
+		"internal": {
+			"ios": {
+				"simulator": false,
+				"distribution": "internal"
+			}
+		}
+	}
+}

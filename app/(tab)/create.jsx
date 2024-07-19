@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
 	Button,
 	Text,
-	SafeAreaView,
+	// SafeAreaView,
 	ScrollView,
 	StyleSheet,
 	Image,
@@ -19,6 +19,7 @@ import { formatTime } from "../../constants/videoTime";
 import { router, useFocusEffect } from "expo-router";
 import UploadVideoComponent from "../../components/UploadViewComponent";
 import { getContext } from "../../context/GlobalContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function App() {
 	const [doneLoading, setDoneLoading] = useState(false);
 	const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();

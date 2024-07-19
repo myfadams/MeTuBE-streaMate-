@@ -41,16 +41,16 @@ import yourVideos from "../assets/icons/yourVideos.png";
 import switchAccount from "../assets/icons/switch.png";
 import incoginito from "../assets/icons/incognito.png";
 import addImage from "../assets/icons/imageAdd.png";
-import allowComment from "../assets/icons/comments.png"
-import globe from "../assets/icons/globe.png"
-import location from "../assets/icons/location.png"
-import playlist from "../assets/icons/playlist.png"
-import description from "../assets/icons/description.png"
+import allowComment from "../assets/icons/comments.png";
+import globe from "../assets/icons/globe.png";
+import location from "../assets/icons/location.png";
+import playlist from "../assets/icons/playlist.png";
+import description from "../assets/icons/description.png";
 import playAdd from "../assets/icons/playAdd.png";
 import edit from "../assets/icons/edit.png";
 import audience from "../assets/icons/audience.png";
 import sponsor from "../assets/icons/costs.png";
-import metube from "../assets/icons/metube.png";
+import streamate from "../assets/icons/metube.png";
 import compass from "../assets/icons/compass.png";
 import dot from "../assets/icons/dot.png";
 import signout from "../assets/icons/signout.png";
@@ -60,11 +60,29 @@ import clock from "../assets/icons/clock.png";
 import forbidden from "../assets/icons/forbidden.png";
 import dontRecommend from "../assets/icons/dontRecommend.png";
 import commentOutline from "../assets/icons/commentOutline.png";
-import camera from "../assets/icons/camera.png"
+import camera from "../assets/icons/camera.png";
 import copy from "../assets/icons/copy.png";
+import nextPage from "../assets/icons/foward.png";
 import info from "../assets/icons/information.png";
+import searchIcon from "../assets/icons/searchIcons.png";
+import microphone from "../assets/icons/microphone.png";
+import email from "../assets/icons/email.png";
+import key from "../assets/icons/key.png";
+import username from "../assets/icons/username.png";
+import timeMachine from "../assets/icons/timeMachine.png";
+import arrow from "../assets/icons/arrow.png";
+import remix from "../assets/icons/recycle.png";
 
 export {
+	remix,
+	nextPage,
+	timeMachine,
+	arrow,
+	microphone,
+	email,
+	key,
+	username,
+	searchIcon,
 	info,
 	copy,
 	camera,
@@ -73,14 +91,14 @@ export {
 	forbidden,
 	clock,
 	signout,
-accountSetting,
-addAccount,
+	accountSetting,
+	addAccount,
 	dot,
 	edit,
-	metube,
+	streamate,
 	compass,
-audience,
-sponsor,
+	audience,
+	sponsor,
 	apple,
 	playAdd,
 	google,
@@ -126,8 +144,8 @@ sponsor,
 	switchAccount,
 	incoginito,
 	allowComment,
-globe,
-location,
-playlist,
-description,
+	globe,
+	location,
+	playlist,
+	description,
 };

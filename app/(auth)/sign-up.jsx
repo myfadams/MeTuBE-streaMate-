@@ -15,7 +15,7 @@ import { bgColor, borderPrimary, buttonColor, otherColor } from "../../constants
 import { logo } from "../../constants/images";
 
 import Button from "../../components/Button";
-import { apple, google } from "../../constants/icons";
+import { apple, email, google, key, username } from "../../constants/icons";
 import { Link, router } from "expo-router";
 import { createAccount, emailVerification } from "../../libs/firebase";
 import { getContext } from "../../context/GlobalContext";
@@ -39,7 +39,10 @@ const SignUp = () => {
 			setName(form.name)
 
 			Alert.alert("sent an email verifcation to "+form.email,"",[{
-				text:"continue", onPress:()=>{router.replace("verification")}
+				text:"continue", onPress:()=>{
+					router.dismissAll();
+					router.replace("verification");
+				}
 			}])
 		} catch (error) {
 			console.log(error.code);
@@ -58,13 +61,15 @@ const SignUp = () => {
 						{
 							text: "continue",
 							onPress: () => {
+								router.dismissAll();
 								router.replace("verification");
+		
 							},
 						},
 					]);
 				}
 			} else {
-				let errorMessage = error.message.replace("Firebase","MeTuBE")
+				let errorMessage = error.message.replace("Firebase","StreaMate")
 				if(error.code==="auth/invalid-email")
 					errorMessage=errorMessage.replace("("+error.code+")","The Email Entered is Invalid")
 				else if(error.code==="auth/network-request-failed")
@@ -95,15 +100,15 @@ const SignUp = () => {
 					}}
 				>
 					<Image source={logo} style={styles.image} resizeMode="contain" />
-					<Text
+					{/* <Text
 						style={{
 							color: "#fff",
 							fontFamily: "Montserrat_900Black",
 							fontSize: 40,
 						}}
 					>
-						MeTuBE
-					</Text>
+						StreaMate
+					</Text> */}
 				</View>
 				<View
 					style={{
@@ -131,7 +136,8 @@ const SignUp = () => {
 					handleChange={(e) => {
 						setForm({ ...form, name: e });
 					}}
-					value={form.password}
+					value={form.name}
+					icon={username}
 				/>
 				<View style={{ marginTop: 20 }} />
 
@@ -141,7 +147,8 @@ const SignUp = () => {
 					handleChange={(e) => {
 						setForm({ ...form, email: e });
 					}}
-					value={form.password}
+					value={form.email}
+					icon={email}
 				/>
 				<View style={{ marginTop: 20 }} />
 				<InputFields
@@ -151,6 +158,7 @@ const SignUp = () => {
 						setForm({ ...form, password: e });
 					}}
 					value={form.password}
+					icon={key}
 				/>
 				<View style={{ marginTop: 30 }} />
 				{/* <Button title="Sign Up" handlePress={signUp} isLoading={isLoading} /> */}
@@ -201,7 +209,7 @@ const SignUp = () => {
 					<Text
 						style={{
 							color: "#fff",
-							fontSize: "16%",
+							fontSize: Platform.OS === "ios" ? "16%" : 16,
 							marginBottom: 5,
 							fontFamily: "Montserrat_500Medium",
 						}}
@@ -212,7 +220,7 @@ const SignUp = () => {
 						href="sign-in"
 						style={{
 							color: otherColor,
-							fontSize: "16%",
+							fontSize: Platform.OS === "ios" ? "16%" : 16,
 							marginBottom: 5,
 							fontFamily: "Montserrat_600SemiBold",
 						}}
@@ -236,8 +244,8 @@ const styles = StyleSheet.create({
 		backgroundColor: bgColor,
 	},
 	image: {
-		width: 90,
-		height: 66,
+		width: 250,
+		height: 120,
 	},
 	vewStyle: {
 		justifyContent: "center",

@@ -29,7 +29,7 @@ import {
 	edit,
 	globe,
 	location,
-	metube,
+	streamate,
 	playlist,
 	search,
 	shorts,
@@ -51,6 +51,7 @@ const UploadShortsView = () => {
 		title: "",
 		videoUrl: videoUpload.thumbnail,
 		thumbnailUrl: videoUpload.thumbnailURL,
+		duration:videoUpload.duration
 	});
 	async function openFilePicker(typeOfFile) {
 		const result = await ImagePicker.launchImageLibraryAsync({
@@ -66,7 +67,7 @@ const UploadShortsView = () => {
 			}
 		}
 	}
-	const uploadMetubeShorts = async () => {
+	const uploadStreaMateShorts = async () => {
 		try {
 			if (shortInfo.title !== "") {
 				router.push("home");
@@ -80,7 +81,7 @@ const UploadShortsView = () => {
 					shortInfo.thumbnailUrl,
 					shortInfo.title.replaceAll(" ","")
 				);
-				await addShortToDB(shortInfo, thumbnailUrl, videoUrl, user?.uid);
+				await addShortToDB(shortInfo, thumbnailUrl, videoUrl, user?.uid, videoUpload.duration);
 				let toast = Toast.show("Short uploaded", {
 					duration: Toast.durations.LONG,
 				});
@@ -184,7 +185,7 @@ const UploadShortsView = () => {
 								height: "50%",
 								color: "#fff",
 								fontSize: 17,
-								flexWrap:  "wrap",
+								flexWrap: "wrap",
 								justifyContent: "center",
 								alignItems: "center",
 							}}
@@ -236,7 +237,7 @@ const UploadShortsView = () => {
 								backgroundColor: "black",
 								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							}}
-							resizeMode="contain"
+							resizeMode="cover"
 						/>
 						<View>
 							<Text
@@ -296,7 +297,7 @@ const UploadShortsView = () => {
 						</Text>
 					</Text>
 				</View>
-				<UploadButtons sourceUrl={metube} title={"Related video"} />
+				<UploadButtons sourceUrl={streamate} title={"Related video"} />
 				<UploadButtons
 					sourceUrl={shorts}
 					title={"Allow video and audio remixing"}
@@ -312,7 +313,7 @@ const UploadShortsView = () => {
 				title={"Upload short"}
 				height={45}
 				color={buttonColor}
-				handlePress={uploadMetubeShorts}
+				handlePress={uploadStreaMateShorts}
 			/>
 		</SafeAreaView>
 	);

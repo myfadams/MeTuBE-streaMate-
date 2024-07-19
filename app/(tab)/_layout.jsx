@@ -1,29 +1,26 @@
 import { View, Text,Image, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Tabs } from 'expo-router';
+import { Tabs, useFocusEffect } from 'expo-router';
 import { add, home, shorts, subsription} from '../../constants/icons';
 import { bgColor, buttonColor, fieldColor } from '../../constants/colors';
 import { getContext } from '../../context/GlobalContext';
 import { getUSerProfile } from '../../libs/firebase';
 function TabIcon({ icon, color, name, focused }) {
-	const {user} = getContext();
+	const { user, refereshing } = getContext();
 	// console.log(user)
 	const [userInfo,setUserInfo]=useState(null)
 	// const [userImage, setUserImage] = useState("")
 	// console.log(user)
 
 	useEffect(() => {
-		async function daTa (){
-			if(user && user?.emailVerified){
+		async function daTa() {
+			if (user && user?.emailVerified) {
 				const getDAta = await getUSerProfile(user?.uid);
-				setUserInfo(getDAta)
-
+				setUserInfo(getDAta);
 			}
-			
 		}
-		daTa()
-		
-	}, []);
+		daTa();
+	}, [refereshing]);
 	
 	return (
 		<View
@@ -43,8 +40,9 @@ function TabIcon({ icon, color, name, focused }) {
 				/>
 			) : (
 				// userInfo?.image
+				// user?.photoURL
 				<Image
-					source={{ uri: user?.photoURL }}
+					source={{ uri: userInfo?.image }}
 					resizeMode="cover"
 					style={{
 						width: 26,

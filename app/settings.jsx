@@ -5,13 +5,14 @@ import {
 	Image,
 	TouchableOpacity,
 	ScrollView,
-	SafeAreaView,
+	// SafeAreaView,
 } from "react-native";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { bgColor, borderLight } from "../constants/colors";
 import { close } from "../constants/icons";
 import ForYouButtons from "../components/ForYouButtons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Modal() {
 	// If the page was reloaded or navigated to directly, then the modal should be presented as
@@ -26,7 +27,7 @@ export default function Modal() {
 		"Notification",
 		"Connected apps",
 		"Manage all history",
-		"Your data in MeTuBE",
+		"Your data in StreaMate",
 		"Privacy",
 		"Offline",
 		"Uploads",

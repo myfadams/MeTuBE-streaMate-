@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, ScrollView, Alert, SafeAreaView, Platform } from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { accountSetting, addAccount, close, signout } from "../constants/icons";
@@ -7,8 +7,10 @@ import { getContext } from "../context/GlobalContext";
 import MoreButton from "../components/MoreButton";
 import ForYouButtons from "../components/ForYouButtons";
 import { signOut } from "firebase/auth";
-import { authentication } from "../libs/config";
+import { authentication, db } from "../libs/config";
 import { formatSubs, getNumberSubs } from "../libs/videoUpdates";
+import { get, ref } from "firebase/database";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const AccountInfo = () => {
 	const { user } = getContext();
@@ -20,13 +22,27 @@ const AccountInfo = () => {
     signOut(authentication)
       .then(() => {
         Alert.alert('Signed Out', 'You have been signed out successfully.');
+		// while (router.canGoBack()) { router.back() }
+		router.dismissAll()
 		router.replace("sign-in")
+		
         // Perform any additional actions like navigating to the login screen
       })
       .catch((error) => {
         Alert.alert('Error', error.message);
       });
 	}
+	const [chInfo, setChInfo] = useState()
+	useEffect(() => {
+		async function getCover() {
+			const inforef = ref(db, "usersref/" + user?.uid);
+			const res = await get(inforef);
+			// console.log(res)
+			setChInfo(res.val());
+			
+		}
+		getCover();
+	}, []);
 	return (
 		<SafeAreaView
 			style={{
@@ -119,7 +135,7 @@ const AccountInfo = () => {
 					>
 						<Image
 							source={{ uri: user?.photoURL }}
-							resizeMode="contain"
+							resizeMode="cover"
 							style={{
 								width: 60,
 								height: 60,
@@ -151,7 +167,7 @@ const AccountInfo = () => {
 										fontFamily: "Montserrat_300Light",
 									}}
 								>
-									{/* {user.email} */}@channel_name
+									{chInfo?.handle ?? "No handle"}
 								</Text>
 								<Text
 									style={{
@@ -167,6 +183,9 @@ const AccountInfo = () => {
 							<TouchableOpacity
 								activeOpacity={0.7}
 								style={{ marginTop: 20, marginBottom: "20" }}
+								onPress={()=>{
+									router.replace("userVideos/channelSettings")
+								}}
 							>
 								<Text
 									style={{
@@ -280,7 +299,7 @@ const AccountInfo = () => {
 					<ForYouButtons sourceUrl={addAccount} title={"Add account"} />
 					<ForYouButtons
 						sourceUrl={signout}
-						title={"Use MeTuBE sign out"}
+						title={"Use StreaMate sign out"}
 						handlePress={handleSignOut}
 					/>
 					<ForYouButtons

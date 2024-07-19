@@ -12,6 +12,8 @@ import VideoView from '../../components/VideoView';
 import TrendingShorts from '../../components/TrendingShorts';
 import { shuffleArray } from '../../libs/sound';
 import Menu from '../../components/Menu';
+import { getUploadTimestamp } from '../../libs/videoUpdates';
+import { StatusBar } from "expo-status-bar";
 const shortsPostion = Math.floor(Math.random() * fetchVideos().length);
 const home = () => {
 	// console.log(shortsPostion)
@@ -23,6 +25,7 @@ const home = () => {
 	const [menuVisiblity,setMenuVisiblity]= useState(false)
 
 	const [isMenuVisible, setIsMenuVisible] = useState(false);
+	
 	useFocusEffect(useCallback(()=>{
 		setMenuVisiblity(true);
 		return () => {
@@ -158,6 +161,7 @@ const home = () => {
 					userId={user.uid}
 				/>
 			)}
+			<StatusBar style="light" />
 		</SafeAreaView>
 	);
 }

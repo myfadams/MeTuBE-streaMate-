@@ -1,5 +1,5 @@
 import { Video } from "expo-av";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Image,
@@ -37,7 +37,7 @@ const UploadVideoComponent = React.memo(({ item, isLoaded }) => {
 			style={{ flex: 1, margin: 2, height: 120 }}
 			activeOpacity={0.6}
 			onPress={() => {
-				if(parseInt(item.height)>=845 && Math.round(item.duration)<=60)
+				if(parseInt(item.height)>=630 && Math.round(item.duration)<=60)
 					router.push({
 						pathname: "/upload/uploadShorts",
 						params: { ...item, thumbnailURL: thumbnail },
@@ -67,4 +67,4 @@ const UploadVideoComponent = React.memo(({ item, isLoaded }) => {
 	);
 });
 
-export default UploadVideoComponent;
+export default memo(UploadVideoComponent);

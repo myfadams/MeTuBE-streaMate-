@@ -13,9 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import InputFields from "../../components/InputFields";
 import { bgColor, borderPrimary, buttonColor, otherColor } from "../../constants/colors";
 import { logo } from "../../constants/images";
-
+import { StatusBar } from "expo-status-bar";
 import Button from "../../components/Button";
-import { apple, google } from "../../constants/icons";
+import { apple, email, google, key } from "../../constants/icons";
 import { Link, Redirect, SplashScreen, router } from "expo-router";
 import { getContext } from "../../context/GlobalContext";
 import { emailVerification, loginUser } from "../../libs/firebase";
@@ -46,7 +46,7 @@ const SignIn = () => {
 					{
 						text: "continue",
 						onPress: () => {
-							router.push("verification");
+							router.replace("verification");
 						},
 					},
 				]);
@@ -56,7 +56,7 @@ const SignIn = () => {
 		} catch (error) {
 			console.log(error.code);
 
-			let errorMessage = error.message.replace("Firebase", "MeTuBE");
+			let errorMessage = error.message.replace("Firebase", "StreaMate");
 			if (error.code === "auth/invalid-email")
 				errorMessage = errorMessage.replace(
 					"(" + error.code + ")",
@@ -66,6 +66,8 @@ const SignIn = () => {
 				errorMessage = "Theres a problem with your network";
 			} else if (error.code === "auth/user-not-found") {
 				errorMessage = "No account with that email";
+			} else if (error.code === "auth/wrong-password") {
+				errorMessage = "Incorrect Password";
 			} else {
 				errorMessage = errorMessage.replace("(" + error.code + ")", "");
 			}
@@ -90,15 +92,15 @@ const SignIn = () => {
 					}}
 				>
 					<Image source={logo} style={styles.image} resizeMode="contain" />
-					<Text
+					{/* <Text
 						style={{
 							color: "#fff",
 							fontFamily: "Montserrat_900Black",
 							fontSize: 40,
 						}}
 					>
-						MeTuBE
-					</Text>
+						StreaMate
+					</Text> */}
 				</View>
 				<View
 					style={{
@@ -127,7 +129,8 @@ const SignIn = () => {
 					handleChange={(e) => {
 						setform({ ...form, email: e });
 					}}
-					value={form.password}
+					value={form.name}
+					icon={email}
 				/>
 				<View style={{ marginTop: 20 }} />
 				<InputFields
@@ -137,6 +140,7 @@ const SignIn = () => {
 						setform({ ...form, password: e });
 					}}
 					value={form.password}
+					icon={key}
 				/>
 				<View style={{ marginTop: 30, width: "100%" }} />
 				{/* <Button title="Sign In" isLoading={isLoading} handlePress={login} /> */}
@@ -208,6 +212,7 @@ const SignIn = () => {
 					</Link>
 				</View>
 			</ScrollView>
+			<StatusBar style="light" />
 		</SafeAreaView>
 	);
 };
@@ -222,8 +227,8 @@ const styles = StyleSheet.create({
 		backgroundColor: bgColor,
 	},
 	image: {
-		width: 90,
-		height: 66,
+		width: 250,
+		height: 120
 	},
 	vewStyle: {
 		justifyContent: "center",

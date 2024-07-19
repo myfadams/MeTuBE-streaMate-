@@ -6,93 +6,110 @@ import {
 	ScrollView,
 	TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor, borderPrimary, otherColor } from "../../constants/colors";
 import { logo } from "../../constants/images";
 import * as Animatable from "react-native-animatable";
-import AnimatedLoader from "react-native-animated-loader";
+
 import { getContext } from "../../context/GlobalContext";
 import { Redirect, router } from "expo-router";
 import { checkVerified, getCurrentUser } from "../../libs/firebase";
 import { authentication } from "../../libs/config";
 import { getAuth } from "firebase/auth";
+import LottieView from "lottie-react-native";
 const Verification = () => {
-	
-	const {user,name}= (getContext())
-	const currUser=JSON.stringify(user)
+	const { user, name } = getContext();
+	const currUser = JSON.stringify(user);
 	// console.log("uers: " +currUser );
-
 
 	const slideInDown = {
 		from: {
-			translateY: -20, // Starting position (50 units above the original position)
+			translateY: -15, // Starting position (50 units above the original position)
 		},
 		to: {
 			translateY: 0, // Ending position (original position)
 		},
 	};
 
-	const [isVerified, setIsVerified] = useState(false)
-	
-	 useEffect(() => {
-		 const interval = setInterval(async () => {
-			 const verified = await checkVerified(user);
-			//  console.log("hi :"+verified)
-				if (verified) {
-					setIsVerified(true);
-					clearInterval(interval);
-				}
-			}, 3000); // Check every 3 seconds
+	const [isVerified, setIsVerified] = useState(false);
 
-			return () => clearInterval(interval); // Clear interval on component unmount
-		}, [user]);
+	useEffect(() => {
+		const interval = setInterval(async () => {
+			const verified = await checkVerified(user);
+			//  console.log("hi :"+verified)
+			if (verified) {
+				setIsVerified(true);
+				clearInterval(interval);
+			}
+		}, 3000); // Check every 3 seconds
+
+		return () => clearInterval(interval); // Clear interval on component unmount
+	}, [user]);
 	if (isVerified) return <Redirect href="home" />;
-	console.log(isVerified)
+	console.log(isVerified);
+	 const animation = useRef()
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView
-				contentContainerStyle={styles.vewStyle}
-				automaticallyAdjustKeyboardInsets
-			>
-				<AnimatedLoader
-					visible={true}
-					overlayColor={bgColor}
-					source={require("../../assets/animations/loading.json")}
-					animationStyle={styles.lottie}
-					speed={1}
+			<View style={styles.vewStyle}>
+				
+				<View
+					style={{
+						justifyContent: "center",
+						width: "100%",
+						alignItems: "center",
+					}}
 				>
 					<View
 						style={{
+							// justifyContent: "center",
+							// // width: "100%",
+							// alignItems: "center",
+						}}
+					>
+						<LottieView
+							autoPlay
+							ref={animation}
+							style={{
+								width: 130,
+								height: 130,
+								overflow:"hidden"
+							}}
+							// Find more Lottie files at https://lottiefiles.com/featured
+							source={require("../../assets/animations/loading.json")}
+						/>
+					</View>
+					<View
+						style={{
 							flexDirection: "row",
-							width: "92%",
 							alignItems: "center",
 							justifyContent: "center",
-							marginBottom: 30,
+							marginBottom: 20,
 						}}
 					>
 						<Image
 							source={logo}
 							style={{
-								width: 90,
-								height: 66,
+								width: 250,
+								height: 120,
 							}}
 							resizeMode="contain"
 						/>
-						<Text
+						{/* <Text
 							style={{
 								color: "#fff",
 								fontFamily: "Montserrat_900Black",
 								fontSize: 40,
 							}}
 						>
-							MeTuBE
-						</Text>
+							StreaMate
+						</Text> */}
 					</View>
 					<View
 						style={{
 							flexDirection: "row",
-							
+							alignItems: "center",
+							justifyContent: "center",
 						}}
 					>
 						<Animatable.Text
@@ -109,8 +126,9 @@ const Verification = () => {
 							Please verify your email...
 						</Animatable.Text>
 					</View>
-				</AnimatedLoader>
-			</ScrollView>
+				</View>
+				
+			</View>
 		</SafeAreaView>
 	);
 };
@@ -126,6 +144,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		flex: 1,
+		height:"100%",
 		backgroundColor: bgColor,
 	},
 	image: {

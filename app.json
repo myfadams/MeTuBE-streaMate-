@@ -1,45 +1,59 @@
 {
-  "expo": {
-    "name": "meTube",
-    "slug": "meTube",
-    "scheme": "meTube",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/mySplash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0A0A0A"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "We need your permission to access your gallery",
-        "NSPhotoLibraryAddUsageDescription": "This app needs permission to save photos to your library."
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        "permissions": ["READ_EXTERNAL_STORAGE"]
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      ["expo-media-library",
-      {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
-          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
-          "isAccessMediaLocationEnabled": true
-        }
-      ]
-       
-    ]
-  }
+	"expo": {
+		"name": "meTube",
+		"slug": "meTube",
+		"scheme": ["meTube"],
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "light",
+		"splash": {
+			"image": "./assets/mySplash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#0A0A0A"
+		},
+		"ios": {
+			"supportsTablet": true,
+			"infoPlist": {
+				"NSPhotoLibraryUsageDescription": "We need your permission to access your gallery",
+				"NSPhotoLibraryAddUsageDescription": "This app needs permission to save photos to your library."
+			},
+			"bundleIdentifier": "com.fadl.streamate"
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/adaptive-icon.png",
+				"backgroundColor": "#ffffff",
+				"permissions": ["READ_EXTERNAL_STORAGE"]
+			},
+			"permissions": [
+				"android.permission.READ_EXTERNAL_STORAGE",
+				"android.permission.WRITE_EXTERNAL_STORAGE",
+				"android.permission.ACCESS_MEDIA_LOCATION"
+			],
+			"package": "com.fadl.streamate"
+		},
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"plugins": [
+			"expo-router",
+			[
+				"expo-media-library",
+				{
+					"photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+					"savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+					"isAccessMediaLocationEnabled": true
+				}
+			]
+		],
+		"extra": {
+			"router": {
+				"origin": false
+			},
+			"eas": {
+				"projectId": "237c257b-7b23-4031-9bea-ecb9437ba1f3"
+			}
+		}
+	}
 }

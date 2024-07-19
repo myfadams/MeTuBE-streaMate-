@@ -11,7 +11,7 @@ import {
 import React, { useState } from "react";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { bgColor, fieldColor, loadingColor } from "../../constants/colors";
+import { bgColor, buttonColor, fieldColor, loadingColor } from "../../constants/colors";
 import {
 	addImage,
 	allowComment,
@@ -33,12 +33,13 @@ const UploadView = () => {
 	const { user } = getContext();
 	const videoUpload = useLocalSearchParams();
 	const { vidDescription } = getContext();
-	// console.log(vidDescription)
+	// console.log(videoUpload)
 	const [videoInfo, setVideoInfo] = useState({
 		title: "",
 		videoUrl: videoUpload.thumbnail,
 		description: vidDescription,
 		thumbnailUrl: videoUpload.thumbnailURL,
+		duration:videoUpload.duration
 	});
 	// console.log(videoInfo.description)
 	async function openFilePicker(typeOfFile) {
@@ -87,7 +88,7 @@ const UploadView = () => {
 							<Image
 								source={back}
 								resizeMode="contain"
-								style={{ width: 35, height: 35 }}
+								style={{ width: 30, height: 30 }}
 							/>
 						</TouchableOpacity>
 						<Text
@@ -103,13 +104,14 @@ const UploadView = () => {
 						</Text>
 					</View>
 					<MoreButton
+						color={buttonColor}
 						title={"Next"}
 						handlePress={() => {
 							// console.log(videoInfo)
 							if (videoInfo.title != "")
 								router.push({
 									pathname: "upload/audience",
-									params: videoInfo,
+									params: { ...videoInfo, duration: videoUpload.duration },
 								});
 							else Alert.alert("Please give your video a title");
 						}}
@@ -165,7 +167,7 @@ const UploadView = () => {
 								backgroundColor: "black",
 								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							}}
-							resizeMode="contain"
+							resizeMode="cover"
 						/>
 						<View>
 							<Text

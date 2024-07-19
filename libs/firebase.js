@@ -245,21 +245,24 @@ getAuthToken();
 
 export async function changeUserDetails(type, value) {
 	const cUser = authentication.currentUser;
-	const userRef = ref(db, "usersref/" + cUser.uid);
+	const userRef = ref(db, "usersref/" + cUser?.uid);
 	if (type === "displayName") {
 		await updateProfile(cUser, { displayName: value });
-		console.log(cUser.displayName)
-		await update(userRef, { name: cUser.displayName });
+		console.log(cUser?.displayName)
+		await update(userRef, { name: cUser?.displayName });
 	}
 	if (type === "photoURL") {
 		await updateProfile(cUser, { photoURL: value });
-		await update(userRef, { image: cUser.photoURL });
+		await update(userRef, { image: cUser?.photoURL });
 	}
 	if(type==="desc"){
-		update(userRef, { descripition: value });
+		update(userRef, { description: value });
 	}
 	if (type === "cover") {
 		await update(userRef, { coverPhoto: value });
+	}
+	if (type === "handle") {
+		update(userRef, { handle: value });
 	}
 	// console.log(cUser)
 }

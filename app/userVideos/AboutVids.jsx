@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { StyleSheet, View, Text, SafeAreaView, Dimensions, Platform } from "react-native";
+import { StyleSheet, View, Text,  Dimensions, Platform } from "react-native";
 
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import {
@@ -15,7 +15,7 @@ import MyCarousel from "../../components/Carousel";
 import ChannelHeader from "../../components/channel/ChannelHeader";
 import { ScrollView } from "react-native";
 import HorizontalHeaderScrollView from "../../components/channel/HorizontalHeader";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import OptionsHeader from "../../components/channel/OptionsHeader";
 import { getContext } from "../../context/GlobalContext";
 import Offline from "../../components/Offline";

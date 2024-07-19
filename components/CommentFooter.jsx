@@ -4,14 +4,17 @@ import ChatInput from "./ChatInput";
 import { useKeyboard } from "@react-native-community/hooks";
 import { bgColor } from "../constants/colors";
 import { send } from "../constants/icons";
+import { addComment } from "../libs/videoUpdates";
+import { getContext } from "../context/GlobalContext";
 
-const CommentFooter = ({profile}) => {
+const CommentFooter = ({ profile, videoID, creatorID }) => {
 	const [keyboardHeight, setKeyboardHeight] = useState(0);
 	const [keyboardOpen, setKeyboardOpen] = useState(false);
 
 	const keyboard = useKeyboard();
 	// const keyboardHeight = keyboard.keyboardHeight;
-	
+	const { user } = getContext();
+	const [commentText, setCommentText] = useState();
 	useEffect(() => {
 		const keyboardDidShowListener = Keyboard.addListener(
 			Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow",
@@ -63,10 +66,22 @@ const CommentFooter = ({profile}) => {
 						}}
 					/>
 					<View style={{ width: "80%", alignItems: "center" }}>
-						<ChatInput />
+						<ChatInput
+							handleChange={(text) => {
+								setCommentText(text);
+							}}
+							text={commentText}
+							videoId={videoID}
+							creatorID={creatorID}
+						/>
 					</View>
 					<TouchableOpacity
-					// activeOpacity={0.7}
+						// activeOpacity={0.7}
+						onPress={() => {
+							addComment(videoID, user.uid, commentText, creatorID);
+							setCommentText("");
+							Keyboard.dismiss();
+						}}
 					>
 						<Image
 							source={send}

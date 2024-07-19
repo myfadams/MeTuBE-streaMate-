@@ -49,7 +49,7 @@ const NotFound = ({type}) => {
 							textAlign: "center",
 						}}
 					>
-						{type?"Share your videos with anyone or everyone":"Be the first to upload on MeTube"}
+						{type?"Share your videos with anyone or everyone":"Be the first to upload on StreaMate"}
 					</Text>
 				</View>
 				{/* <Button

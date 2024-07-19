@@ -1,12 +1,13 @@
 import {
 	View,
 	Text,
-	SafeAreaView,
+	// SafeAreaView,
 	TouchableOpacity,
 	Image,
 	FlatList,
     RefreshControl,
     Platform,
+	Dimensions,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { bgColor, borderLight, fieldColor } from "../../constants/colors";
@@ -18,6 +19,7 @@ import { shuffleArray } from "../../libs/sound";
 import { getContext } from "../../context/GlobalContext";
 import { router } from "expo-router";
 import NotFound from "../../components/NotFound";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const yourVideos = () => {
 	const [isActive, setIsActive] = useState(0);
@@ -26,9 +28,23 @@ const yourVideos = () => {
 	const [shorts, setShorts] = useState([]);
 	const [live, setLive] = useState([]);
 	
-	
+	const [specialItemLayout, setSpecialItemLayout] = useState(null);
     const { setRefreshing, refereshing,user } = getContext();
     const [isRefreshing, setIsRefreshing] = useState(false);
+
+	const [isTrackedViewVisible, setIsTrackedViewVisible] = useState(true);
+	const trackedViewRef = useRef(null);
+	const screenDimensions = Dimensions.get("window");
+	const handleScroll = () => {
+    // Calculate if tracked view is visible based on its position
+    if (trackedViewRef.current) {
+      trackedViewRef.current.measure((x, y, width, height, pageX, pageY) => {
+        const isViewVisible = pageY >= 0 && pageY <= screenDimensions.height - height;
+        setIsTrackedViewVisible(isViewVisible);
+      });
+    }
+  };
+//   console.log("isVisible header: "+isTrackedViewVisible)
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -52,7 +68,9 @@ const yourVideos = () => {
 		return s.creator == user?.uid;
 	});
    
-	let data=shuffleArray([...vids,...short])
+	let data = [...vids, ...short];
+	
+	// shuffleArray([...vids,...short])
 	const [dataTodisplay, setDataTodisplay] = useState();
 	function handleShorts() {
         setIsActive(3);
@@ -72,7 +90,8 @@ const yourVideos = () => {
 	function handleSort() {
         // setIsActive(1);
 	}
-
+	
+	
 	const HeaderVid = () => {
 		return (
 			<View
@@ -84,7 +103,7 @@ const yourVideos = () => {
 					marginBottom: 14,
 				}}
 			>
-				<View style={{ width: "94%" }}>
+				<View style={{ width: "94%" }} ref={trackedViewRef}>
 					<Text
 						style={{
 							color: "#fff",
@@ -93,9 +112,12 @@ const yourVideos = () => {
 							height: 35,
 						}}
 					>
-						{isHeaderVisible && "Your videos"}
+						{/* {isHeaderVisible && "Your videos"} */}
+						{isTrackedViewVisible && "Your videos"}
 					</Text>
+					{/* <View style={{ height: 2 }} ></View> */}
 				</View>
+				{/* //chab dasjd */}
 				<View style={{ width: "100%", alignItems: "center" }}>
 					<View style={{ flexDirection: "row", width: "94%", gap: 10 }}>
 						<OtherViewButtons
@@ -198,10 +220,10 @@ const yourVideos = () => {
 							<Image
 								source={back}
 								resizeMode="contain"
-								style={{ width: 35, height: 35 }}
+								style={{ width: 30, height: 30 }}
 							/>
 						</TouchableOpacity>
-						{!isHeaderVisible && (
+						{!isTrackedViewVisible && (
 							<Text
 								style={{
 									color: "#fff",
@@ -278,7 +300,7 @@ const yourVideos = () => {
 						}}
 					/>
 				}
-				l
+				onScroll={handleScroll}
 			/>
 			
 		</SafeAreaView>

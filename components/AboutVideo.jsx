@@ -9,12 +9,17 @@ import {
 	Keyboard,
 	Dimensions,
 	ScrollView,
-    TouchableOpacity,
-    Image,
+	TouchableOpacity,
+	Image,
 	Platform,
 } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { bgColor, borderLight, fieldColor, loadingColor } from "../constants/colors";
+import {
+	bgColor,
+	borderLight,
+	fieldColor,
+	loadingColor,
+} from "../constants/colors";
 import { FlatList } from "react-native-gesture-handler";
 import CommentsHeader from "./CommentsHeader";
 import CommentFooter from "./CommentFooter";
@@ -23,9 +28,9 @@ import { get, onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
 import { formatSubs, getLikes, getNumberSubs } from "../libs/videoUpdates";
 const windowHeight = Dimensions.get("window").height;
-const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
+const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 	// console.log(info)
-	const [creator, setcreator] = useState()
+	const [creator, setcreator] = useState();
 	const insets = useSafeAreaInsets();
 	const commentHeight =
 		((windowHeight - 250 - insets.bottom) / windowHeight) * 100;
@@ -85,7 +90,7 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 			const data = snapshot.val();
 			setViews(data || 0);
 		});
-		getNumberSubs(info.creator, setNoSubs)
+		getNumberSubs(info.creator, setNoSubs);
 		// Cleanup listener on unmount
 		return () => unsubscribe();
 	}, [info.videoview]);
@@ -101,185 +106,201 @@ const AboutVideo = ({ isVisible, onClose, isActive,info }) => {
 				backgroundColor: bgColor,
 			}}
 		>
-			<CommentsHeader handleClose={handleClosePress} text={"Description"} />
-			<ScrollView
-				contentContainerStyle={{
-					width: "100%",
-					height: "100%",
-					marginTop: 10,
-					// justifyContent: "center",
-					alignItems: "center",
-				}}
-			>
-				<View style={{ width: "100%", borderTopWidth: 0.6 }}></View>
-				<View style={{ width: "96%", marginTop: 30 }}>
-					<Text
-						style={{
-							color: "white",
-							fontSize: 18,
-							fontFamily: "Montserrat_500Medium",
-							flexWrap: "wrap",
-							flexDirection: "row",
-						}}
-					>
-						{info?.title}
-					</Text>
-				</View>
-				<View
-					style={{
+			<View style={{ height: "100%",flex:1 }}>
+				<CommentsHeader handleClose={handleClosePress} text={"Description"} />
+
+				<ScrollView
+					contentContainerStyle={{
 						width: "100%",
-						flexDirection: "row",
-						justifyContent: "space-around",
-						marginTop: 40,
-					}}
-				>
-					<View
-						style={{ justifyContent: "center", gap: 5, alignItems: "center" }}
-					>
-						<Text
-							style={{
-								color: "white",
-								fontSize: 18,
-								fontFamily: "Montserrat_500Medium",
-								// flex:1
-							}}
-						>
-							{formatSubs(likes)}
-						</Text>
-						<Text
-							style={{
-								color: loadingColor,
-								fontSize: 14,
-								fontFamily: "Montserrat_400Regular",
-								// flex:1
-							}}
-						>
-							Likes
-						</Text>
-					</View>
-					<View
-						style={{ justifyContent: "center", gap: 5, alignItems: "center" }}
-					>
-						<Text
-							style={{
-								color: "white",
-								fontSize: 18,
-								fontFamily: "Montserrat_500Medium",
-								// flex:1
-							}}
-						>
-							{views}
-						</Text>
-						<Text
-							style={{
-								color: loadingColor,
-								fontSize: 14,
-								fontFamily: "Montserrat_400Regular",
-								// flex:1
-							}}
-						>
-							Views
-						</Text>
-					</View>
-					<View
-						style={{ justifyContent: "center", gap: 5, alignItems: "center" }}
-					>
-						<Text
-							style={{
-								color: "white",
-								fontSize: 18,
-								fontFamily: "Montserrat_500Medium",
-								// flex:1
-							}}
-						>
-							1h
-						</Text>
-						<Text
-							style={{
-								color: loadingColor,
-								fontSize: 14,
-								fontFamily: "Montserrat_400Regular",
-								// flex:1
-							}}
-						>
-							Ago
-						</Text>
-					</View>
-				</View>
-				<View
-					style={{
-						width: "96%",
-						marginTop: 30,
+						// height: "100%",
+						flexGrow:1,
+						marginTop: 10,
+						// justifyContent: "center",
 						alignItems: "center",
-						justifyContent: "center",
-						minHeight: 80,
-						backgroundColor: fieldColor,
-						paddingTop: 15,
-						paddingBottom: 15,
-						borderRadius: 9,
 					}}
 				>
-					<Text
+					<View style={{ width: "100%", borderTopWidth: 0.6 }}></View>
+					<View style={{ width: "96%", marginTop: 30 }}>
+						<Text
+							style={{
+								color: "white",
+								fontSize: 18,
+								fontFamily: "Montserrat_500Medium",
+								flexWrap: "wrap",
+								flexDirection: "row",
+							}}
+						>
+							{info?.title}
+						</Text>
+					</View>
+					<View
 						style={{
-							color: "white",
-							fontSize: 15,
-							fontFamily: "Montserrat_400Regular",
-							flexWrap: "wrap",
+							width: "100%",
 							flexDirection: "row",
-							paddingLeft: 4,
-							paddingRight: 4,
+							justifyContent: "space-around",
+							marginTop: 40,
 						}}
 					>
-						{info?.description !== ""
-							? info?.description
-							: "This video has no description"}
-					</Text>
-				</View>
-
-				<TouchableOpacity
-					style={{
-						width: "50%",
-						flexDirection: "row",
-						marginTop: 30,
-						alignItems: "center",
-						gap: 10,
-					}}
-				>
-					<Image
-						source={{ uri: info?.image }}
+						<View
+							style={{
+								justifyContent: "center",
+								gap: 5,
+								alignItems: "center",
+							}}
+						>
+							<Text
+								style={{
+									color: "white",
+									fontSize: 18,
+									fontFamily: "Montserrat_500Medium",
+									// flex:1
+								}}
+							>
+								{formatSubs(likes)}
+							</Text>
+							<Text
+								style={{
+									color: loadingColor,
+									fontSize: 14,
+									fontFamily: "Montserrat_400Regular",
+									// flex:1
+								}}
+							>
+								Likes
+							</Text>
+						</View>
+						<View
+							style={{
+								justifyContent: "center",
+								gap: 5,
+								alignItems: "center",
+							}}
+						>
+							<Text
+								style={{
+									color: "white",
+									fontSize: 18,
+									fontFamily: "Montserrat_500Medium",
+									// flex:1
+								}}
+							>
+								{views}
+							</Text>
+							<Text
+								style={{
+									color: loadingColor,
+									fontSize: 14,
+									fontFamily: "Montserrat_400Regular",
+									// flex:1
+								}}
+							>
+								Views
+							</Text>
+						</View>
+						<View
+							style={{
+								justifyContent: "center",
+								gap: 5,
+								alignItems: "center",
+							}}
+						>
+							<Text
+								style={{
+									color: "white",
+									fontSize: 18,
+									fontFamily: "Montserrat_500Medium",
+									// flex:1
+								}}
+							>
+								{info?.timePassed}
+							</Text>
+							<Text
+								style={{
+									color: loadingColor,
+									fontSize: 14,
+									fontFamily: "Montserrat_400Regular",
+									// flex:1
+								}}
+							>
+								Ago
+							</Text>
+						</View>
+					</View>
+					<View
 						style={{
-							borderRadius: Platform.OS === "ios" ? "50%" : 50,
-							width: 45,
-							height: 45,
-							borderWidth: 0.7,
-							borderColor: borderLight,
-							backgroundColor: "#000",
+							width: "96%",
+							marginTop: 30,
+							alignItems: "center",
+							justifyContent: "center",
+							minHeight: 80,
+							backgroundColor: fieldColor,
+							paddingTop: 15,
+							paddingBottom: 15,
+							borderRadius: 9,
 						}}
-					/>
-					<View style={{ gap: 6 }}>
+					>
 						<Text
 							style={{
 								color: "white",
-								fontSize: 18,
-								fontFamily: "Montserrat_600SemiBold",
+								fontSize: 15,
+								fontFamily: "Montserrat_400Regular",
+								flexWrap: "wrap",
+								flexDirection: "row",
+								paddingLeft: 4,
+								paddingRight: 4,
 							}}
 						>
-							{info?.name}
-						</Text>
-
-						<Text
-							style={{
-								color: "white",
-								fontSize: 14,
-								fontFamily: "Montserrat_300Light",
-							}}
-						>
-							{formatSubs(noSubs)}{" "}
-							{formatSubs(noSubs) === 1 ? "Subscriber" : "Subscribers"}
+							{info.videoDescription !== ""
+								? info.videoDescription
+								: "This video has no description"}
 						</Text>
 					</View>
-				</TouchableOpacity>
-			</ScrollView>
+
+					<TouchableOpacity
+						style={{
+							width: "50%",
+							flexDirection: "row",
+							marginTop: 30,
+							alignItems: "center",
+							gap: 10,
+						}}
+					>
+						<Image
+							source={{ uri: info?.image }}
+							style={{
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
+								width: 45,
+								height: 45,
+								borderWidth: 0.7,
+								borderColor: borderLight,
+								backgroundColor: "#000",
+							}}
+						/>
+						<View style={{ gap: 6 }}>
+							<Text
+								style={{
+									color: "white",
+									fontSize: 18,
+									fontFamily: "Montserrat_600SemiBold",
+								}}
+							>
+								{info?.name}
+							</Text>
+
+							<Text
+								style={{
+									color: "white",
+									fontSize: 14,
+									fontFamily: "Montserrat_300Light",
+								}}
+							>
+								{formatSubs(noSubs)}{" "}
+								{formatSubs(noSubs) === 1 ? "Subscriber" : "Subscribers"}
+							</Text>
+						</View>
+					</TouchableOpacity>
+				</ScrollView>
+			</View>
 		</BottomSheet>
 	);
 };

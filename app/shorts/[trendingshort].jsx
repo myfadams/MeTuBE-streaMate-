@@ -92,7 +92,7 @@ const TrendingShort = () => {
 					<Image
 						source={back}
 						resizeMode="contain"
-						style={{ width: 35, height: 35 }}
+						style={{ width: 30, height: 30 }}
 					/>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -111,6 +111,7 @@ const TrendingShort = () => {
 			</View>
 			<FlatList
 				data={newS}
+				initialNumToRender={3}
 				viewabilityConfig={{ itemVisiblePercentThreshold: 75 }}
 				onViewableItemsChanged={onViewableItemsChanged.current}
 				pagingEnabled

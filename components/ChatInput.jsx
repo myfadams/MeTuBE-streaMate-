@@ -11,43 +11,46 @@ import React, { useState } from "react";
 import { bgColor, borderPrimary, fieldColor } from "../constants/colors";
 import { hide, search, show } from "../constants/icons";
 import { router } from "expo-router";
+import { addComment } from "../libs/videoUpdates";
+import { getContext } from "../context/GlobalContext";
 
-const ChatInput = ({ text, placeholderText, handleChange, name }) => {
+const ChatInput = ({
+	text,
+	placeholderText,
+	handleChange,
+	videoId,
+	creatorID,
+}) => {
+	const { user } = getContext();
 	// console.log(name)
 	const [isHidden, setIsHidden] = useState(true);
-	const [SearchWord, setSearchWord] = useState("");
-	const [searches, setSearches] = useState([]);
-	const submit = () => {
-		setSearches(searches.push(SearchWord));
-		console.log(searches);
-		router.replace("search/results");
-	};
+
 	return (
 		<View>
 			<View style={styles.fieldStyle}>
 				<TextInput
-					autoFocus={name==="name"}
+					// autoFocus={}
+					selectionColor={"#fff"}
+					onSubmitEditing={() => {
+						addComment(videoId, user.uid, text,creatorID)
+						handleChange("");
+					}}
 					style={{
 						width: "100%",
 						height: "100%",
 						color: "white",
-						fontSize: Platform.OS==="ios"?"19%":19,
-						fontFamily: "Montserrat_500Medium",
-						textAlign: "center",
+						fontSize: Platform.OS === "ios" ? "16%" : 16,
+						fontFamily: "Montserrat_400Regular",
+						// textAlign: "center",
 						flex: 1,
 					}}
 					placeholder={placeholderText}
 					placeholderTextColor={"gray"}
 					returnKeyType="send"
 					// onSubmitEditing={submit}
-					onChangeText={(word) => {
-						// setSearchWord(word);
-						handleChange(word);
-					}}
+					onChangeText={handleChange}
 					value={text}
 				/>
-
-				
 			</View>
 		</View>
 	);

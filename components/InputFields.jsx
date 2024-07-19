@@ -8,31 +8,46 @@ import {
 	View,
 } from "react-native";
 import React, { useState } from "react";
-import { bgColor, borderPrimary, fieldColor } from "../constants/colors";
+import { bgColor, borderPrimary, fieldColor, otherColor } from "../constants/colors";
 import { hide, show } from "../constants/icons";
 
-const InputFields = ({ text, placeholderText, handleChange }) => {
+const InputFields = ({ text, placeholderText, handleChange,value,icon }) => {
 	const [isHidden, setIsHidden] = useState(true);
+	// console.log(text);
+
 	return (
 		<View>
 			<Text style={styles.text}>{text}</Text>
 			<View style={styles.fieldStyle}>
+				
+				<Image
+					source={icon}
+					resizeMode="contain"
+					style={{ width: 20, height: 20 }}
+					tintColor={"#fff"}
+				/>
+				
 				<TextInput
+					selectionColor={"#fff"}
 					style={{
 						width: "100%",
 						height: "100%",
 						color: "white",
-						fontSize: Platform.OS === "ios" ? "19%" : 19,
+						fontSize: Platform.OS === "ios" ? "17%" : 17,
 						fontFamily: "Montserrat_500Medium",
-						textAlign: "center",
+						// textAlign: "center",
+						justifyContent: "center",
+						alignItems: "center",
+						marginHorizontal: 10,
 						flex: 1,
 					}}
 					placeholder={placeholderText}
 					placeholderTextColor={"gray"}
 					onChangeText={handleChange}
 					secureTextEntry={text === "Password" && isHidden}
+					value={value}
 				/>
-				{isHidden && text === "Password" && (
+				{isHidden && text === "Password" && value !== "" && (
 					<TouchableOpacity
 						style={{ margin: 10 }}
 						activeOpacity={0.7}
@@ -47,7 +62,7 @@ const InputFields = ({ text, placeholderText, handleChange }) => {
 						/>
 					</TouchableOpacity>
 				)}
-				{!isHidden && text === "Password" && (
+				{!isHidden && text === "Password" && value !== "" && (
 					<TouchableOpacity
 						style={{ margin: 10 }}
 						activeOpacity={0.7}

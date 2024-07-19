@@ -16,7 +16,9 @@ refe}) => {
             // console.log("name");
             changeUserDetails("displayName", val.name)
 			setVal({...val,name:val.name})
-        }
+        }else{
+			changeUserDetails("handle", val.handle);
+		}
 		setModalVisible(!modalVisible);
 		setRef(!refe)
 
@@ -39,7 +41,7 @@ refe}) => {
 				<TouchableWithoutFeedback
 					onPress={() => {
 						setModalVisible(!modalVisible);
-						
+
 						let toast = Toast.show("Not saved", {
 							duration: Toast.durations.LONG,
 						});
@@ -50,7 +52,7 @@ refe}) => {
 				>
 					<View
 						//weird change
-						style={{ justifyContent: "center", width: "100%", height: "150%" }}
+						style={{ justifyContent: "center", width: "100%", height: "130%" }}
 					>
 						<View style={styles.modalView}>
 							<View
@@ -62,7 +64,7 @@ refe}) => {
 							>
 								<Text
 									style={{
-										color: "#000",
+										color: "#fff",
 										fontFamily: "Montserrat_600SemiBold",
 										fontSize: 20,
 										marginVertical: 15,
@@ -101,7 +103,7 @@ refe}) => {
 									style={{
 										width: "92%",
 										flexDirection: "row",
-										gap: 2,
+										gap: 4,
 										// alignItems: "center",
 									}}
 								>
@@ -109,26 +111,51 @@ refe}) => {
 										source={globe}
 										style={{ width: 13, height: 13 }}
 										resizeMode="contain"
-										tintColor={"#000"}
+										tintColor={"#fff"}
 									/>
-									<Text
-										style={{
-											color: "#C5C5C5",
-											fontFamily: "Montserrat_500Medium",
-											fontSize: 13,
-											flexWrap: "wrap",
-											flexShrink: 1,
-											// width:
-										}}
-									>
-										Visible to anyone on MeTuBE
-									</Text>
+									{type === "name" ? (
+										<Text
+											style={{
+												color: "#C5C5C5",
+												fontFamily: "Montserrat_500Medium",
+												fontSize: 14,
+												flexWrap: "wrap",
+												flexShrink: 1,
+												// width:
+											}}
+										>
+											Visible to anyone on StreaMate.
+										</Text>
+									) : (
+										<Text
+											style={{
+												color: "#C5C5C5",
+												fontFamily: "Montserrat_500Medium",
+												fontSize: 14,
+												flexWrap: "wrap",
+												flexShrink: 1,
+												// width:
+											}}
+										>
+											Visible to all users on
+											StreaMate. Remember to follow our{" "}
+											<Text style={{ color: buttonColor }}>
+												{" "}
+												Community Guidelines
+											</Text>
+											and{" "}
+											<Text style={{ color: buttonColor }}>
+												{" "}
+												best practices
+											</Text>{" "}
+										</Text>
+									)}
 								</View>
 								<View
 									style={{
 										width: "92%",
 										flexDirection: "row",
-										gap: 2,
+										gap: 4,
 										// alignItems: "center",
 									}}
 								>
@@ -136,22 +163,40 @@ refe}) => {
 										source={info}
 										style={{ width: 13, height: 13 }}
 										resizeMode="contain"
-										tintColor={"#000"}
+										tintColor={"#fff"}
 									/>
-									<Text
-										style={{
-											color: "#C5C5C5",
-											fontFamily: "Montserrat_500Medium",
-											fontSize: 11,
-											flexWrap: "wrap",
-											flexShrink: 1,
-											// width:
-										}}
-									>
-										Changes made to your name will be reflected on MeTube. You
-										can change your name twice in 14 days.
-										<Text style={{ color: buttonColor }}> Learn more</Text>
-									</Text>
+									{type === "name" ? (
+										<Text
+											style={{
+												color: "#C5C5C5",
+												fontFamily: "Montserrat_500Medium",
+												fontSize: 14,
+												flexWrap: "wrap",
+												flexShrink: 1,
+												// width:
+											}}
+										>
+											You can change your handle back within 14 days. This
+											becomes your channel URL. Handles can be changed twice
+											every 14 days.
+											<Text style={{ color: buttonColor }}> Learn more</Text>
+										</Text>
+									) : (
+										<Text
+											style={{
+												color: "#C5C5C5",
+												fontFamily: "Montserrat_500Medium",
+												fontSize: 12,
+												flexWrap: "wrap",
+												flexShrink: 1,
+												// width:
+											}}
+										>
+											Changes made to your name will be reflected on StreaMate. You
+											can change your name twice in 14 days.
+											<Text style={{ color: buttonColor }}> Learn more</Text>
+										</Text>
+									)}
 								</View>
 							</View>
 							<View style={{ width: "100%", alignItems: "center" }}>
@@ -186,7 +231,7 @@ const styles = StyleSheet.create({
 	modalView: {
 		margin: 20,
         // width:"92%",
-		backgroundColor: "white",
+		backgroundColor:bgColor,
 		borderRadius: 10,
 		padding: 10,
 		// alignItems: "center",

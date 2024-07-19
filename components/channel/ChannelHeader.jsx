@@ -1,17 +1,19 @@
 import { View, Text, TouchableOpacity, Image, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
 	back,
 	chromecast,
 	edit,
+	nextPage,
 	options,
 	search,
 	watchtime,
 } from "../../constants/icons";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import {
 	bgColor,
 	borderLight,
+	borderPrimary,
 	buttonColor,
 	fieldColor,
 	ldingColor,
@@ -27,27 +29,45 @@ import { db } from '../../libs/config';
 import { defaultCover } from '../../constants/images';
 const ChannelHeader = ({userInfo,act}) => {
 	const { user, refereshing } = getContext();
+	const [userObj,setUserObj]= useState()
 	const [cover,setCover]=useState()
 	// console.log(userInfo)
+	const [isFocused,setIsFocused]=useState(false)
 	useEffect(() => {
 		async function getCover() {
 			const coverPhoto = ref(db, "usersref/" + userInfo?.uid);
 			const res = await get(coverPhoto);
+			// console.log(res)
 			setCover(res.val().coverPhoto);
+			setUserObj(res.val())
 		}
 		getCover();
-	}, [refereshing]);
-	// console.log(cover)
+	}, [refereshing,isFocused]);
+	useFocusEffect(useCallback(()=>{
+		async function getCover() {
+			const coverPhoto = ref(db, "usersref/" + userInfo?.uid);
+			const res = await get(coverPhoto);
+			// console.log(res)
+			setCover(res.val().coverPhoto);
+			setUserObj(res.val());
+			setIsFocused(!isFocused)
+			return ()=>{
+				setCover(res.val().coverPhoto);
+				setUserObj(res.val());
+			}
+		}
+		getCover();
+	}, []))
 	
 	const [subscribed, setsubscribed] = useState(false);
 	function handleSubscribe() {
 		subscribeToChannel(userInfo?.uid, user?.uid);
-		getSubsriptions(user?.uid, setsubscribed, userInfo.uid);
+		getSubsriptions(user?.uid, setsubscribed, userInfo?.uid);
 		// console.log("Get sub status: "+subscribed);
 	}
 	useEffect(() => {
 	
-		getSubsriptions(user?.uid, setsubscribed, userInfo.uid);
+		getSubsriptions(user?.uid, setsubscribed, userInfo?.uid);
 		
 	}, []);
 	// console.log("subbed: "+subscribed)
@@ -138,7 +158,7 @@ const ChannelHeader = ({userInfo,act}) => {
 										fontFamily: "Montserrat_300Light",
 									}}
 								>
-									@channel_name
+									{userObj?.handle ?? "No handle"}
 								</Text>
 							</View>
 						</View>
@@ -163,17 +183,14 @@ const ChannelHeader = ({userInfo,act}) => {
 								color: "#fff",
 							}}
 						>
-							Regardless of your location, you're legally required to comply
-							with the Children's Online Privacy Protection Act (COPPA) and/or
-							other laws. You're required to tell us whether your videos are
-							made for kids.
+							{userObj?.description ?? "This Channel has no desription"}
 						</Text>
 						<Image
-							source={back}
+							source={nextPage}
 							style={{
 								width: 24,
 								height: 24,
-								transform: [{ rotate: "180deg" }],
+								
 							}}
 						/>
 					</TouchableOpacity>
@@ -188,13 +205,13 @@ const ChannelHeader = ({userInfo,act}) => {
 						margin: 4,
 					}}
 				>
-					{!userInfo.otherChannel || userInfo.uid === user.uid ? (
+					{userInfo?.uid === user?.uid ? (
 						<>
 							<View style={{ flex: 1 }}>
 								<MoreButton
 									title={"Manage videos"}
 									height={42}
-									color={fieldColor}
+									color={buttonColor}
 									handlePress={() => {
 										router.push("/userVideos/yourVideos");
 									}}
@@ -216,8 +233,8 @@ const ChannelHeader = ({userInfo,act}) => {
 								flex: 1,
 								height: 40,
 								backgroundColor: subscribed ? fieldColor : buttonColor,
-								borderWidth: subscribed && 0.6,
-								borderColor: borderLight,
+								borderWidth: subscribed ? 0.6 :0,
+								borderColor: borderPrimary,
 								justifyContent: "center",
 								alignItems: "center",
 								borderRadius: 30,

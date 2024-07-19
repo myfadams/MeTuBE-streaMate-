@@ -5,7 +5,7 @@ import {
 	Image,
 	TouchableOpacity,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { loadingColor } from "../constants/colors";
 import { clock, like, options, shortLogo } from "../constants/icons";
 import { router, useFocusEffect } from "expo-router";
@@ -123,4 +123,4 @@ const PlaylistView = ({ data }) => {
 	);
 };
 
-export default PlaylistView;
+export default memo(PlaylistView);

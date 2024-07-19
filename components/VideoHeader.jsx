@@ -7,9 +7,10 @@ import ScrollButtons from "./ScrollButtons";
 import { getContext } from "../context/GlobalContext";
 import { formatSubs, formatViews, getNumberSubs, getSubsriptions, setDisLikeStatus, setLikeStatus, subscribeToChannel } from "../libs/videoUpdates";
 
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, get } from "firebase/database";
 import { db } from "../libs/config";
 import { router, useFocusEffect } from "expo-router";
+import { shuffleArray } from "../libs/sound";
 
 const VidHeader = ({ comment, about,vidinfo}) => {
 	// console.log(vidinfo)
@@ -19,7 +20,8 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 	const [views, setViews] = useState(0);
 	const [like, setlike] = useState(false)
 	const [dislike, setdislike] = useState(false);
-	
+	const [latestComment, setLatestComment] = useState();
+	const [noComments, setNoComments] = useState();
 	useEffect(() => {
 		const videoRef = ref(db, `videosRef/${vidinfo.videoview}/views`);
 		getSubsriptions(user?.uid, setsubscribed, vidinfo.creator);
@@ -30,8 +32,34 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 
 		// Cleanup listener on unmount
 		return () => unsubscribe();
-	}, [vidinfo.videoview]);
-	
+	}, [vidinfo?.videoview]);
+	useEffect(() => {
+		const videoCommentRef = ref(db, `commentsRef/${vidinfo?.videoview}`);
+		const unsubscribe = onValue(videoCommentRef, (snapshot) => {
+			if (snapshot.exists()) {
+				const data = snapshot.val();
+				// console.log(snapshot.val())
+				const commentsWithInfo = [];
+				data.forEach(async (comment) => {
+					const commenterRef = ref(db, `usersref/${comment?.commenterID}`);
+					const commenterInfo = await (await get(commenterRef)).val();
+					// console.log(commenterInfo)
+					commentsWithInfo.push({
+						...comment,
+						name: commenterInfo.name,
+						handle: commenterInfo?.handle,
+						image: commenterInfo?.image,
+					});
+					setNoComments(commentsWithInfo?.length)
+					setLatestComment(shuffleArray(commentsWithInfo)[0]);
+				});
+			}
+		});
+
+		// Cleanup listener on unmountjj
+		return () => unsubscribe();
+	}, [user?.uid]);
+	// console.log(latestComment)
 	useEffect(() => {
 		// const chSubsRef = ref(db, `subs/channel/${vidinfo.creator}/subscribers`);
 		// getSubsriptions(user.uid, setsubscribed, vidinfo.creator);
@@ -58,6 +86,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 		getSubsriptions(user?.uid, setsubscribed, vidinfo.creator); 
 		// console.log("Get sub status: "+subscribed);
 	}
+	console.log(latestComment)
 	return (
 		<View
 			style={{
@@ -111,7 +140,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 							fontFamily: "Montserrat_300Light",
 						}}
 					>
-						1 day ago
+						{vidinfo.timePassed} ago
 					</Text>
 					<Text
 						style={{
@@ -157,6 +186,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 							height: 45,
 							backgroundColor: "#000",
 						}}
+						resizeMode="cover"
 					/>
 					<View style={{ flexDirection: "row", gap: 10 }}>
 						<Text
@@ -196,7 +226,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 								width: 100,
 								height: 35,
 								backgroundColor: subscribed ? fieldColor : buttonColor,
-								borderWidth: subscribed && 0.6,
+								borderWidth: subscribed? 0.6:0,
 								borderColor: borderLight,
 								justifyContent: "center",
 								alignItems: "center",
@@ -252,7 +282,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 							fontFamily: "Montserrat_400Regular",
 						}}
 					>
-						989
+						{noComments}
 					</Text>
 				</View>
 				<View
@@ -260,21 +290,22 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 						flexDirection: "row",
 						alignItems: "center",
 						justifyContent: "space-between",
-						gap: 3,
+						gap: 10,
 						width: "100%",
 						margin: 10,
 					}}
 				>
-					<Image
-						resizeMode="contain"
+					{latestComment&&<Image
+						source={{uri:latestComment?.image}}
+						resizeMode="cover"
 						style={{
-							width: 40,
-							height: 40,
+							width: 30,
+							height: 30,
 							backgroundColor: "#000",
 
 							borderRadius: Platform.OS === "ios" ? "50%" : 50,
 						}}
-					/>
+					/>}
 					<Text
 						numberOfLines={2}
 						ellipsizeMode="tail"
@@ -284,10 +315,11 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 							fontFamily: "Montserrat_400Regular",
 							flexWrap: "wrap",
 							flexDirection: "row",
+							
 							flex: 1,
 						}}
 					>
-						This is a comment, are you 😂😂 just test ande wwill see
+						{latestComment?.text ?? "No comments available for this video"}
 					</Text>
 				</View>
 			</TouchableOpacity>

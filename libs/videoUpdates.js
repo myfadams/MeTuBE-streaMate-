@@ -1,8 +1,9 @@
 // updateViews.js
-import { get, onValue, ref, remove, runTransaction } from "firebase/database";
-import { db } from "./config";
+import { get, onValue, ref, remove, runTransaction, set } from "firebase/database";
+import { db, firestore } from "./config";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 // import { database } from "./firebase";
-
+import { v4 as uuidv4 } from "uuid";
 export const incrementVideoViews = (videoId, loc) => {
 	// console.log(videoId)
 	const videoRef = ref(db, `${loc}/${videoId}/views`);
@@ -54,7 +55,8 @@ export const addToHistory = async (type, video, videoId, userId) => {
 	// console.log(video)
 	// Reference to the history path for the user and videoId
 	const historyRef = ref(db, `history/${type}/${userId}`);
-	
+	let date = new Date().toLocaleDateString("en-CA");
+
 	let temp;
 	let creator;
 	if (type !== "shorts") {
@@ -74,6 +76,7 @@ export const addToHistory = async (type, video, videoId, userId) => {
 			...creator.val(),
 			videoview: video.videoview,
 			email: "",
+			date:date
 		};
 	else{
 		video = {
@@ -82,6 +85,7 @@ export const addToHistory = async (type, video, videoId, userId) => {
 			id: video.id,
 			videoview: video.id,
 			email: "",
+			date: date,
 		};
 	}
 	// console.log(video)
@@ -100,7 +104,8 @@ export const addToHistory = async (type, video, videoId, userId) => {
 					currentHistory.unshift(video);
 				} else if (index > 0) {
 					// If videoId exists but is not the first item, move it to the first position
-					const videoToMove = currentHistory.splice(index, 1)[0];
+					let videoToMove = currentHistory.splice(index, 1)[0];
+					videoToMove={...video,date:date}
 					currentHistory.unshift(videoToMove);
 				}
 				return currentHistory;
@@ -114,7 +119,8 @@ export const addToHistory = async (type, video, videoId, userId) => {
 					currentHistory.unshift(video);
 				} else if (index > 0) {
 					// If videoId exists but is not the first item, move it to the first position
-					const videoToMove = currentHistory.splice(index, 1)[0];
+					let videoToMove = currentHistory.splice(index, 1)[0];
+					videoToMove = { ...video, date: date };
 					currentHistory.unshift(videoToMove);
 				}
 				return currentHistory;
@@ -448,3 +454,107 @@ export const playList = (videoId, loc, userId) => {
 		// console.log("Likes incremented successfully");
 	});
 };
+
+// export async function getUploadTimestamp(fileName, type) {
+// 	try {
+		
+// 		const docRef = doc(firestore, type, `/${fileName}`);
+// 		const time = (await getDoc(docRef));
+// 		console.log(time.data().uploadedAt.toDate());
+// 		// console.log(docRef.type)
+		
+// 	} catch (error) {
+// 		console.error("Error retrieving timestamp:", error);
+// 	}
+// }
+function getFilenameFromUrl(url) {
+		let temp = url?.split("/");
+		let lastitem = temp[temp?.length - 1];
+		let filename = lastitem?.split("?")[0].replace("shorts%2F", "");
+		filename = filename?.replace("videos%2F", "");
+		return filename;
+	}
+export async function getUploadTimestamp(url, type) {
+	// console.log(url)
+	const fileName = decodeURIComponent(getFilenameFromUrl(url));
+	// console.log(decodeURIComponent(fileName));
+	try {
+		const docRef = doc(
+			firestore,
+			type,
+			fileName
+		);
+		const docSnap =await getDoc(docRef);
+		// console.log(docSnap.data())
+
+		if (docSnap.exists()) {
+			const uploadedAt = docSnap.data().uploadedAt.toDate();
+			// console.log(uploadedAt)
+			return uploadedAt;
+		} else {
+			throw new Error("No such document!");
+		}
+	} catch (error) {
+		console.error("Error retrieving timestamp:", error);
+	}
+}
+
+
+export function calculateTimePassed(uploadedAt) {
+	const now = new Date();
+	const secondsPassed = Math.floor((now - uploadedAt) / 1000); // Time passed in seconds
+	return formatTimePassed(secondsPassed);
+}
+
+function formatTimePassed(seconds) {
+	const years = Math.floor(seconds / (3600 * 24 * 365));
+	const months = Math.floor(seconds / (3600 * 24 * 30));
+	const days = Math.floor(seconds / (3600 * 24));
+	const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+	const minutes = Math.floor((seconds % 3600) / 60);
+	const remainingSeconds = seconds % 60;
+
+	if (years > 0) {
+		return `${years} ${years===1? "year": "years"}`;
+	} else if (months > 0) {
+		return `${months} ${months === 1 ? "month" : "months"}`;
+	} else if (days > 0) {
+		return `${days} ${days === 1 ? "day" : "days"}`;
+	} else if (hours > 0) {
+		return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+	} else if (minutes > 0) {
+		return `${minutes}  ${minutes === 1 ? "minute" : "minutes"}`;
+	} else {
+		return `${remainingSeconds}  ${remainingSeconds === 1 ? "second" : "seconds"}`;
+	}
+}
+
+
+export async function addComment(videoId,userId,commentText,creatorID){
+	const comment={
+		text:commentText,
+		commenterID:userId,
+		commentId:uuidv4(),
+		date:new Date().toLocaleDateString(),
+		likes:0,
+		replies:[],
+		creatorID:creatorID
+	}
+	const commentsRef=ref(db,`commentsRef/${videoId}`)
+
+	// const commentsarray = await get(commentsRef, {...comment,commenterId:userId});
+	runTransaction(commentsRef,(commentsArray)=>{
+
+		try {
+			if(!commentsArray)
+				return [comment]
+			else{
+				return [...commentsArray, comment];
+			}
+			
+		} catch (error) {
+			
+		}
+	})
+
+}

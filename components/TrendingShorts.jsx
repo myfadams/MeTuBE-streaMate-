@@ -5,7 +5,7 @@ import {
 	ImageBackground,
 	Image,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import ShortComponent from "./ShortComponent";
 import { shortLogo, shorts } from "../constants/icons";
 import { FlatList } from "react-native-gesture-handler";
@@ -104,4 +104,4 @@ const TrendingShorts = ({ type,data,subs }) => {
 		);
 };
 
-export default TrendingShorts;
+export default memo(TrendingShorts);

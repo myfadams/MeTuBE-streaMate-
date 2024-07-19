@@ -53,7 +53,7 @@ const Offline = ({type}) => {
 							title={"Go to downloads"}
 							height={45}
 							color={buttonColor}
-							// handlePress={uploadMetubeShorts}
+							// handlePress={uploadStreaMateShorts}
 						/>
 					</View>
 				</View>

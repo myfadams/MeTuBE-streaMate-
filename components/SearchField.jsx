@@ -9,55 +9,89 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { bgColor, borderPrimary, fieldColor } from "../constants/colors";
-import { hide, search, show } from "../constants/icons";
-import { router } from "expo-router";
+import { back, hide, microphone, search, show } from "../constants/icons";
+import { router, useLocalSearchParams } from "expo-router";
 
-const SearchFields = ({ text, placeholderText, handleChange, name }) => {
-	const [isHidden, setIsHidden] = useState(true);
-	const [SearchWord, setSearchWord] = useState("");
-	const [searches, setSearches] = useState([]);
-	const submit = () => {
-		setSearches(searches.push(SearchWord));
-		console.log(searches);
-		router.replace("search/results");
-	};
+const SearchFields = ({
+	text,
+	placeholderText,
+	handleChange,
+	name,
+	value,
+	handleSubmit,
+	setActive,
+}) => {
+	// const [SearchWord, setSearchWord] = useState("");
+
+	// const submit = () => {
+
+	// };
 	return (
-		<View>
-			{/* <Text style={styles.text}>{text}</Text> */}
+		<View
+			style={{
+				flexDirection: "row",
+				alignItems: "center",
+				gap: 10,
+				marginHorizontal: 7,
+			}}
+		>
+			<TouchableOpacity onPress={()=>{
+				router.back()
+			}}>
+				<Image
+					source={back}
+					resizeMode="contain"
+					style={{ width: 30, height: 30 }}
+				/>
+			</TouchableOpacity>
 			<View style={styles.fieldStyle}>
 				<TextInput
+					selectionColor={"#fff"}
+					// autoFocus={true}
+					onFocus={() => {
+						setActive(true);
+					}}
+					onBlur={() => {
+						setActive(false);
+					}}
 					style={{
 						width: "100%",
 						height: "100%",
 						color: "white",
-						fontSize: Platform.OS === "ios" ? "19%" : 19,
+						fontSize: Platform.OS === "ios" ? "16%" : 16,
 						fontFamily: "Montserrat_500Medium",
-						textAlign: "center",
+						// textAlign: "center",
+						marginHorizontal: 10,
 						flex: 1,
 					}}
 					placeholder={placeholderText}
 					placeholderTextColor={"gray"}
 					returnKeyType="search"
-					onSubmitEditing={submit}
+					onSubmitEditing={handleSubmit}
 					onChangeText={(word) => {
-						setSearchWord(word);
-						handleChange;
+						handleChange(word);
 					}}
-					value={SearchWord}
+					value={value}
 				/>
-
-				<TouchableOpacity
-					style={{ margin: 10 }}
-					activeOpacity={0.7}
-					onPress={submit}
-				>
-					<Image
-						source={search}
-						resizeMode="contain"
-						style={{ width: 24, height: 24 }}
-					/>
-				</TouchableOpacity>
 			</View>
+			<TouchableOpacity
+				style={{
+					backgroundColor: fieldColor,
+					borderRadius: Platform.OS === "ios" ? "50%" : 50,
+					height: 34,
+					width: 35,
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+				activeOpacity={0.6}
+			>
+				<Image
+					source={microphone}
+					resizeMode="contain"
+					style={{ width: 21, height: 21 }}
+					tintColor={"white"}
+				/>
+			</TouchableOpacity>
 		</View>
 	);
 };
@@ -80,10 +114,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		borderRadius: 20,
-		width: "92%",
+		// width: "92%",
+		flex:1,
 		margin: "0 10px",
 		padding: 10,
-		height: 50,
+		height: 35,
 		backgroundColor: fieldColor,
+		
 	},
 });

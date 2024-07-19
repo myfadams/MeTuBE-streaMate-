@@ -37,58 +37,54 @@ const Index = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<View
-				style={styles.vewStyle}
-				
-			>
-					<View
+			<View style={styles.vewStyle}>
+				<View
+					style={{
+						flexDirection: "row",
+
+						alignItems: "center",
+						justifyContent: "center",
+						marginBottom: 30,
+					}}
+				>
+					<Image
+						source={logo}
 						style={{
-							flexDirection: "row",
-				
-							alignItems: "center",
-							justifyContent: "center",
-							marginBottom: 30,
+							width: 250,
+							height: 120,
 						}}
-					>
-						<Image
-							source={logo}
-							style={{
-								width: 90,
-								height: 66,
-							}}
-							resizeMode="contain"
-						/>
-						<Text
+						resizeMode="contain"
+					/>
+					{/* <Text
 							style={{
 								color: "#fff",
 								fontFamily: "Montserrat_900Black",
 								fontSize: 40,
 							}}
 						>
-							MeTuBE
-						</Text>
-					</View>
-					<View
+							StreaMate
+						</Text> */}
+				</View>
+				<View
+					style={{
+						flexDirection: "row",
+					}}
+				>
+					<Animatable.Text
+						animation={slideInDown}
+						iterationCount="infinite"
+						easing="ease-out"
+						direction="alternate"
 						style={{
-							flexDirection: "row",
+							color: "#fff",
+							fontFamily: "Montserrat_600SemiBold",
+							fontSize: 18,
 						}}
 					>
-						<Animatable.Text
-							animation={slideInDown}
-							iterationCount="infinite"
-							easing="ease-out"
-							direction="alternate"
-							style={{
-								color: "#fff",
-								fontFamily: "Montserrat_600SemiBold",
-								fontSize: 18,
-							}}
-						>
-							Loading..
-						</Animatable.Text>
-					</View>
+						Loading..
+					</Animatable.Text>
 				</View>
-			
+			</View>
 		</SafeAreaView>
 	);
 };

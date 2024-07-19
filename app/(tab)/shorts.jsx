@@ -5,6 +5,7 @@ import {
 	Dimensions,
 	TouchableOpacity,
 	Image,
+	Platform,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";

@@ -1,7 +1,7 @@
 import { View, Text, FlatList, Image, TouchableOpacity, Platform } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { bgColor, borderLight, loadingColor } from "../../constants/colors";
+import { bgColor, borderLight, buttonColor, loadingColor } from "../../constants/colors";
 import HeaderApp from "../../components/HeaderApp";
 import { ScrollView } from "react-native-gesture-handler";
 import ForYouButtons from "../../components/ForYouButtons";
@@ -14,6 +14,7 @@ import {
 	help,
 	incoginito,
 	lightbulb,
+	nextPage,
 	switchAccount,
 	watchtime,
 	yourVideos,
@@ -22,7 +23,7 @@ import MoreButton from "../../components/MoreButton";
 import History from "../../components/History";
 import { getContext } from "../../context/GlobalContext";
 import Toast from "react-native-root-toast";
-import { onValue, ref } from "firebase/database";
+import { get, onValue, ref } from "firebase/database";
 import { authentication, db } from "../../libs/config";
 import { router, useFocusEffect } from "expo-router";
 import { fetchData } from "../../libs/firebase";
@@ -50,6 +51,12 @@ const profile = () => {
 		}
 	},[]))
 	useEffect(()=>{
+		async function getD() {
+			const tempdata = await fetchData("playlist/" + user?.uid);
+			// console.log(tempdata);
+			setplayList([...tempdata]);
+		}
+		getD();
 		setUser(authentication.currentUser);
 	},[isFocused])
 	// console.log(user)
@@ -121,8 +128,18 @@ const profile = () => {
 		// Cleanup listener on unmount
 		return () => unsubscribe();
 	}, [user?.uid,refereshing]);
-	// console.log(historyShorts)
-	// history.reverse();
+	const [userObj, setUserObj] = useState();
+	
+	useEffect(() => {
+		async function getCover() {
+			const detailRef = ref(db, "usersref/" + user?.uid);
+			const res = await get(detailRef);
+			// console.log(res);
+
+			setUserObj(res.val());
+		}
+		getCover();
+	}, [refereshing]);
 	
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
@@ -131,7 +148,7 @@ const profile = () => {
 				<TouchableOpacity
 					onPress={() => {
 						// console.log(user)
-						router.push({ pathname: "userVideos/aboutVids" ,params:user});
+						router.push({ pathname: "userVideos/aboutVids", params: user });
 					}}
 					style={{ width: "100%", alignItems: "center", marginTop: 30 }}
 				>
@@ -155,6 +172,7 @@ const profile = () => {
 								borderColor: borderLight,
 								borderWidth: 1,
 							}}
+							
 						/>
 						<View>
 							<Text
@@ -177,7 +195,7 @@ const profile = () => {
 										fontFamily: "Montserrat_300Light",
 									}}
 								>
-									@channel_name {" . "}
+									{userObj?.handle?? "No handle"} {" . "}
 								</Text>
 								<Text
 									style={{
@@ -191,11 +209,11 @@ const profile = () => {
 								>
 									view channel{" "}
 									<Image
-										source={back}
+										source={nextPage}
 										style={{
 											width: 14,
 											height: 14,
-											transform: [{ rotate: "180deg" }],
+											
 										}}
 									/>
 								</Text>
@@ -208,9 +226,8 @@ const profile = () => {
 						imageUrl={switchAccount}
 						title={"Switch Account"}
 						handlePress={() => {
-							if(isConnected)
-								router.push("account");
-							else{
+							if (isConnected) router.push("account");
+							else {
 								let toast = Toast.show(
 									"Connect to internet to change account",
 									{
@@ -230,118 +247,146 @@ const profile = () => {
 						handlePress={incognitoMode}
 					/>
 				</ScrollView>
-				{isConnected&&<View style={{ marginBottom: 25 }}>
-					<View style={{ marginTop: 25 }}>
-						<View
-							style={{
-								flexDirection: "row",
-								alignItems: "center",
-								marginLeft: "2%",
-								marginRight: "2%",
-								justifyContent: "space-between",
-							}}
-						>
-							<Text
-								numberOfLines={2}
+				{isConnected && (
+					<View style={{ marginBottom: 25 }}>
+						<View style={{ marginTop: 25 }}>
+							{(history.length > 0 || historyShorts.length > 0) && (
+								<View
+									style={{
+										flexDirection: "row",
+										alignItems: "center",
+										marginLeft: "2%",
+										marginRight: "2%",
+										justifyContent: "space-between",
+									}}
+								>
+									<Text
+										numberOfLines={2}
+										style={{
+											color: "white",
+											fontSize: 20,
+											marginBottom: 8,
+											fontFamily: "Montserrat_600SemiBold",
+											flexWrap: "wrap",
+											flexDirection: "row",
+										}}
+									>
+										History
+									</Text>
+									{(history.length >= 3 || historyShorts.length >= 3) && (
+										<MoreButton
+											title={"View all"}
+											color={buttonColor}
+											handlePress={() => {
+												router.push("userVideos/historyVideos");
+											}}
+										/>
+									)}
+								</View>
+							)}
+							<FlatList
+								horizontal
+								decelerationRate={"fast"}
+								showsHorizontalScrollIndicator={false}
+								data={history.slice(0, 5)}
+								renderItem={({ item, index }) => {
+									// if(index===0)
+
+									return <History data={item} />;
+								}}
+								keyExtractor={(item) => item?.videoview}
+							/>
+							<FlatList
+								horizontal
+								decelerationRate={"fast"}
+								showsHorizontalScrollIndicator={false}
+								data={historyShorts?.slice(0, 5)}
+								renderItem={({ item, index }) => {
+									// if(index===0)
+
+									return <History data={item} type={"shorts"} />;
+								}}
+								keyExtractor={(item) => item?.id}
+							/>
+						</View>
+						<View style={{ marginTop: 25 }}>
+							<View
 								style={{
-									color: "white",
-									fontSize: 20,
-									marginBottom: 8,
-									fontFamily: "Montserrat_600SemiBold",
-									flexWrap: "wrap",
 									flexDirection: "row",
+									alignItems: "center",
+									justifyContent: "space-between",
+									marginLeft: "2%",
+									marginRight: "2%",
 								}}
 							>
-								History
-							</Text>
-							<MoreButton title={"View all"} />
-						</View>
-						<FlatList
-							horizontal
-							decelerationRate={"fast"}
-							showsHorizontalScrollIndicator={false}
-							data={history.slice(0, 5)}
-							renderItem={({ item, index }) => {
-								// if(index===0)
-
-								return <History data={item} />;
-							}}
-							keyExtractor={(item) => item?.videoview}
-						/>
-						<FlatList
-							horizontal
-							decelerationRate={"fast"}
-							showsHorizontalScrollIndicator={false}
-							data={historyShorts?.slice(0, 5)}
-							renderItem={({ item, index }) => {
-								// if(index===0)
-
-								return <History data={item} type={"shorts"} />;
-							}}
-							keyExtractor={(item) => item?.id}
-						/>
-					</View>
-					<View style={{ marginTop: 25 }}>
-						<View
-							style={{
-								flexDirection: "row",
-								alignItems: "center",
-								justifyContent: "space-between",
-								marginLeft: "2%",
-								marginRight: "2%",
-							}}
-						>
-							<Text
-								numberOfLines={2}
-								style={{
-									color: "white",
-									fontSize: 20,
-									marginBottom: 8,
-									fontFamily: "Montserrat_600SemiBold",
-									flexWrap: "wrap",
-									flexDirection: "row",
+								<Text
+									numberOfLines={2}
+									style={{
+										color: "white",
+										fontSize: 20,
+										marginBottom: 8,
+										fontFamily: "Montserrat_600SemiBold",
+										flexWrap: "wrap",
+										flexDirection: "row",
+									}}
+								>
+									Playlist
+								</Text>
+								{playList.length >= 3 && <MoreButton title={"View all"} />}
+							</View>
+							<FlatList
+								horizontal
+								decelerationRate={"fast"}
+								showsHorizontalScrollIndicator={false}
+								data={playList}
+								renderItem={({ item, index }) => {
+									return <PlaylistView data={item} />;
 								}}
-							>
-								Playlist
-							</Text>
-							<MoreButton title={"View all"} />
+								keyExtractor={(item) => {
+									return item.id;
+								}}
+							/>
 						</View>
-						<FlatList
-							horizontal
-							decelerationRate={"fast"}
-							showsHorizontalScrollIndicator={false}
-							data={playList}
-							renderItem={({ item, index }) => {
-								return <PlaylistView data={item} />;
-							}}
-							keyExtractor={(item) => {
-								return item.id;
+					</View>
+				)}
+				<View
+					style={{
+						borderColor: loadingColor,
+						borderBottomWidth: isConnected ? 0.9 : 0,
+					}}
+				>
+					{isConnected && (
+						<ForYouButtons
+							sourceUrl={yourVideos}
+							title={"Your videos"}
+							handlePress={() => {
+								router.push("userVideos/yourVideos");
 							}}
 						/>
-					</View>
-				</View>}
-				<View style={{ borderColor: loadingColor, borderBottomWidth:isConnected? 0.9:0 }}>
-					{isConnected&&<ForYouButtons
-						sourceUrl={yourVideos}
-						title={"Your videos"}
-						handlePress={() => {
-							router.push("userVideos/yourVideos");
-						}}
-					/>}
+					)}
 					<ForYouButtons sourceUrl={download} title={"Downloads"} />
-					{isConnected&&<ForYouButtons sourceUrl={lightbulb} title={"Your courses"} />}
+					{isConnected && (
+						<ForYouButtons sourceUrl={lightbulb} title={"Your courses"} />
+					)}
 					<View style={{ marginBottom: 10 }}></View>
 				</View>
-				{isConnected&&<View style={{ borderColor: loadingColor, borderBottomWidth: 0.9 }}>
-					<ForYouButtons sourceUrl={clapper} title={"Your movies"} />
-					<ForYouButtons sourceUrl={getPremium} title={"Get MeTuBE premium"} />
-					<View style={{ marginBottom: 10 }}></View>
-				</View>}
-				{isConnected&&<View style={{}}>
-					<ForYouButtons sourceUrl={watchtime} title={"Time Watched"} />
-					<ForYouButtons sourceUrl={help} title={"Help & feedback"} />
-					<View style={{ marginBottom: 10 }}></View>
-				</View>}
+				{isConnected && (
+					<View style={{ borderColor: loadingColor, borderBottomWidth: 0.9 }}>
+						<ForYouButtons sourceUrl={clapper} title={"Your movies"} />
+						<ForYouButtons
+							sourceUrl={getPremium}
+							title={"Get StreaMate premium"}
+						/>
+						<View style={{ marginBottom: 10 }}></View>
+					</View>
+				)}
+				{isConnected && (
+					<View style={{}}>
+						<ForYouButtons sourceUrl={watchtime} title={"Time Watched"} />
+						<ForYouButtons sourceUrl={help} title={"Help & feedback"} />
+						<View style={{ marginBottom: 10 }}></View>
+					</View>
+				)}
 			</ScrollView>
 		</SafeAreaView>
 	);

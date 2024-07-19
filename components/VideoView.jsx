@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	Platform,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { borderLight, loadingColor } from "../constants/colors";
 import * as Animatable from "react-native-animatable";
@@ -15,16 +15,23 @@ import { router } from "expo-router";
 import { dot, options } from "../constants/icons";
 import { getCreatorInfo } from "../libs/firebase";
 import { db } from "../libs/config";
-import { formatViews } from "../libs/videoUpdates";
+import {
+	calculateTimePassed,
+	formatViews,
+	getUploadTimestamp,
+} from "../libs/videoUpdates";
 import { getContext } from "../context/GlobalContext";
-const VideoView = ({videoInfo,type,menu}) => {
+import { formatTime } from "../constants/videoTime";
+
+const VideoView = ({ videoInfo, type, menu }) => {
 	// console.log(videoInfo)
-	const [creator, setCreator] = useState([])
+	const [creator, setCreator] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
-	const [error,setError]=useState()
-	// thumbnail={item.thumbnail} id={item.id} 
-	const { setRefreshing, refereshing } = getContext();
-	useEffect(()=>{
+	const [error, setError] = useState();
+	// thumbnail={item.thumbnail} id={item.id}
+	const [timePassed, setTimePassed] = useState();
+	const { setRefreshing, refereshing, isConnected } = getContext();
+	useEffect(() => {
 		const fetchCreator = async () => {
 			try {
 				const users = await getCreatorInfo(videoInfo?.creator);
@@ -37,9 +44,15 @@ const VideoView = ({videoInfo,type,menu}) => {
 		};
 
 		fetchCreator();
-	},[refereshing])
+		if (isConnected)
+			getUploadTimestamp(videoInfo.thumbnail, "videoUploads").then((data) => {
+				let time = calculateTimePassed(data);
+				setTimePassed(time);
+			});
+	}, [refereshing]);
 	const [views, setViews] = useState(0);
 	// console.log(creator)
+	// console.log(timePassed);
 	useEffect(() => {
 		const videoRef = ref(db, `videosRef/${videoInfo?.id}/views`);
 
@@ -58,12 +71,21 @@ const VideoView = ({videoInfo,type,menu}) => {
 				if (!type)
 					router.push({
 						pathname: "video/" + videoInfo?.id,
-						params: { ...videoInfo, ...creator[0] },
+						params: {
+							...videoInfo,
+							...creator[0],
+							timePassed: timePassed,
+							videoDescription: videoInfo.description,
+						},
 					});
 				else
 					router.replace({
 						pathname: "video/" + videoInfo?.id,
-						params: { ...videoInfo, ...creator[0] },
+						params: {
+							...videoInfo,
+							...creator[0],
+							videoDescription: videoInfo.description,
+						},
 					});
 			}}
 		>
@@ -91,6 +113,28 @@ const VideoView = ({videoInfo,type,menu}) => {
 							}}
 							resizeMode="contain"
 						/>
+						<View
+							style={{
+								position: "absolute",
+								bottom: 5,
+								right: 10,
+								backgroundColor: "#000",
+								padding: 6,
+								borderRadius: 4,
+								opacity: 0.7,
+							}}
+						>
+							<Text
+								style={{
+									color: "white",
+									fontSize: 12,
+									fontFamily: "Montserrat_500Medium",
+								}}
+							>
+								{formatTime(videoInfo?.duration ?? 0)}
+								{/* 16:30 */}
+							</Text>
+						</View>
 					</View>
 					<View
 						style={{
@@ -100,8 +144,8 @@ const VideoView = ({videoInfo,type,menu}) => {
 							justifyContent: "center",
 						}}
 					>
-						<TouchableOpacity onPress={
-							()=>{
+						<TouchableOpacity
+							onPress={() => {
 								router.push({
 									pathname: "userVideos/aboutVids",
 									params: {
@@ -111,21 +155,21 @@ const VideoView = ({videoInfo,type,menu}) => {
 										otherChannel: "OtherChannel",
 									},
 								});
-							}
-						}>
-
-						<Image
-							source={{ uri: creator[0]?.image }}
-							style={{
-								width: 50,
-								height: 50,
-								borderRadius: Platform.OS === "ios" ? "50%" : 50,
-								borderColor: borderLight,
-								borderWidth: 1,
-								margin: 3,
-								backgroundColor: "#fff",
 							}}
-						/>
+						>
+							<Image
+								source={{ uri: creator[0]?.image }}
+								style={{
+									width: 50,
+									height: 50,
+									borderRadius: Platform.OS === "ios" ? "50%" : 50,
+									borderColor: borderLight,
+									borderWidth: 1,
+									margin: 3,
+									backgroundColor: "#000",
+								}}
+								resizeMode="cover"
+							/>
 						</TouchableOpacity>
 						<View
 							style={{
@@ -153,13 +197,16 @@ const VideoView = ({videoInfo,type,menu}) => {
 										: "This is the videos Title for now and still now"}
 								</Text>
 								<Text
+									numberOfLines={2}
 									style={{
 										flexWrap: "wrap",
+										flexShrink:1,
 										fontSize: 12,
 										color: borderLight,
+										fontFamily: "Montserrat_400Regular",
 									}}
 								>
-									{creator[0]?.name}{" "}
+									{creator[0]?.name?.substring(0, 25)}{" "}
 									<View
 										style={{
 											justifyContent: "center",
@@ -187,7 +234,7 @@ const VideoView = ({videoInfo,type,menu}) => {
 											resizeMode="contain"
 										/>
 									</View>{" "}
-									1 day ago
+									{timePassed} ago
 								</Text>
 							</View>
 							<TouchableOpacity onPress={menu}>
@@ -205,4 +252,4 @@ const VideoView = ({videoInfo,type,menu}) => {
 	);
 };
 
-export default VideoView;
+export default memo(VideoView);

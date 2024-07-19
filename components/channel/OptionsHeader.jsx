@@ -35,7 +35,7 @@ const OptionsHeader = ({userInfo}) => {
 						<Image
 							source={back}
 							resizeMode="contain"
-							style={{ width: 35, height: 35 }}
+							style={{ width: 30, height: 30 }}
 						/>
 					</TouchableOpacity>
 

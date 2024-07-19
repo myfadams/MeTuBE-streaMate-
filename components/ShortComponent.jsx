@@ -1,14 +1,14 @@
 import { View, Text, ImageBackground, TouchableOpacity,Image, Dimensions } from 'react-native'
-import React from 'react'
+import React, { memo } from 'react'
 import { options } from '../constants/icons';
 import { router } from 'expo-router';
 
 const width =Dimensions.get("window").width
-const ShortComponent = ({title,short,marginVid}) => {
+const ShortComponent = ({title,short,marginVid,type}) => {
 	// console.log(short)
   return (
 		<TouchableOpacity
-			style={{ width: 0.48 * width, height: 250, margin: marginVid }}
+			style={{ width:!type? 0.48 * width:0.3*width, height:!type? 250:150, margin: marginVid }}
 			activeOpacity={0.7}
 			onPress={() => {
 				router.push({ pathname: "shorts/" + short.id, params: short });
@@ -18,7 +18,7 @@ const ShortComponent = ({title,short,marginVid}) => {
 				style={{ position: "relative", borderRadius: 10, overflow: "hidden" }}
 			>
 				<ImageBackground
-					source={{ uri: short.thumbnail }}
+					source={{ uri: short?.thumbnail }}
 					style={{
 						width: "100%",
 						height: "100%",
@@ -57,4 +57,4 @@ const ShortComponent = ({title,short,marginVid}) => {
 	);
 }
 
-export default ShortComponent
+export default ShortComponent;

@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, Platform } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Platform, ActivityIndicator } from 'react-native'
 import React from 'react'
 
 import { fieldColor } from '../constants/colors';
@@ -29,7 +29,8 @@ const MoreButton = ({ title, imageUrl, handlePress,height,color,isLoading,typeau
 					tintColor={"#fff"}
 				/>
 			)}
-			<Text
+			{isLoading&&<ActivityIndicator color={"#fff"} />}
+			{!isLoading&&<Text
 				style={{
 					color: "white",
 					marginRight: imageUrl && 14,
@@ -38,7 +39,7 @@ const MoreButton = ({ title, imageUrl, handlePress,height,color,isLoading,typeau
 				}}
 			>
 				{title}
-			</Text>
+			</Text>}
 		</TouchableOpacity>
 	);
 };

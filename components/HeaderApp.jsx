@@ -27,10 +27,10 @@ const HeaderApp = ({ screenName, disable,type }) => {
 				>
 					<Image
 						source={logo}
-						style={{ width: 35, height: 35 }}
+						style={{ width:105, height: 60 }}
 						resizeMode="contain"
 					/>
-					<Text
+					{/* <Text
 						style={{
 							color: "#fff",
 							fontFamily: "Montserrat_900Black",
@@ -38,8 +38,8 @@ const HeaderApp = ({ screenName, disable,type }) => {
 							marginLeft: 2,
 						}}
 					>
-						MeTuBE
-					</Text>
+						StreaMate
+					</Text> */}
 				</View>
 				<View
 					style={{

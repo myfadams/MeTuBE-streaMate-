@@ -1,7 +1,7 @@
 import {
 	View,
 	Text,
-	SafeAreaView,
+	// SafeAreaView,
 	TouchableOpacity,
 	Image,
 	Platform,
@@ -13,6 +13,7 @@ import {
 	camera,
 	chromecast,
 	copy,
+	description,
 	edit,
 	options,
 	search,
@@ -32,6 +33,7 @@ import { authentication, db } from "../../libs/config";
 import { onValue, ref } from "firebase/database";
 import { changeUserDetails } from "../../libs/firebase";
 import Toast from "react-native-root-toast";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const channelSettings = () => {
 	const [isEnabled, setIsEnabled] = useState(false);
@@ -112,6 +114,7 @@ const channelSettings = () => {
 
 			const unsubscribe = onValue(userRef, (snapshot) => {
 				const data = snapshot.val();
+				// console.log(data);
 				setUserData(data);
 			});
 
@@ -119,12 +122,14 @@ const channelSettings = () => {
 			return () => unsubscribe();
 		}
 	}, [refereshing]);
+	// console.log(userData);
 	useEffect(() => {
-		setUserDetails({ ...userDetails, name: userData?.name });
+		setUserDetails({ ...userDetails, name: userData?.name, handle: (userData?.handle ?? "No handle") });
 	}, [refereshing]);
 	// console.log("new name"+user.);
+	// console.log(userData?.handle);
 	async function handleChangeProfile() {
-		const data = await OpenImageView();
+		const data = await OpenImageView("profile");
 		if (data) {
 			let toast = Toast.show("Updating Profile photo", {
 				duration: Toast.durations.LONG,
@@ -143,7 +148,7 @@ const channelSettings = () => {
 		// console.log(data.replace(/^.*?\./,   "cover."));
 	}
 	async function handleChangeCover() {
-		const data = await OpenImageView();
+		const data = await OpenImageView("cover");
 		if(data){
 			let toast = Toast.show("Updating Cover photo", {
 				duration: Toast.durations.LONG,
@@ -185,7 +190,7 @@ const channelSettings = () => {
 								<Image
 									source={back}
 									resizeMode="contain"
-									style={{ width: 35, height: 35 }}
+									style={{ width: 30, height: 30 }}
 								/>
 							</TouchableOpacity>
 
@@ -284,7 +289,7 @@ const channelSettings = () => {
 								source={{ uri: userData?.image }}
 								style={{
 									margin: 3,
-									backgroundColor: "white",
+									backgroundColor: "#000",
 									borderWidth: 0.7,
 									opacity: 0.6,
 									width: 75,
@@ -316,22 +321,26 @@ const channelSettings = () => {
 					<ChannelEditButtons
 						sourceUrl={edit}
 						title={"Handle"}
-						subtitle={"@channel_name"}
+						subtitle={userData?.handle ?? "No handle"}
 						handlePress={() => {
 							setIsModalVisible(!isModalVisible);
 							setType("handle");
+							setUserDetails({ ...userDetails, handle: userData?.handle });
 						}}
 					/>
 					<ChannelEditButtons
 						sourceUrl={copy}
 						title={"Channel URL"}
-						subtitle={"www.metube.com/channel_name"}
+						subtitle={"www.StreaMate.com/channel_name"}
 					/>
 					<ChannelEditButtons
+						handlePress={()=>{
+							router.push({pathname:"userVideos/channelDescription",params:userData})
+						}}
 						sourceUrl={edit}
 						title={"Description"}
 						subtitle={
-							"channel_name this the temp channel description for now berebe saa i will see"
+							userData?.description ?? "No channel description"
 						}
 					/>
 
@@ -379,7 +388,7 @@ const channelSettings = () => {
 									style={{ transform: [{ scaleX: 0.75 }, { scaleY: 0.75 }] }}
 								>
 									<Switch
-										trackColor={{ false: "#767577", true: "#81b0ff" }}
+										trackColor={{ false: "#767577", true: buttonColor }}
 										thumbColor={"#f4f3f4"}
 										ios_backgroundColor="#3e3e3e"
 										value={isEnabled}
@@ -397,7 +406,7 @@ const channelSettings = () => {
 									// width:
 								}}
 							>
-								Changes made to your name and profile are visible only on MeTube
+								Changes made to your name and profile are visible only on StreaMate
 								and not other Google services.
 								<Text style={{ color: buttonColor }}> Learn more</Text>
 							</Text>
@@ -413,6 +422,7 @@ const channelSettings = () => {
 				val={userDetails}
 				setRef={setRefreshing}
 				refe={refereshing}
+				// data={userData}
 			/>
 		</SafeAreaView>
 	);
