@@ -3,7 +3,6 @@ import {
 	Text,
 	// SafeAreaView,
 	TouchableOpacity,
-	Image,
 	FlatList,
 	RefreshControl,
 	Platform,
@@ -12,6 +11,7 @@ import {
 	TouchableHighlight,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
+import { Image } from "expo-image";
 import { bgColor, borderLight, fieldColor } from "../../constants/colors";
 import {
 	back,
@@ -237,7 +237,7 @@ const historyVideos = () => {
 						>
 							<Image
 								source={back}
-								resizeMode="contain"
+								contentFit="contain"
 								style={{ width: 30, height: 30 }}
 							/>
 						</TouchableOpacity>
@@ -265,7 +265,7 @@ const historyVideos = () => {
 							<Image
 								source={chromecast}
 								style={{ width: 21, height: 21 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 
@@ -277,14 +277,14 @@ const historyVideos = () => {
 							<Image
 								source={search}
 								style={{ width: 21, height: 21 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 						<TouchableOpacity>
 							<Image
 								source={options}
 								style={{ width: 21, height: 21 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 					</View>
@@ -296,9 +296,9 @@ const historyVideos = () => {
 				viewabilityConfig={{ viewAreaCoveragePercentThreshold: 100 }}
 				onViewableItemsChanged={onViewableItemsChanged}
 				renderItem={({ item, index }) => {
-					const date = item[0][0]?.date ?? item[1][0]?.date
+					const date = item[0][0]?.date ?? item[1][0]?.date;
 					// console.log(date);
-					
+
 					return (
 						<View style={{ marginBottom: 20 }}>
 							<View style={{ width: "94%" }}>
@@ -313,20 +313,20 @@ const historyVideos = () => {
 									{formatDate(date)}
 								</Text>
 							</View>
-							{
-								item[0].length>0&&<View
+							{item[0].length > 0 && (
+								<View
 									style={{
 										flexDirection: "row",
 										alignItems: "center",
 										gap: 10,
-										marginTop:20,
-										marginBottom:10
+										marginTop: 20,
+										marginBottom: 10,
 									}}
 								>
 									<Image
 										source={shortLogo}
 										style={{ width: 30, height: 30 }}
-										resizeMode="contain"
+										contentFit="contain"
 									/>
 									<Text
 										style={{
@@ -339,7 +339,7 @@ const historyVideos = () => {
 										Shorts
 									</Text>
 								</View>
-							}
+							)}
 							<FlatList
 								horizontal
 								data={item[0]}
@@ -363,7 +363,7 @@ const historyVideos = () => {
 						</View>
 					);
 				}}
-				keyExtractor={(item,index) => {
+				keyExtractor={(item, index) => {
 					return index;
 				}}
 				ListEmptyComponent={<NotFound type={"yourVideos"} />}
@@ -383,6 +383,7 @@ const historyVideos = () => {
 					/>
 				}
 				onScroll={handleScroll}
+				scrollEventThrottle={16}
 			/>
 		</SafeAreaView>
 	);

@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
+import { Image } from "expo-image";
 import React from 'react'
 import { adjuster, close } from '../constants/icons';
 

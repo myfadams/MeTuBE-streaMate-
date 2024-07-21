@@ -1,4 +1,5 @@
-import { View, Text,Image,TouchableOpacity, Platform } from 'react-native'
+import { View, Text,TouchableOpacity, Platform } from 'react-native'
+import { Image } from "expo-image";
 import React from 'react'
 import { logo } from '../constants/images';
 import { chromecast, gear, message, search, sub } from '../constants/icons';
@@ -27,8 +28,8 @@ const HeaderApp = ({ screenName, disable,type }) => {
 				>
 					<Image
 						source={logo}
-						style={{ width:105, height: 60 }}
-						resizeMode="contain"
+						style={{ width: 105, height: 60 }}
+						contentFit="contain"
 					/>
 					{/* <Text
 						style={{
@@ -54,11 +55,14 @@ const HeaderApp = ({ screenName, disable,type }) => {
 					}}
 				>
 					{screenName !== "you" && (
-						<TouchableOpacity>
+						<TouchableOpacity onPress={()=>{
+							router.push("post")
+						}}>
 							<Image
 								source={message}
 								style={{ width: 21, height: 21 }}
-								resizeMode="contain"
+								contentFit="contain"
+								tintColor={"#fff"}
 							/>
 							<View
 								style={{
@@ -76,14 +80,16 @@ const HeaderApp = ({ screenName, disable,type }) => {
 						<Image
 							source={chromecast}
 							style={{ width: 21, height: 21 }}
-							resizeMode="contain"
+							contentFit="contain"
+							tintColor={"#fff"}
 						/>
 					</TouchableOpacity>
 					<TouchableOpacity>
 						<Image
 							source={sub}
 							style={{ width: 21, height: 21 }}
-							resizeMode="contain"
+							contentFit="contain"
+							tintColor={"#fff"}
 						/>
 						<View
 							style={{
@@ -104,7 +110,8 @@ const HeaderApp = ({ screenName, disable,type }) => {
 						<Image
 							source={search}
 							style={{ width: 21, height: 21 }}
-							resizeMode="contain"
+							contentFit="contain"
+							tintColor={"#fff"}
 						/>
 					</TouchableOpacity>
 					{screenName === "you" && (
@@ -116,7 +123,8 @@ const HeaderApp = ({ screenName, disable,type }) => {
 							<Image
 								source={gear}
 								style={{ width: 21, height: 21 }}
-								resizeMode="contain"
+								contentFit="contain"
+								tintColor={"#fff"}
 							/>
 						</TouchableOpacity>
 					)}

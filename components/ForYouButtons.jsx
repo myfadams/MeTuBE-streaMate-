@@ -1,4 +1,5 @@
-import { View, Text, Image ,TouchableOpacity} from "react-native";
+import { View, Text ,TouchableOpacity} from "react-native";
+import { Image } from "expo-image";
 import React from "react";
 
 const ForYouButtons = ({sourceUrl,title, handlePress}) => {
@@ -16,7 +17,7 @@ const ForYouButtons = ({sourceUrl,title, handlePress}) => {
 				<Image
 					source={sourceUrl}
 					style={{ width: 27, height: 27 }}
-					resizeMode="contain"
+					contentFit="contain"
 					tintColor={"#fff"}
 				/>
 				<Text

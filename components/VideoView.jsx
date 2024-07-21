@@ -2,22 +2,23 @@ import {
 	View,
 	Text,
 	StyleSheet,
-	Image,
 	TouchableWithoutFeedback,
 	TouchableOpacity,
 	Platform,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { memo, useEffect, useState } from "react";
-import { ref, onValue } from "firebase/database";
-import { borderLight, loadingColor } from "../constants/colors";
+import { ref, onValue, update } from "firebase/database";
+import { bgColor, borderLight, loadingColor } from "../constants/colors";
 import * as Animatable from "react-native-animatable";
 import { router } from "expo-router";
-import { dot, options } from "../constants/icons";
+import { dot, options, playVideo } from "../constants/icons";
 import { getCreatorInfo } from "../libs/firebase";
 import { db } from "../libs/config";
 import {
 	calculateTimePassed,
 	formatViews,
+	getUploadTime,
 	getUploadTimestamp,
 } from "../libs/videoUpdates";
 import { getContext } from "../context/GlobalContext";
@@ -44,11 +45,13 @@ const VideoView = ({ videoInfo, type, menu }) => {
 		};
 
 		fetchCreator();
-		if (isConnected)
-			getUploadTimestamp(videoInfo.thumbnail, "videoUploads").then((data) => {
-				let time = calculateTimePassed(data);
-				setTimePassed(time);
-			});
+
+		getUploadTime(videoInfo.id, "video").then((res) => {
+			// console.log(res)
+			let time = calculateTimePassed(res);
+			// console.log(time)
+			setTimePassed(time);
+		});
 	}, [refereshing]);
 	const [views, setViews] = useState(0);
 	// console.log(creator)
@@ -109,14 +112,15 @@ const VideoView = ({ videoInfo, type, menu }) => {
 							style={{
 								width: "100%",
 								height: "100%",
+								borderRadius: 20,
 								backgroundColor: "#1A1818",
 							}}
-							resizeMode="contain"
+							contentFit="cover"
 						/>
 						<View
 							style={{
 								position: "absolute",
-								bottom: 5,
+								top: 15,
 								right: 10,
 								backgroundColor: "#000",
 								padding: 6,
@@ -138,10 +142,30 @@ const VideoView = ({ videoInfo, type, menu }) => {
 					</View>
 					<View
 						style={{
+							width: 40,
+							height: 40,
+							backgroundColor: bgColor,
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
+							alignItems: "center",
+							justifyContent: "center",
+							position: "absolute",
+							right: 30,
+							top: 197,
+						}}
+					>
+						<Image
+							style={{ width: 15, height: 16 }}
+							contentFit="contain"
+							source={playVideo}
+						/>
+					</View>
+					<View
+						style={{
 							flexDirection: "row",
 							width: "100%",
-							margin: 8,
+							marginVertical: 8,
 							justifyContent: "center",
+							gap: 10,
 						}}
 					>
 						<TouchableOpacity
@@ -165,16 +189,16 @@ const VideoView = ({ videoInfo, type, menu }) => {
 									borderRadius: Platform.OS === "ios" ? "50%" : 50,
 									borderColor: borderLight,
 									borderWidth: 1,
-									margin: 3,
+									// margin: 3,
 									backgroundColor: "#000",
 								}}
-								resizeMode="cover"
+								contentFit="cover"
 							/>
 						</TouchableOpacity>
 						<View
 							style={{
 								flex: 1,
-								justifyContent: "center",
+								justifyContent: "space-between",
 								flexDirection: "row",
 							}}
 						>
@@ -200,7 +224,7 @@ const VideoView = ({ videoInfo, type, menu }) => {
 									numberOfLines={2}
 									style={{
 										flexWrap: "wrap",
-										flexShrink:1,
+										flexShrink: 1,
 										fontSize: 12,
 										color: borderLight,
 										fontFamily: "Montserrat_400Regular",
@@ -217,7 +241,7 @@ const VideoView = ({ videoInfo, type, menu }) => {
 										<Image
 											source={dot}
 											style={{ width: 3, height: 3 }}
-											resizeMode="contain"
+											contentFit="contain"
 										/>
 									</View>{" "}
 									{formatViews(views)}{" "}
@@ -231,7 +255,7 @@ const VideoView = ({ videoInfo, type, menu }) => {
 										<Image
 											source={dot}
 											style={{ width: 3, height: 3 }}
-											resizeMode="contain"
+											contentFit="contain"
 										/>
 									</View>{" "}
 									{timePassed} ago
@@ -241,7 +265,7 @@ const VideoView = ({ videoInfo, type, menu }) => {
 								<Image
 									source={options}
 									style={{ width: 15, height: 15 }}
-									resizeMode="contain"
+									contentFit="contain"
 								/>
 							</TouchableOpacity>
 						</View>

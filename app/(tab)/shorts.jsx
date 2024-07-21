@@ -4,14 +4,13 @@ import {
 	FlatList,
 	Dimensions,
 	TouchableOpacity,
-	Image,
 	Platform,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor } from "../../constants/colors";
 import ShortsView from "../../components/ShortsView";
-
+import { Image } from "expo-image";
 import { router, useFocusEffect } from "expo-router";
 import { search } from "../../constants/icons";
 import { fetchShorts } from "../../libs/firebase";
@@ -21,7 +20,7 @@ import { getContext } from "../../context/GlobalContext";
 const windowHeight = Dimensions.get("window").height;
 
 const shorts = () => {
-	const {refereshing}=getContext();
+	const { refereshing } = getContext();
 	const [viewableItems, setViewableItems] = useState([]);
 	const [scollable, setScollable] = useState(false);
 	const onViewableItemsChanged = useRef(({ viewableItems }) => {
@@ -31,7 +30,7 @@ const shorts = () => {
 
 	useFocusEffect(
 		useCallback(() => {
-			console.log("shorts focused")
+			console.log("shorts focused");
 			setIsFocused(true);
 			return () => {
 				setIsFocused(false);
@@ -54,6 +53,37 @@ const shorts = () => {
 
 		fetchData();
 	}, [refereshing]);
+	const contentHeight =
+		Platform.OS === "ios" ? windowHeight - 80 : windowHeight - 60;
+	const renderItem = useCallback(
+		({ item,index }) => {
+			const shouldPlay = viewableItems.includes(item.id.toString());
+			// console.log(index+" "+shouldPlay)
+			return (
+				<View
+					style={{
+						height: contentHeight,
+						borderTopWidth: 0.7,
+						borderBottomWidth: 0.7,
+					}}
+				>
+					<ShortsView
+						sourceUrl={item.video}
+						shouldPlay={shouldPlay}
+						title={item.caption}
+						videoId={item.id}
+						creatorID={item.creator}
+						fix={(val) => {
+							setScollable(val);
+						}}
+						data={item}
+						beFocused={isFocused}
+					/>
+				</View>
+			);
+		},
+		[viewableItems, contentHeight]
+	);
 
 	return (
 		<View
@@ -84,46 +114,23 @@ const shorts = () => {
 				>
 					<Image
 						source={search}
-						resizeMode="contain"
+						contentFit="contain"
 						style={{ width: 24, height: 24 }}
 					/>
 				</TouchableOpacity>
 			</View>
 			<FlatList
 				data={shorts}
-				viewabilityConfig={{ itemVisiblePercentThreshold: 75 }}
+				viewabilityConfig={{ itemVisiblePercentThreshold: 85 }}
 				onViewableItemsChanged={onViewableItemsChanged.current}
 				pagingEnabled
 				scrollEnabled={!scollable}
 				snapToAlignment="start"
 				decelerationRate="fast"
+				initialNumToRender={3}
+				removeClippedSubviews={true}
 				showsVerticalScrollIndicator={false}
-				renderItem={({ item }) => {
-					const shouldPlay = viewableItems.includes(item.id.toString());
-					return (
-						<View
-							style={{
-								height: windowHeight - 80,
-								borderTopWidth: 0.7,
-								borderBottomWidth: 0.7,
-							}}
-						>
-							<ShortsView
-								sourceUrl={item.video}
-								shouldPlay={shouldPlay}
-								title={item.caption}
-								videoId={item.id}
-								creatorID={item.creator}
-								fix={(val) => {
-									// console.log(val);
-									setScollable(val);
-								}}
-								data={item}
-								beFocused={isFocused}
-							/>
-						</View>
-					);
-				}}
+				renderItem={renderItem}
 				keyExtractor={(item) => item.id}
 			/>
 		</View>

@@ -1,4 +1,5 @@
-import { View, Text, Modal, StyleSheet, Pressable, KeyboardAvoidingView, Platform, Image, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, Modal, StyleSheet, Pressable, KeyboardAvoidingView, Platform,  TouchableWithoutFeedback } from 'react-native'
+import { Image } from "expo-image";
 import React from 'react'
 import ChatInput from '../ChatInput';
 import { bgColor, buttonColor } from '../../constants/colors';
@@ -89,6 +90,7 @@ refe}) => {
 									}}
 									text={type === "name" ? val.name : val.handle}
 									name={"name"}
+									type={"editor"}
 								/>
 							</View>
 							<View
@@ -110,7 +112,7 @@ refe}) => {
 									<Image
 										source={globe}
 										style={{ width: 13, height: 13 }}
-										resizeMode="contain"
+										contentFit="contain"
 										tintColor={"#fff"}
 									/>
 									{type === "name" ? (
@@ -162,7 +164,7 @@ refe}) => {
 									<Image
 										source={info}
 										style={{ width: 13, height: 13 }}
-										resizeMode="contain"
+										contentFit="contain"
 										tintColor={"#fff"}
 									/>
 									{type === "name" ? (

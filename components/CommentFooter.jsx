@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image,KeyboardAvoidingView, Platform, Keyboard } from "react-native";
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import React, { useEffect, useState } from "react";
 import ChatInput from "./ChatInput";
 import { useKeyboard } from "@react-native-community/hooks";
@@ -6,7 +6,7 @@ import { bgColor } from "../constants/colors";
 import { send } from "../constants/icons";
 import { addComment } from "../libs/videoUpdates";
 import { getContext } from "../context/GlobalContext";
-
+import { Image } from "expo-image";
 const CommentFooter = ({ profile, videoID, creatorID }) => {
 	const [keyboardHeight, setKeyboardHeight] = useState(0);
 	const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -85,7 +85,7 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 					>
 						<Image
 							source={send}
-							resizeMode="contain"
+							contentFit="contain"
 							style={{ width: 40, height: 40 }}
 						/>
 					</TouchableOpacity>

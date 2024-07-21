@@ -3,11 +3,11 @@ import {
 	Text,
 	// SafeAreaView,
 	TouchableOpacity,
-	Image,
 	TextInput,
     ScrollView,
 	Alert,
 } from "react-native";
+import { Image } from "expo-image";
 import Toast from "react-native-root-toast";
 import React, { useEffect, useRef, useState } from "react";
 import { bgColor, borderLight, buttonColor } from "../../constants/colors";
@@ -99,7 +99,7 @@ const UploadFeatures = () => {
 						>
 							<Image
 								source={back}
-								resizeMode="contain"
+								contentFit="contain"
 								style={{ width: 35, height: 35 }}
 							/>
 						</TouchableOpacity>
@@ -250,7 +250,7 @@ const UploadFeatures = () => {
 										height: 27,
 										transform: [{ rotate: isVisible ? "90deg" : "-90deg" }],
 									}}
-									resizeMode="contain"
+									contentFit="contain"
 									tintColor={"#fff"}
 								/>
 							</View>

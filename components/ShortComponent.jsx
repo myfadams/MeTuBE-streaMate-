@@ -1,14 +1,18 @@
-import { View, Text, ImageBackground, TouchableOpacity,Image, Dimensions } from 'react-native'
+import { View, Text, ImageBackground, TouchableOpacity, Dimensions } from 'react-native'
+import { Image } from "expo-image";
 import React, { memo } from 'react'
 import { options } from '../constants/icons';
 import { router } from 'expo-router';
+import { getUploadTimestamp } from '../libs/videoUpdates';
+import { ref, update } from 'firebase/database';
+import { db } from '../libs/config';
 
 const width =Dimensions.get("window").width
 const ShortComponent = ({title,short,marginVid,type}) => {
 	// console.log(short)
   return (
 		<TouchableOpacity
-			style={{ width:!type? 0.48 * width:0.3*width, height:!type? 250:150, margin: marginVid }}
+			style={{ width:!type? 0.44 * width:0.3*width, height:!type? 250:150, margin: marginVid }}
 			activeOpacity={0.7}
 			onPress={() => {
 				router.push({ pathname: "shorts/" + short.id, params: short });
@@ -25,7 +29,7 @@ const ShortComponent = ({title,short,marginVid,type}) => {
 						borderRadius: 10,
 						backgroundColor: "#1A1818",
 					}}
-					resizeMode="cover"
+					contentFit="cover"
 				/>
 				<Text
 					numberOfLines={2}
@@ -49,7 +53,7 @@ const ShortComponent = ({title,short,marginVid,type}) => {
 					<Image
 						source={options}
 						style={{ width: 20, height: 20 }}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 				</TouchableOpacity>
 			</View>

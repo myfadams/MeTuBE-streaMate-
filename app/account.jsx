@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Image, ScrollView, Alert, Platform } from "react-native";
+import { View, Text, TouchableOpacity,  ScrollView, Alert, Platform } from "react-native";
+import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { accountSetting, addAccount, close, signout } from "../constants/icons";
@@ -69,7 +70,7 @@ const AccountInfo = () => {
 				>
 					<Image
 						source={close}
-						resizeMode="contain"
+						contentFit="contain"
 						style={{ width: 25, height: 25 }}
 					/>
 				</TouchableOpacity>
@@ -135,7 +136,7 @@ const AccountInfo = () => {
 					>
 						<Image
 							source={{ uri: user?.photoURL }}
-							resizeMode="cover"
+							contentFit="cover"
 							style={{
 								width: 60,
 								height: 60,
@@ -257,7 +258,7 @@ const AccountInfo = () => {
 						>
 							<Image
 								// source={{ uri: user.photoURL }}
-								resizeMode="contain"
+								contentFit="contain"
 								style={{
 									width: 50,
 									height: 50,

@@ -98,9 +98,9 @@ export default function MyPager() {
 	// console.log();
 	if (isConnected)
 		return (
-			<SafeAreaView style={{ backgroundColor: bgColor }}>
+			<View style={{ backgroundColor: bgColor, paddingBottom:insets.bottom }}>
 				{!isItemVisible(specialItemLayout, scrollY) && (
-					<View style={{ position: "absolute", top:Platform.OS==="ios" &&insets.top, zIndex: 1 }}>
+					<View style={{ position: "absolute", paddingTop:Platform.OS==="ios" &&insets.top, zIndex: 1,backgroundColor:bgColor }}>
 						<OptionsHeader userInfo={userInfo} />
 						<HorizontalHeaderScrollView
 							activePage={activePage}
@@ -125,7 +125,7 @@ export default function MyPager() {
 						act={handleActivePage}
 					/>
 				</ScrollView>
-			</SafeAreaView>
+			</View>
 		);
 	else return <Offline type={"prof"}/>;
 }

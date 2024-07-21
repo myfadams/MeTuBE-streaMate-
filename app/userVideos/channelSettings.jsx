@@ -3,11 +3,12 @@ import {
 	Text,
 	// SafeAreaView,
 	TouchableOpacity,
-	Image,
+	
 	Platform,
 	Switch,
 } from "react-native";
 import React, { useEffect, useState } from "react";
+import { Image } from "expo-image";
 import {
 	back,
 	camera,
@@ -92,7 +93,7 @@ const channelSettings = () => {
 				<Image
 					source={sourceUrl}
 					style={{ width: 23, height: 23 }}
-					resizeMode="contain"
+					contentFit="contain"
 					tintColor={"#fff"}
 				/>
 			</TouchableOpacity>
@@ -189,7 +190,7 @@ const channelSettings = () => {
 							>
 								<Image
 									source={back}
-									resizeMode="contain"
+									contentFit="contain"
 									style={{ width: 30, height: 30 }}
 								/>
 							</TouchableOpacity>
@@ -216,7 +217,7 @@ const channelSettings = () => {
 								<Image
 									source={chromecast}
 									style={{ width: 21, height: 21 }}
-									resizeMode="contain"
+									contentFit="contain"
 								/>
 							</TouchableOpacity>
 
@@ -228,14 +229,14 @@ const channelSettings = () => {
 								<Image
 									source={search}
 									style={{ width: 21, height: 21 }}
-									resizeMode="contain"
+									contentFit="contain"
 								/>
 							</TouchableOpacity>
 							<TouchableOpacity>
 								<Image
 									source={options}
 									style={{ width: 21, height: 21 }}
-									resizeMode="contain"
+									contentFit="contain"
 								/>
 							</TouchableOpacity>
 						</View>
@@ -253,7 +254,7 @@ const channelSettings = () => {
 									height: 120,
 									opacity: 0.6,
 								}}
-								resizeMode="cover"
+								contentFit="cover"
 							/>
 							<Image
 								source={camera}
@@ -265,7 +266,7 @@ const channelSettings = () => {
 									top: 10,
 								}}
 								tintColor={"white"}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 						<TouchableOpacity
@@ -296,13 +297,13 @@ const channelSettings = () => {
 									height: 75,
 									borderRadius: Platform.OS === "ios" ? "50%" : 50,
 								}}
-								resizeMode="cover"
+								contentFit="cover"
 							/>
 							<Image
 								source={camera}
 								style={{ position: "absolute", width: 40, height: 40 }}
 								tintColor={"white"}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 					</View>

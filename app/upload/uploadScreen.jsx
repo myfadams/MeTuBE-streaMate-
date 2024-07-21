@@ -2,12 +2,12 @@ import {
 	View,
 	Text,
 	ScrollView,
-	Image,
 	TouchableOpacity,
 	TextInput,
 	Alert,
 	Platform,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { useState } from "react";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -87,7 +87,7 @@ const UploadView = () => {
 						>
 							<Image
 								source={back}
-								resizeMode="contain"
+								contentFit="contain"
 								style={{ width: 30, height: 30 }}
 							/>
 						</TouchableOpacity>
@@ -123,7 +123,7 @@ const UploadView = () => {
 					<Image
 						source={{ uri: videoInfo.thumbnailUrl }}
 						style={{ width: "100%", height: 250, backgroundColor: "#000" }}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 					<TouchableOpacity
 						onPress={() => {
@@ -143,7 +143,7 @@ const UploadView = () => {
 					>
 						<Image
 							source={addImage}
-							resizeMode="contain"
+							contentFit="contain"
 							style={{ width: 25, height: 25 }}
 							tintColor={"#fff"}
 						/>
@@ -167,7 +167,7 @@ const UploadView = () => {
 								backgroundColor: "black",
 								borderRadius: Platform.OS === "ios" ? "50%" : 50,
 							}}
-							resizeMode="cover"
+							contentFit="cover"
 						/>
 						<View>
 							<Text

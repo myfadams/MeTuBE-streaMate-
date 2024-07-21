@@ -1,5 +1,6 @@
-import { View, Text, TouchableOpacity, Image, TextInput } from "react-native";
+import { View, Text, TouchableOpacity,  TextInput } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
+import { Image } from "expo-image";
 // import { SafeAreaView } from "react-native";
 import { bgColor, buttonColor } from "../../constants/colors";
 import { back } from "../../constants/icons";
@@ -57,7 +58,7 @@ const channelDescription = () => {
 						>
 							<Image
 								source={back}
-								resizeMode="contain"
+								contentFit="contain"
 								style={{ width: 35, height: 35 }}
 							/>
 						</TouchableOpacity>

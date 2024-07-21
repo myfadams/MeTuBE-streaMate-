@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity,Image, Platform} from "react-native";
+import { View, Text, TouchableOpacity, Platform} from "react-native";
+import { Image } from "expo-image";
 import React, { useCallback, useEffect, useState } from "react";
 import { borderLight, buttonColor, fieldColor, loadingColor } from "../constants/colors";
 import OtherViewButtons from "./OtherViewButtons";
@@ -186,7 +187,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 							height: 45,
 							backgroundColor: "#000",
 						}}
-						resizeMode="cover"
+						contentFit="cover"
 					/>
 					<View style={{ flexDirection: "row", gap: 10 }}>
 						<Text
@@ -297,7 +298,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 				>
 					{latestComment&&<Image
 						source={{uri:latestComment?.image}}
-						resizeMode="cover"
+						contentFit="cover"
 						style={{
 							width: 30,
 							height: 30,

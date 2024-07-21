@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity, Image, Platform } from "react-native";
+import { View, Text, TouchableOpacity,  Platform, Dimensions } from "react-native";
+import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
-import { formatSubs } from "../../libs/videoUpdates";
+import { formatSubs, getSubsriptions, subscribeToChannel } from "../../libs/videoUpdates";
 import OtherViewButtons from "../OtherViewButtons";
 import { borderLight, buttonColor, fieldColor } from "../../constants/colors";
 import { get, ref } from "firebase/database";
@@ -15,7 +16,7 @@ const ChannelComponent = ({ channel }) => {
 	// console.log(user.uid)
 	function handleSubscribe() {
 		subscribeToChannel(channel?.id, user?.uid);
-		// getSubsriptions(user?.uid, setIsSubscribed, channel.id);
+		getSubsriptions(user?.uid, setIsSubscribed, channel.id);
 	}
 	useEffect(() => {
 		const usersRef = ref(db, `subs/users/${user?.uid}/subscriptions`);
@@ -24,7 +25,7 @@ const ChannelComponent = ({ channel }) => {
 			const subs = await (await get(usersRef)).val();
 			const subscribers = await (await get(subsRef)).val();
 			// console.log(susbcribers)
-			setNoSubs(subscribers?.length);
+			setNoSubs(subscribers?.length ?? "No");
 			if (subs?.includes(channel?.id)) {
                 // console.log("is true")
 				setIsSubscribed(true);
@@ -48,94 +49,75 @@ const ChannelComponent = ({ channel }) => {
 			style={{
 				width: "100%",
 				alignItems: "center",
-				marginTop: 15,
-				paddingTop: 15,
-				borderTopWidth: 0.7,
-				borderColor: borderLight,
+				// marginTop: 15,
+				// paddingTop: 15,
+				// borderTopWidth: 0.7,
+				// borderColor: borderLight,
 			}}
 		>
 			<View
 				style={{
-					width: "97%",
+					width: "100%",
 					flexDirection: "row",
-					// alignItems: "center",
-					gap: 20,
+					alignItems: "center",
+					gap: 5,
+					justifyContent: "space-between",
 					marginBottom: 20,
 				}}
 			>
 				<Image
 					source={{ uri: channel?.image }}
-					resizeMode="contain"
+					contentFit="contain"
 					style={{
-						width: 60,
-						height: 60,
+						width: 70,
+						height: 70,
 						backgroundColor: "#000",
 						borderColor: borderLight,
 						borderWidth: 1,
 						borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					}}
 				/>
-				<View>
+				<View style={{ width: Dimensions.get("window").width * 0.45, alignItems:"center"}}>
 					<Text
-						numberOfLines={2}
+						numberOfLines={1}
 						style={{
 							color: "white",
-							fontSize: 20,
-							fontFamily: "Montserrat_600SemiBold",
+							fontSize: 16,
+							fontFamily: "Montserrat_500Medium,",
 							flexWrap: "wrap",
+							// width:Dimensions.get("window").width*0.5,
 							marginBottom: 5,
 							flexDirection: "row",
 						}}
 					>
-						{channel?.name}
+						{/* {channel?.name} */}
+						{channel?.handle ?? channel?.name}
 					</Text>
-					<View
+					<Text
 						style={{
-							gap: 30,
-							flexDirection: "row",
-							marginTop: 10,
-							justifyContent: "space-between",
-							alignItems: "center",
+							color: "white",
+							fontSize: 13,
+							fontFamily: "Montserrat_300Light",
 						}}
 					>
-						<View style={{ gap: 5 }}>
-							<Text
-								style={{
-									color: "white",
-									fontSize: 14,
-									fontFamily: "Montserrat_300Light",
-								}}
-							>
-								{channel?.handle ?? "No handle"}
-							</Text>
-							<Text
-								style={{
-									color: "white",
-									fontSize: 14,
-									fontFamily: "Montserrat_300Light",
-								}}
-							>
-								{formatSubs(noSubs)}{" "}
-								{formatSubs(noSubs) === 1 ? "Subscriber" : "Subscribers"}
-							</Text>
-						</View>
-
-						<OtherViewButtons
-							title={isSubscribed ? "Subscribed" : "Subscribe"}
-							handlePress={handleSubscribe}
-							styles={{
-								width: 100,
-								height: 35,
-								backgroundColor: isSubscribed ? fieldColor : buttonColor,
-								borderWidth: isSubscribed ? 0.6 : 0,
-								borderColor: borderLight,
-								justifyContent: "center",
-								alignItems: "center",
-								borderRadius: 30,
-							}}
-						/>
-					</View>
+						{formatSubs(noSubs)}{" "}
+						{formatSubs(noSubs) <= 1 ? "subscriber" : "subscribers"}
+					</Text>
 				</View>
+				<OtherViewButtons
+					title={isSubscribed ? "Subscribed" : "Subscribe"}
+					handlePress={handleSubscribe}
+					styles={{
+						width: 100,
+						height: 45,
+						backgroundColor: isSubscribed ? fieldColor : buttonColor,
+						borderWidth: isSubscribed ? 0.6 : 0,
+						borderColor: borderLight,
+						justifyContent: "center",
+						alignItems: "center",
+						borderRadius: 30,
+					}}
+				/>
 			</View>
 		</TouchableOpacity>
 	);

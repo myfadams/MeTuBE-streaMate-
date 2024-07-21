@@ -2,16 +2,21 @@ import {
 	View,
 	Text,
 	ImageBackground,
-	Image,
+	
 	TouchableOpacity,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { memo, useEffect, useState } from "react";
 import { loadingColor } from "../constants/colors";
 import { options } from "../constants/icons";
 import { router } from "expo-router";
 import { get, ref } from "firebase/database";
 import { db } from "../libs/config";
-import { calculateTimePassed, getUploadTimestamp } from "../libs/videoUpdates";
+import {
+	calculateTimePassed,
+	getUploadTime,
+	getUploadTimestamp,
+} from "../libs/videoUpdates";
 import { getContext } from "../context/GlobalContext";
 
 const History = ({ data, type }) => {
@@ -42,22 +47,26 @@ const History = ({ data, type }) => {
 			// console.log(creator)
 		}
 		getHis();
-		if (isConnected)
-			try {
-				if (!data?.caption)
-					getUploadTimestamp(data?.thumbnail, "videoUploads").then((dat) => {
-						let time = calculateTimePassed(dat);
-						setTimePassed(time);
-					});
-				else {
-					getUploadTimestamp(data?.thumbnail, "shortsUploads").then((dat) => {
-						let time = calculateTimePassed(dat);
-						setTimePassed(time);
-					});
-				}
-			} catch (error) {
-				console.log("thisHappened")
+
+		try {
+			if (!data?.caption)
+				getUploadTime(data.videoview, "shorts").then((res) => {
+					// console.log(res)
+					let time = calculateTimePassed(res);
+					// console.log(time)
+					setTimePassed(time);
+				});
+			else {
+				getUploadTime(data.videoview, "video").then((res) => {
+					// console.log(res)
+					let time = calculateTimePassed(res);
+					// console.log(time)
+					setTimePassed(time);
+				});
 			}
+		} catch (error) {
+			console.log(error);
+		}
 	}, []);
 	// console.log(his);
 	if (type !== "shorts")
@@ -84,7 +93,7 @@ const History = ({ data, type }) => {
 						height: 80,
 						borderRadius: 8,
 					}}
-					resizeMode="cover"
+					contentFit="cover"
 				/>
 				<View style={{ marginTop: 8, position: "relative" }}>
 					<Text
@@ -119,7 +128,7 @@ const History = ({ data, type }) => {
 						<Image
 							source={options}
 							style={{ width: 15, height: 15, position: "absolute", right: 0 }}
-							resizeMode="contain"
+							contentFit="contain"
 						/>
 					</TouchableOpacity>
 				</View>
@@ -154,7 +163,7 @@ const History = ({ data, type }) => {
 							? his?.thumbnail
 							: his?.thumbnail?.replace("shorts/", "shorts%2F"),
 					}}
-					resizeMode="cover"
+					contentFit="cover"
 				>
 					<Image
 						source={{
@@ -168,7 +177,7 @@ const History = ({ data, type }) => {
 							height: 80,
 							borderRadius: 8,
 						}}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 				</ImageBackground>
 				<View style={{ marginTop: 8, position: "relative" }}>
@@ -190,7 +199,7 @@ const History = ({ data, type }) => {
 						<Image
 							source={options}
 							style={{ width: 15, height: 15, position: "absolute", right: 0 }}
-							resizeMode="contain"
+							contentFit="contain"
 						/>
 					</TouchableOpacity>
 				</View>

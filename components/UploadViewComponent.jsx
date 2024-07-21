@@ -2,13 +2,13 @@ import { Video } from "expo-av";
 import React, { memo, useEffect, useState } from "react";
 import {
 	ActivityIndicator,
-	Image,
 	Text,
 	TouchableOpacity,
 	View,
 } from "react-native";
 import { formatTime } from "../constants/videoTime";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 import * as VideoThumbnails from "expo-video-thumbnails";
 
 const UploadVideoComponent = React.memo(({ item, isLoaded }) => {
@@ -37,7 +37,7 @@ const UploadVideoComponent = React.memo(({ item, isLoaded }) => {
 			style={{ flex: 1, margin: 2, height: 120 }}
 			activeOpacity={0.6}
 			onPress={() => {
-				if(parseInt(item.height)>=630 && Math.round(item.duration)<=60)
+				if (parseInt(item.height) >= 630 && Math.round(item.duration) <= 60)
 					router.push({
 						pathname: "/upload/uploadShorts",
 						params: { ...item, thumbnailURL: thumbnail },
@@ -51,13 +51,14 @@ const UploadVideoComponent = React.memo(({ item, isLoaded }) => {
 		>
 			<Image
 				source={{ uri: thumbnail }}
+				cachePolicy={"disk"}
 				style={{
 					width: "100%",
 					height: "100%",
 					backgroundColor: "#000",
 					borderRadius: 5,
 				}}
-				resizeMode="cover"
+				contentFit="cover"
 			/>
 
 			<View style={{ position: "absolute", bottom: 5, right: 10 }}>
@@ -67,4 +68,4 @@ const UploadVideoComponent = React.memo(({ item, isLoaded }) => {
 	);
 });
 
-export default memo(UploadVideoComponent);
+export default UploadVideoComponent;

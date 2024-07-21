@@ -17,8 +17,9 @@ const HorizontalHeaderScrollView = ({
 	return (
 		<View
 			style={{
-				
 				backgroundColor: bgColor,
+				borderColor: borderLight,
+				borderBottomWidth: 0.5,
 			}}
 		>
 			<ScrollView
@@ -56,8 +57,9 @@ const styles = StyleSheet.create({
 	headerContainer: {
 		flexDirection: "row",
 		// height:70,
-		borderColor: borderLight,
-		borderBottomWidth: 0.5,
+		paddingHorizontal:Dimensions.get("screen").width * 0.06,
+		// borderColor: borderLight,
+		// borderBottomWidth: 0.5,
 		// backgroundColor: "#ccc",
 	},
 	headerText: {

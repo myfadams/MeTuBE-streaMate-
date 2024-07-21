@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, ScrollView,Image, Platform } from "react-native"
+import { View, Text, TouchableOpacity, ScrollView, Platform } from "react-native"
+import { Image } from "expo-image";
 import {
 	clip,
 	dislikOutline,
@@ -85,7 +86,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 						source={likeClicked ? like : likeOutline}
 						tintColor={likeClicked ? buttonColor : "#fff"}
 						style={{ width: 22, height: 22 }}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 					<Text
 						style={{
@@ -112,7 +113,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 						source={dislikeClicked ? dislike : dislikOutline}
 						tintColor={dislikeClicked ? buttonColor : "#fff"}
 						style={{ width: 22, height: 22 }}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 				</TouchableOpacity>
 			</View>
@@ -131,7 +132,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				<Image
 					source={foward}
 					style={{ width: 22, height: 22, marginLeft: 14 }}
-					resizeMode="contain"
+					contentFit="contain"
 				/>
 				<Text
 					style={{
@@ -158,7 +159,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				<Image
 					source={shorts}
 					style={{ width: 22, height: 22, marginLeft: 14 }}
-					resizeMode="contain"
+					contentFit="contain"
 					tintColor={"#fff"}
 				/>
 				<Text
@@ -186,7 +187,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				<Image
 					source={download}
 					style={{ width: 22, height: 22, marginLeft: 14 }}
-					resizeMode="contain"
+					contentFit="contain"
 				/>
 				<Text
 					style={{
@@ -213,7 +214,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				<Image
 					source={clip}
 					style={{ width: 22, height: 22, marginLeft: 14 }}
-					resizeMode="contain"
+					contentFit="contain"
 				/>
 				<Text
 					style={{
@@ -241,7 +242,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				<Image
 					source={save}
 					style={{ width: 22, height: 22, marginLeft: 14 }}
-					resizeMode="contain"
+					contentFit="contain"
 				/>
 				<Text
 					style={{
@@ -268,7 +269,7 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				<Image
 					source={flag}
 					style={{ width: 22, height: 22, marginLeft: 14 }}
-					resizeMode="contain"
+					contentFit="contain"
 				/>
 				<Text
 					style={{

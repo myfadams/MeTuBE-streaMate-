@@ -1,5 +1,4 @@
 import {
-	Image,
 	Platform,
 	StyleSheet,
 	Text,
@@ -8,6 +7,7 @@ import {
 	View,
 } from "react-native";
 import React, { useState } from "react";
+import { Image } from "expo-image";
 import { bgColor, borderPrimary, fieldColor } from "../constants/colors";
 import { hide, search, show } from "../constants/icons";
 import { router } from "expo-router";
@@ -20,6 +20,7 @@ const ChatInput = ({
 	handleChange,
 	videoId,
 	creatorID,
+	type
 }) => {
 	const { user } = getContext();
 	// console.log(name)
@@ -29,7 +30,7 @@ const ChatInput = ({
 		<View>
 			<View style={styles.fieldStyle}>
 				<TextInput
-					// autoFocus={}
+					autoFocus={type?true:false}
 					selectionColor={"#fff"}
 					onSubmitEditing={() => {
 						addComment(videoId, user.uid, text,creatorID)

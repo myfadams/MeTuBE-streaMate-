@@ -38,9 +38,10 @@ export const addShortToDB = async (file, thumnailUrl, videoUrl, userId,duration)
 	await set(ShortsRef(uuidv4()), {
 		caption: file.title,
 		thumbnail: thumnailUrl,
-		video: (""+videoUrl),
+		video: "" + videoUrl,
 		creator: userId,
-		duration:duration,
+		duration: duration,
+		date: new Date().toISOString(),
 		views: 0,
 		likes: 0,
 	});
@@ -52,10 +53,11 @@ export const addVideoToDB = async (file, thumnailUrl, videoUrl, userId,duration)
 	await set(VideosRef(uuidv4()), {
 		title: file.title,
 		thumbnail: thumnailUrl,
-		video:(""+ videoUrl),
+		video: "" + videoUrl,
 		creator: userId,
 		description: file.description,
-		duration:duration,
+		date: new Date().toISOString(),
+		duration: duration,
 		views: 0,
 		likes: 0,
 	});

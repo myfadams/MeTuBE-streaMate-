@@ -1,6 +1,6 @@
 import { View, Text , FlatList, RefreshControl, Platform} from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getContext } from '../../context/GlobalContext';
 import { Redirect, SplashScreen, useFocusEffect } from 'expo-router';
 import { bgColor } from '../../constants/colors';
@@ -83,14 +83,17 @@ const home = () => {
 
 	const { user,isConnected } = getContext();
 	// console.log(user)
+	const insets = useSafeAreaInsets();
 	if (!user || (user && !user?.emailVerified))
 		return <Redirect href="sign-in" />;
 	return (
-		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
+		<View style={{ backgroundColor: bgColor, height: "100%", paddingTop:insets.top}}>
 			<FlatList
+		
 				scrollEnabled={
 					(isConnected && videos.length !== 0) || videos.length !== 0
 				}
+				style={{paddingHorizontal:10}}
 				showsVerticalScrollIndicator={false}
 				data={videos}
 				keyExtractor={(item) => {
@@ -162,7 +165,7 @@ const home = () => {
 				/>
 			)}
 			<StatusBar style="light" />
-		</SafeAreaView>
+		</View>
 	);
 }
 

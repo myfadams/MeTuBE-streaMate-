@@ -10,10 +10,10 @@ import {
 	Dimensions,
 	ScrollView,
 	TouchableOpacity,
-	Image,
 	Platform,
 } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { Image } from "expo-image";
 import {
 	bgColor,
 	borderLight,
@@ -106,14 +106,14 @@ const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 				backgroundColor: bgColor,
 			}}
 		>
-			<View style={{ height: "100%",flex:1 }}>
+			<View style={{ height: "100%", flex: 1 }}>
 				<CommentsHeader handleClose={handleClosePress} text={"Description"} />
 
 				<ScrollView
 					contentContainerStyle={{
 						width: "100%",
 						// height: "100%",
-						flexGrow:1,
+						flexGrow: 1,
 						marginTop: 10,
 						// justifyContent: "center",
 						alignItems: "center",
@@ -261,6 +261,7 @@ const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 							width: "50%",
 							flexDirection: "row",
 							marginTop: 30,
+							marginBottom: 40,
 							alignItems: "center",
 							gap: 10,
 						}}

@@ -3,8 +3,9 @@ import {
 	Text,
 	TouchableOpacity,
 	ImageBackground,
-	Image,
+	
 } from "react-native";
+import { Image } from "expo-image";
 import React, { memo, useEffect, useState } from "react";
 import ShortComponent from "./ShortComponent";
 import { shortLogo, shorts } from "../constants/icons";
@@ -53,7 +54,7 @@ const TrendingShorts = ({ type,data,subs }) => {
 					<Image
 						source={shortLogo}
 						style={{ width: 40, height: 40 }}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 					<Text
 						style={{
@@ -71,7 +72,7 @@ const TrendingShorts = ({ type,data,subs }) => {
 						<View
 							style={{
 								flexDirection: "row",
-								
+								justifyContent:"center",
 								gap:10,
 								flexWrap: "wrap",
 							}}

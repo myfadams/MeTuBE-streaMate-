@@ -2,9 +2,9 @@ import {
 	View,
 	Text,
 	ImageBackground,
-	Image,
 	TouchableOpacity,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { loadingColor } from "../constants/colors";
 import { clock, like, options, shortLogo } from "../constants/icons";
@@ -62,7 +62,7 @@ const PlaylistView = ({ data }) => {
 						borderRadius: 8,
 						opacity: 0.5,
 					}}
-					resizeMode="cover"
+					contentFit="cover"
 				/>
 				<Image
 					tintColor={"#fff"}
@@ -78,7 +78,7 @@ const PlaylistView = ({ data }) => {
 							{ translateY: -12.5 }, // Adjust based on your component size
 						],
 					}}
-					resizeMode="contain"
+					contentFit="contain"
 				/>
 				<Image
 					// tintColor={"#fff"}
@@ -91,7 +91,7 @@ const PlaylistView = ({ data }) => {
                         right:5
                     
 					}}
-					resizeMode="contain"
+					contentFit="contain"
 				/>
 			</View>
 			<View style={{ marginTop: 8, position: "relative" }}>
@@ -115,7 +115,7 @@ const PlaylistView = ({ data }) => {
 					<Image
 						source={options}
 						style={{ width: 15, height: 15, position: "absolute", right: 0 }}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 				</TouchableOpacity>
 			</View>

@@ -3,16 +3,17 @@ import {
 	Text,
 	// SafeAreaView,
 	FlatList,
-	Image,
 	TouchableOpacity,
+	KeyboardAvoidingView,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { memo, useEffect, useState } from "react";
-import { bgColor, loadingColor } from "../../constants/colors";
+import { bgColor, fieldColor, loadingColor } from "../../constants/colors";
 import { router, useLocalSearchParams } from "expo-router";
 import SearchFields from "../../components/SearchField";
-import { arrow, shortLogo, timeMachine } from "../../constants/icons";
+import { arrow, search, shortLogo, timeMachine } from "../../constants/icons";
 import { getArray, saveArray } from "../../libs/otherFunctions";
-import { searchEntries } from "../../libs/search";
+import { fetchVideoTitles, searchEntries, sortBySearchResults, sortBySearchTerm } from "../../libs/search";
 import VideoView from "../../components/VideoView";
 import TrendingShorts from "../../components/TrendingShorts";
 import ShortComponent from "../../components/ShortComponent";
@@ -21,6 +22,7 @@ import { getContext } from "../../context/GlobalContext";
 import { get, ref } from "firebase/database";
 import { db, usersRef } from "../../libs/config";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
 const searchView = () => {
 	const { searchWord: pageName } = useLocalSearchParams();
@@ -42,7 +44,7 @@ const searchView = () => {
 							<Image
 								source={shortLogo}
 								style={{ width: 40, height: 40 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 							<Text
 								style={{
@@ -77,6 +79,7 @@ const searchView = () => {
 		);
 	};
 
+	
 	const [items, setItems] = useState([]);
 	const [searchResultVideos, setSearchResultVideos] = useState([]);
 	const [searchResultShorts, setSearchResultShorts] = useState([]);
@@ -85,13 +88,19 @@ const searchView = () => {
 		searchTerm: "",
 		imageClicked: "",
 	});
-
+	const [suggestions, setSuggestions] = useState();
+	const [dbSuggestions, setDbSuggestions] = useState([]);
 	useEffect(() => {
 		const loadItems = async () => {
 			const storedItems = await getArray();
 			setItems(storedItems);
+			setSuggestions(storedItems);
 		};
 		loadItems();
+		fetchVideoTitles().then((res) => {
+			setDbSuggestions(res);
+		});
+		console.log("pagename: " + pageName);
 		if (pageName !== "SearchPage") {
 			setSearchHistory({ ...searchHistory, searchTerm: pageName });
 
@@ -112,7 +121,13 @@ const searchView = () => {
 							combinedResults = [...combinedResults, ...otherVids];
 						});
 
-						setSearchResultVideos([...res, ...combinedResults]);
+						setSearchResultVideos(
+							sortBySearchResults(
+								[...res, ...combinedResults],
+								pageName,
+								"title"
+							)
+						);
 					});
 				});
 			});
@@ -134,49 +149,103 @@ const searchView = () => {
 							combinedResults = [...combinedResults, ...otherVids];
 						});
 
-						setSearchResultShorts([...res, ...combinedResults]);
+						setSearchResultShorts(
+							sortBySearchResults(
+								[...res, ...combinedResults],
+								pageName,
+								"caption"
+							)
+						);
 					});
 				});
 			});
 
 			searchEntries(pageName, "usersref", "name").then((res) => {
-				setSearchResultChannels(res);
+				setSearchResultChannels(sortBySearchResults(res,pageName,"name"));
 			});
 		}
 	}, [pageName]);
 
-	const addToSearchHistory = async () => {
-		const updatedItems = [...items, searchHistory];
-		setItems(updatedItems);
-		await saveArray(updatedItems);
+	const addToSearchHistory = async (type="") => {
+		// const updatedItems = [...items, searchHistory];
+		if(type===""){
+			const updatedItems = items.filter((it) => {
+				return it.searchTerm !== searchHistory.searchTerm;
+			});
+			updatedItems.push(searchHistory);
+			setItems(updatedItems);
+			await saveArray(updatedItems);
+		}else{
+			const updatedItems = items.filter((it) => {
+				return it.searchTerm !==type;
+			});
+			updatedItems.push({"imageClicked": "", "searchTerm": type});
+			setItems(updatedItems);
+			await saveArray(updatedItems);
+		}
 	};
 
 	const handleTextChange = (text) => {
 		setSearchHistory({ ...searchHistory, searchTerm: text });
+		let tempText= text.trimStart().trimEnd()
+		// console.log(dbSuggestions[0])
+		if (tempText!== "") {
+			setSuggestions(
+				sortBySearchTerm(
+					[
+						...items.filter((it) => {
+							return it.searchTerm
+								.toLocaleLowerCase()
+								.includes(tempText.toLocaleLowerCase());
+						}),
+						...dbSuggestions.filter((dbS) => {
+							return dbS?.searchTerm
+								?.toLocaleLowerCase()
+								.includes(tempText.toLocaleLowerCase());
+						}),
+					],
+					text
+				)
+			);
+		}
+		if (text.trim() === "") {
+			setSuggestions(items);
+		}
 	};
 
 	async function handleSubmit() {
-		router.replace("search/" + searchHistory.searchTerm);
-		await addToSearchHistory();
+		if (searchHistory.searchTerm.trim() !== "") {
+			router.replace("search/" + searchHistory.searchTerm);
+			await addToSearchHistory();
+			setSuggestions([]);
+		}
 	}
 
-	const SearchViewItem = ({ text, image }) => {
+	const SearchViewItem = ({ text, image, type }) => {
 		return (
 			<TouchableOpacity
 				onPress={() => {
+					// console.log("this: "+text);
 					router.replace("search/" + text);
+					setSearchHistory({ ...searchHistory, searchTerm: text });
+					addToSearchHistory(text).then(console.log("done"));
 				}}
 				activeOpacity={0.7}
 				style={{
 					flexDirection: "row",
 					gap: 15,
 					justifyContent: "center",
-					marginBottom: 30,
-					marginHorizontal: 15,
+					backgroundColor: fieldColor,
+					marginBottom: 10,
+					paddingVertical: 20,
+					alignItems: "center",
+					borderRadius: 19,
+					marginHorizontal: 13,
+					paddingHorizontal: 15,
 				}}
 			>
 				<Image
-					source={timeMachine}
+					source={type ? search : timeMachine}
 					style={{ width: 20, height: 20 }}
 					tintColor={"#fff"}
 				/>
@@ -191,7 +260,7 @@ const searchView = () => {
 				>
 					{text}
 				</Text>
-				{image !== "" && (
+				{image !== "" && image && (
 					<Image
 						style={{
 							backgroundColor: "#000",
@@ -200,19 +269,21 @@ const searchView = () => {
 							borderRadius: 6,
 						}}
 						source={{ uri: image }}
-						resizeMode="stretch"
+						contentFit="fill"
 					/>
 				)}
 				<TouchableOpacity
 					activeOpacity={0.7}
 					onPress={() => {
 						setSearchHistory({ ...searchHistory, searchTerm: text });
+						
 					}}
 				>
 					<Image
 						source={arrow}
 						style={{ width: 20, height: 20 }}
 						tintColor={"#fff"}
+						contentFit="contain"
 					/>
 				</TouchableOpacity>
 			</TouchableOpacity>
@@ -232,13 +303,15 @@ const searchView = () => {
 				/>
 				<View style={{ marginTop: 10, width: "100%", flex: 1 }}>
 					{(pageName === "SearchPage" || isActive) && (
-						<FlatList
-							data={items.reverse()}
+						<KeyboardAwareFlatList
+							style={{ marginTop: 20 }}
+							data={suggestions}
 							renderItem={({ item, index }) => {
 								return (
 									<SearchViewItem
 										text={item.searchTerm}
 										image={item.imageClicked}
+										type={item.type}
 									/>
 								);
 							}}
@@ -254,6 +327,7 @@ const searchView = () => {
 							<FlatList
 								showsVerticalScrollIndicator={false}
 								data={searchResultVideos}
+								style={{ paddingHorizontal: 10 }}
 								keyExtractor={(item, id) => item.id}
 								renderItem={({ item, index }) => {
 									return <VideoView videoInfo={item} />;

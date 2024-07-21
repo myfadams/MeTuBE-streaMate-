@@ -5,13 +5,13 @@ import {
 	// SafeAreaView,
 	ScrollView,
 	StyleSheet,
-	Image,
 	View,
 	Platform,
 	FlatList,
 	TouchableOpacity,
 	ActivityIndicator,
 } from "react-native";
+import { Image } from "expo-image";
 import * as MediaLibrary from "expo-media-library";
 import { Video } from "expo-av";
 import { bgColor } from "../../constants/colors";
@@ -51,7 +51,7 @@ export default function App() {
 
 			while (true) {
 				const media = await MediaLibrary.getAssetsAsync(fetchParams);
-
+				// console.log(media)
 				if (media.assets.length > 0) {
 					allVideos = [...allVideos, ...media.assets];
 					if (media.hasNextPage) {

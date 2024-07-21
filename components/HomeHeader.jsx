@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity,  ScrollView } from 'react-native'
+import { Image } from "expo-image";
 import React from 'react'
 import { compass } from '../constants/icons';
 import { buttonColor, fieldColor } from '../constants/colors';
@@ -54,8 +55,9 @@ const HomeHeader = ({text}) => {
 				>
 					<Image
 						source={compass}
-						resizeMode="contain"
+						contentFit="contain"
 						style={{ width: 25, height: 25 }}
+						tintColor={"#fff"}
 					/>
 				</TouchableOpacity>
 				<TouchableOpacity

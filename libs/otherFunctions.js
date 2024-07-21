@@ -2,18 +2,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { authentication } from "./config";
 
-const STORAGE_KEY = "searchHistory/"+authentication?.currentUser?.uid;
 
 export const getArray = async () => {
+	const STORAGE_KEY = "searchHistory/"+authentication?.currentUser?.uid;
 	try {
 		const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-		return jsonValue != null ? JSON.parse(jsonValue) : [];
+		return jsonValue != null ? JSON.parse(jsonValue).reverse() : [];
 	} catch (e) {
 		console.error("Error reading value", e);
 	}
 };
 
 export const saveArray = async (value) => {
+	const STORAGE_KEY = "searchHistory/" + authentication?.currentUser?.uid;
+	// console.log(value);
 	try {
 		const jsonValue = JSON.stringify(value);
 		await AsyncStorage.setItem(STORAGE_KEY, jsonValue);
@@ -24,7 +26,7 @@ export const saveArray = async (value) => {
 AsyncStorage.getAllKeys().then((dta)=>{
 	console.log(dta)
 })
-// AsyncStorage.removeItem("searchHistory/JVzOWZRRH3dqylwXNX1yw3qlgk32");
+// AsyncStorage.removeItem("searchHistory/ZYVTFArpv7dMSdgDBfgSz3x2r2p2");
 
 
 export function combineAndGroupByDate(shorts, videos) {

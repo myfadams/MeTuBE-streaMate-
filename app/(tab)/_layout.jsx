@@ -1,8 +1,9 @@
-import { View, Text,Image, Platform } from 'react-native'
+import { View, Text, Platform } from 'react-native'
+import { Image } from "expo-image";
 import React, { useEffect, useState } from 'react'
 import { Tabs, useFocusEffect } from 'expo-router';
-import { add, home, shorts, subsription} from '../../constants/icons';
-import { bgColor, buttonColor, fieldColor } from '../../constants/colors';
+import { add, addFill, home, homeFill, shorts, shortsFill, subsFilled, subsription} from '../../constants/icons';
+import { bgColor, borderLight, borderPrimary, buttonColor, fieldColor } from '../../constants/colors';
 import { getContext } from '../../context/GlobalContext';
 import { getUSerProfile } from '../../libs/firebase';
 function TabIcon({ icon, color, name, focused }) {
@@ -34,7 +35,7 @@ function TabIcon({ icon, color, name, focused }) {
 			{name !== "You" ? (
 				<Image
 					source={icon}
-					resizeMode="contain"
+					contentFit="contain"
 					tintColor={color} //so this is passed from tab icon
 					style={{ width: 25, height: 25 }}
 				/>
@@ -43,7 +44,8 @@ function TabIcon({ icon, color, name, focused }) {
 				// user?.photoURL
 				<Image
 					source={{ uri: userInfo?.image }}
-					resizeMode="cover"
+					cachePolicy={'memory-disk'}
+					contentFit="cover"
 					style={{
 						width: 26,
 						height: 26,
@@ -76,12 +78,14 @@ const TabsLayout = () => {
 			screenOptions={{
 				tabBarShowLabel: false,
 				tabBarActiveTintColor: buttonColor, //so this is passed to set the text color for active
-				tabBarInactiveTintColor: "#fff", //for inactive
+				tabBarInactiveTintColor: "#fff",
+				//for inactive'
 				tabBarStyle: {
-					backgroundColor: bgColor,
+					backgroundColor: fieldColor,
 					borderTopWidth: 1,
-					borderTopColor: fieldColor,
-					height: 80,
+					borderTopColor: borderPrimary,
+					height:Platform.OS==="ios"?80:60,
+					paddingBottom:15
 				},
 			}}
 		>
@@ -89,11 +93,12 @@ const TabsLayout = () => {
 				name="home"
 				options={{
 					title: "Home",
+					
 					headerShown: false,
 					tabBarIcon: ({ color, focused }) => {
 						return (
 							<TabIcon
-								icon={home}
+								icon={focused ? homeFill : home}
 								color={color}
 								name="Home"
 								focused={focused}
@@ -106,12 +111,12 @@ const TabsLayout = () => {
 			<Tabs.Screen
 				name="shorts"
 				options={{
-        
+					
 					headerShown: false,
 					tabBarIcon: ({ color, focused }) => {
 						return (
 							<TabIcon
-								icon={shorts}
+								icon={focused ? shortsFill : shorts}
 								color={color}
 								name="Shorts"
 								focused={focused}
@@ -123,11 +128,15 @@ const TabsLayout = () => {
 			<Tabs.Screen
 				name="create"
 				options={{
-					
 					headerShown: false,
 					tabBarIcon: ({ color, focused }) => {
 						return (
-							<TabIcon icon={add} color={color} name="" focused={focused} />
+							<TabIcon
+								icon={focused ? addFill : add}
+								color={color}
+								name=""
+								focused={focused}
+							/>
 						);
 					},
 				}}
@@ -135,11 +144,12 @@ const TabsLayout = () => {
 			<Tabs.Screen
 				name="subscription"
 				options={{
+					lazy: false,
 					headerShown: false,
 					tabBarIcon: ({ color, focused }) => {
 						return (
 							<TabIcon
-								icon={subsription}
+								icon={focused ? subsFilled : subsription}
 								color={color}
 								name="Subscriptions"
 								focused={focused}
@@ -151,6 +161,7 @@ const TabsLayout = () => {
 			<Tabs.Screen
 				name="profile"
 				options={{
+					lazy: false,
 					title: "profile",
 					headerShown: false,
 					tabBarIcon: ({ color, focused }) => {

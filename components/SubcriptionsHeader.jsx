@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, Platform } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity,  Platform } from "react-native";
+import { Image } from "expo-image";
 import React from "react";
 import HeaderApp from "./HeaderApp";
 import HomeHeader from "./HomeHeader";

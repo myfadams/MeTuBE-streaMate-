@@ -1,4 +1,5 @@
-import { View, Text, Image } from "react-native";
+import { View, Text,  } from "react-native";
+import { Image } from "expo-image";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor, buttonColor, loadingColor } from "../constants/colors";
@@ -15,11 +16,11 @@ const Offline = ({type}) => {
 			style={{ backgroundColor: bgColor, justifyContent: "center" }}
 		>
 			{!type&&<HeaderApp />}
-			<View style={{ height: "100%" }}>
+			<View style={{ height: "100%", }}>
 				<Image
-					style={{ width: "100%" }}
-					resizeMode="contain"
 					source={offineLogo}
+					style={{ width: "100%", flex:0.8 }}
+					contentFit="contain"
 				/>
 				<View style={{ marginBottom: 20, alignItems: "center" }}>
 					<Text

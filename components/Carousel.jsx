@@ -104,7 +104,7 @@ const MyCarousel = ({ data, onScroll, scrollEnabled, onLayout, isVisible,act }) 
 				nestedScrollEnabled={true}
 				onScroll={handleScroll}
 				scrollEventThrottle={16}
-				contentContainerStyle={{}}
+				
 			>
 				{pages.map((page, index) => {
 					switch (index) {

@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Image, Platform } from 'react-native'
+import { View, Text, TouchableOpacity,  Platform, ImageBackground, Dimensions } from 'react-native'
+import { Image } from "expo-image";
 import React, { useCallback, useEffect, useState } from 'react'
 import {
 	back,
@@ -27,6 +28,7 @@ import OtherViewButtons from '../OtherViewButtons';
 import { get, ref } from 'firebase/database';
 import { db } from '../../libs/config';
 import { defaultCover } from '../../constants/images';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const ChannelHeader = ({userInfo,act}) => {
 	const { user, refereshing } = getContext();
 	const [userObj,setUserObj]= useState()
@@ -90,53 +92,119 @@ const ChannelHeader = ({userInfo,act}) => {
 				>
 					<Image
 						source={icon}
-						resizeMode="contain"
+						contentFit="contain"
 						style={{ width: 25, height: 25 }}
 						tintColor={"#fff"}
 					/>
 				</TouchableOpacity>
 			);
 		}
+
+	 const insets = useSafeAreaInsets();
   return (
 		<View>
-			<OptionsHeader userInfo={userInfo} />
 			<View style={{ alignItems: "center" }}>
-				<Image
+				<ImageBackground
 					source={cover ? { uri: cover } : defaultCover}
 					style={{
 						backgroundColor: videoColor,
-						width: "94%",
-						height: 120,
+						width: "100%",
+						height: 200,
 						borderRadius: 10,
 					}}
-				/>
-				<View style={{ width: "100%", alignItems: "center", marginTop: 30 }}>
+				>
 					<View
 						style={{
-							width: "97%",
+							// width: "100%",
+							marginTop: insets.top,
+							flexDirection: "row",
+							justifyContent: "space-between",
+							alignItems: "center",
+							marginHorizontal: Dimensions.get("screen").width * 0.06,
+						}}
+					>
+						<TouchableOpacity
+							activeOpacity={0.7}
+							onPress={() => {
+								router.push("../");
+							}}
+						>
+							<Image
+								source={back}
+								contentFit="contain"
+								style={{ width: 30, height: 30 }}
+							/>
+						</TouchableOpacity>
+
+						<TouchableOpacity>
+							<Image
+								source={options}
+								style={{ width: 21, height: 21 }}
+								contentFit="contain"
+							/>
+						</TouchableOpacity>
+					</View>
+				</ImageBackground>
+				<Image
+					source={{
+						uri: userInfo?.photoURL.replace("ChannelsInfo/", "ChannelsInfo%2F"),
+					}}
+					contentFit="cover"
+					style={{
+						position: "absolute",
+						top: 155,
+						right: Dimensions.get("screen").width * 0.06,
+						width: 90,
+						height: 90,
+						backgroundColor: "#000",
+						borderRadius: Platform.OS === "ios" ? "50%" : 50,
+						borderColor: borderLight,
+						borderWidth: 1,
+					}}
+				/>
+				<View
+					style={{
+						flexDirection: "row",
+						width: 130,
+						position: "absolute",
+						top: 175,
+						left: Dimensions.get("screen").width * 0.06,
+					}}
+				>
+					{userInfo?.uid !== user?.uid && (
+						<OtherViewButtons
+							title={subscribed ? "Subscribed" : "Subscribe"}
+							handlePress={handleSubscribe}
+							styles={{
+								flex: 1,
+								height: 53,
+								backgroundColor: subscribed ? fieldColor : buttonColor,
+								borderWidth: subscribed ? 0.6 : 0,
+								borderColor: borderPrimary,
+								justifyContent: "center",
+								alignItems: "center",
+								borderRadius: 30,
+							}}
+						/>
+					)}
+				</View>
+				<View
+					style={{
+						width: "100%",
+						alignItems: "center",
+						marginTop: 45,
+						paddingHorizontal: Dimensions.get("screen").width * 0.04,
+					}}
+				>
+					<View
+						style={{
+							width: "100%",
 							flexDirection: "row",
 							alignItems: "center",
 							gap: 20,
-							marginBottom: 20,
+							marginBottom: 10,
 						}}
 					>
-						<Image
-							source={{
-								uri: userInfo?.photoURL.replace(
-									"ChannelsInfo/",
-									"ChannelsInfo%2F"
-								),
-							}}
-							resizeMode="cover"
-							style={{
-								width: 70,
-								height: 70,
-								backgroundColor: "#000",
-								borderRadius: Platform.OS === "ios" ? "50%" : 50,
-								borderColor: borderLight,
-								borderWidth: 1,
-							}}
-						/>
 						<View>
 							<Text
 								numberOfLines={2}
@@ -170,14 +238,15 @@ const ChannelHeader = ({userInfo,act}) => {
 							flexDirection: "row",
 							justifyContent: "center",
 							alignItems: "center",
+							paddingHorizontal: Dimensions.get("screen").width * 0.02,
 						}}
 					>
 						<Text
 							numberOfLines={2}
 							style={{
-								width: "90%",
+								width: "100%",
 								alignItems: "center",
-								margin: "2%",
+								marginVertical: "1.5%",
 								flexWrap: "wrap",
 								flexDirection: "row",
 								color: "#fff",
@@ -188,10 +257,10 @@ const ChannelHeader = ({userInfo,act}) => {
 						<Image
 							source={nextPage}
 							style={{
-								width: 24,
-								height: 24,
-								
+								width: 20,
+								height: 20,
 							}}
+							contentFit="contain"
 						/>
 					</TouchableOpacity>
 				</View>
@@ -203,9 +272,10 @@ const ChannelHeader = ({userInfo,act}) => {
 						alignItems: "center",
 						gap: 4,
 						margin: 4,
+						paddingHorizontal: Dimensions.get("screen").width * 0.02,
 					}}
 				>
-					{userInfo?.uid === user?.uid ? (
+					{userInfo?.uid === user?.uid && (
 						<>
 							<View style={{ flex: 1 }}>
 								<MoreButton
@@ -225,21 +295,6 @@ const ChannelHeader = ({userInfo,act}) => {
 							/>
 							<AboutBtn icon={watchtime} />
 						</>
-					) : (
-						<OtherViewButtons
-							title={subscribed ? "Subscribed" : "Subscribe"}
-							handlePress={handleSubscribe}
-							styles={{
-								flex: 1,
-								height: 40,
-								backgroundColor: subscribed ? fieldColor : buttonColor,
-								borderWidth: subscribed ? 0.6 :0,
-								borderColor: borderPrimary,
-								justifyContent: "center",
-								alignItems: "center",
-								borderRadius: 30,
-							}}
-						/>
 					)}
 				</View>
 			</View>

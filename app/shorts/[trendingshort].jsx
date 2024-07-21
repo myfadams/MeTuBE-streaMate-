@@ -4,8 +4,9 @@ import {
 	FlatList,
 	Dimensions,
 	TouchableOpacity,
-	Image,
+	
 } from "react-native";
+import { Image } from "expo-image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor } from "../../constants/colors";
@@ -17,7 +18,7 @@ import { fetchShorts, getEncodedFirebaseUrl } from "../../libs/firebase";
 import { shuffleArray } from "../../libs/sound";
 
 const windowHeight = Dimensions.get("window").height;
-
+const screenHeight = Dimensions.get("screen").height
 const TrendingShort = () => {
 	// const { trendingshort: toBePlayed } = useLocalSearchParams();
 	const shortItem = useLocalSearchParams();
@@ -61,6 +62,36 @@ const TrendingShort = () => {
 	});
 	newS.unshift(shortItem)
 	// console.log(newS)
+	const renderItem = useCallback(
+		({ item, index }) => {
+			const shouldPlay = viewableItems.includes(item.id.toString());
+			// console.log(index+" "+shouldPlay)
+			return (
+				<View
+					style={{
+						height: screenHeight,
+						borderTopWidth: 0.7,
+						borderBottomWidth: 0.7,
+					}}
+				>
+					<ShortsView
+						title={item.caption}
+						sourceUrl={getEncodedFirebaseUrl(item.video)}
+						creatorID={item.creator}
+						shouldPlay={shouldPlay}
+						videoId={item?.id}
+						fix={(val) => {
+							// console.log(val);
+							setScollable(val);
+						}}
+						data={item}
+						beFocused={isFocused}
+					/>
+				</View>
+			);
+		},
+		[viewableItems, screenHeight]
+	);
 	return (
 		<View
 			style={{
@@ -91,7 +122,7 @@ const TrendingShort = () => {
 				>
 					<Image
 						source={back}
-						resizeMode="contain"
+						contentFit="contain"
 						style={{ width: 30, height: 30 }}
 					/>
 				</TouchableOpacity>
@@ -104,7 +135,7 @@ const TrendingShort = () => {
 				>
 					<Image
 						source={search}
-						resizeMode="contain"
+						contentFit="contain"
 						style={{ width: 24, height: 24 }}
 					/>
 				</TouchableOpacity>
@@ -112,6 +143,7 @@ const TrendingShort = () => {
 			<FlatList
 				data={newS}
 				initialNumToRender={3}
+				removeClippedSubviews={true}
 				viewabilityConfig={{ itemVisiblePercentThreshold: 75 }}
 				onViewableItemsChanged={onViewableItemsChanged.current}
 				pagingEnabled
@@ -119,50 +151,7 @@ const TrendingShort = () => {
 				snapToAlignment="start"
 				decelerationRate="fast"
 				showsVerticalScrollIndicator={false}
-				renderItem={({ item, index }) => {
-					// console.log(item)
-					const shouldPlay = viewableItems.includes(item?.id);
-					return (
-						<View
-							style={{
-								height: windowHeight,
-								borderTopWidth: 0.7,
-								borderBottomWidth: 0.7,
-							}}
-						>
-							{index === 0 ? (
-								<ShortsView
-									title={item.caption}
-									sourceUrl={getEncodedFirebaseUrl(item.video)}
-									creatorID={item.creator}
-									shouldPlay={shouldPlay}
-									videoId={item?.id}
-									fix={(val) => {
-										// console.log(val);
-										setScollable(val);
-									}}
-									data={item}
-									
-									beFocused={isFocused}
-								/>
-							) : (
-								<ShortsView
-									title={item.caption}
-									sourceUrl={item.video}
-									shouldPlay={shouldPlay}
-									creatorID={item.creator}
-									fix={(val) => {
-										console.log(val);
-										setScollable(val);
-									}}
-									data={item}
-									videoId={item.id}
-									beFocused={isFocused}
-								/>
-							)}
-						</View>
-					);
-				}}
+				renderItem={renderItem}
 				keyExtractor={(item) => item.id}
 			/>
 		</View>

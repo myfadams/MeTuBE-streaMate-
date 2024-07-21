@@ -3,13 +3,13 @@ import {
 	Text,
 	FlatList,
 	ScrollView,
-	Image,
 	TouchableOpacity,
 	RefreshControl,
 	Platform,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Image } from "expo-image";
+import React, { useCallback, useEffect, useState } from "react";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { bgColor, buttonColor } from "../../constants/colors";
 import HeaderApp from "../../components/HeaderApp";
 import HomeHeader from "../../components/HomeHeader";
@@ -20,6 +20,8 @@ import { fetchData, fetchVideos } from "../../libs/firebase";
 import { shuffleArray } from "../../libs/sound";
 import { getContext } from "../../context/GlobalContext";
 import Offline from "../../components/Offline";
+import { useFocusEffect } from "expo-router";
+import Menu from "../../components/Menu";
 
 const subcription = () => {
 	const { user,isConnected } = getContext();
@@ -30,6 +32,30 @@ const subcription = () => {
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [videos, setVideos] = useState([]);
+
+	const [menuVisiblity, setMenuVisiblity] = useState(false);
+
+	const [isMenuVisible, setIsMenuVisible] = useState(false);
+
+	useFocusEffect(
+		useCallback(() => {
+			setMenuVisiblity(true);
+			return () => {
+				// This will be called when the screen is unfocused
+				// console.log("Screen is unfocused");
+				setMenuVisiblity(false);
+			};
+		}, [])
+	);
+	const handleCloseMenu = () => {
+		setIsMenuVisible(false);
+	};
+	const [videId, setVideId] = useState("");
+	const handleToggleMenu = (id) => {
+		setIsMenuVisible(!isMenuVisible);
+		setVideId(id);
+	};
+
 	useEffect(() => {
 		const fetchUsers = async () => {
 			try {
@@ -82,17 +108,31 @@ const subcription = () => {
 	const subVideos = videos.filter((vid) => {
 		return subscriptions.includes(vid.creator);
 	});
+	const insets = useSafeAreaInsets();
 	// console.log(subVideos)
 	if(isConnected)
 	return (
-		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
+		<View
+			style={{
+				backgroundColor: bgColor,
+				height: "100%",
+				paddingTop: insets.top,
+			}}
+		>
 			<FlatList
 				data={subVideos}
+				showsHorizontalScrollIndicator={false}
+				style={{ paddingHorizontal: 10 }}
 				renderItem={({ item, index }) => {
 					if (index === 0)
 						return (
 							<>
-								<VideoView videoInfo={item} />
+								<VideoView
+									videoInfo={item}
+									menu={() => {
+										handleToggleMenu(item.id);
+									}}
+								/>
 								<TrendingShorts
 									type={"suggested"}
 									data={"subs"}
@@ -100,7 +140,14 @@ const subcription = () => {
 								/>
 							</>
 						);
-					return <VideoView videoInfo={item} />;
+					return (
+						<VideoView
+							videoInfo={item}
+							menu={() => {
+								handleToggleMenu(item.id);
+							}}
+						/>
+					);
 				}}
 				ListHeaderComponent={<SubcriptionsHeader channel={subscr} />}
 				refreshControl={
@@ -118,7 +165,15 @@ const subcription = () => {
 					/>
 				}
 			/>
-		</SafeAreaView>
+			{menuVisiblity && (
+				<Menu
+					isVisible={isMenuVisible}
+					onClose={handleCloseMenu}
+					vidId={videId}
+					userId={user.uid}
+				/>
+			)}
+		</View>
 	);
 	else
 		return <Offline/>

@@ -2,7 +2,7 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	Image,
+	
 	ScrollView,
 	TouchableOpacity,
 	Platform,
@@ -11,6 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import InputFields from "../../components/InputFields";
+import { Image } from "expo-image";
 import { bgColor, borderPrimary, buttonColor, otherColor } from "../../constants/colors";
 import { logo } from "../../constants/images";
 import { StatusBar } from "expo-status-bar";
@@ -91,7 +92,7 @@ const SignIn = () => {
 						marginBottom: 17,
 					}}
 				>
-					<Image source={logo} style={styles.image} resizeMode="contain" />
+					<Image source={logo} style={styles.image} contentFit="contain" />
 					{/* <Text
 						style={{
 							color: "#fff",
@@ -147,11 +148,12 @@ const SignIn = () => {
 				<View style={{ width: "97%" }}>
 					<MoreButton
 						title={"Sign In"}
-						height={60}
+						height={69}
 						color={buttonColor}
 						handlePress={login}
 						typeauth={"auth"}
 						isLoading={isLoading}
+						auth={"auth"}
 					/>
 				</View>
 				<View
@@ -166,7 +168,7 @@ const SignIn = () => {
 					<TouchableOpacity style={{ margin: 10 }} activeOpacity={0.7}>
 						<Image
 							source={google}
-							resizeMode="contain"
+							contentFit="contain"
 							style={{ width: 40, height: 40 }}
 						/>
 					</TouchableOpacity>
@@ -174,7 +176,7 @@ const SignIn = () => {
 						<TouchableOpacity style={{ margin: 10 }} activeOpacity={0.7}>
 							<Image
 								source={apple}
-								resizeMode="contain"
+								contentFit="contain"
 								style={{ width: 40, height: 40 }}
 							/>
 						</TouchableOpacity>
@@ -186,6 +188,7 @@ const SignIn = () => {
 						flexDirection: "row",
 						justifyContent: "center",
 						marginTop: 10,
+						marginBottom: 25,
 					}}
 				>
 					<Text

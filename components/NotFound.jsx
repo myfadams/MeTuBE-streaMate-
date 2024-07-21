@@ -1,4 +1,5 @@
-import { View, Text ,Image, ScrollView} from 'react-native'
+import { View, Text , ScrollView} from 'react-native'
+import { Image } from "expo-image";
 import Button from "../components/Button"
 import React from 'react'
 import { notAvailable, notfoundlogo } from '../constants/images';
@@ -25,7 +26,7 @@ const NotFound = ({type}) => {
 						source={type?notAvailable:notfoundlogo}
 						tintColor={!type&&"#fff"}
 						style={{ width: "100%", height: 300 }}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 				</View>
 				<View style={{ marginTop: 20, marginBottom: 20 }}>

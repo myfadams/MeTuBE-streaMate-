@@ -3,12 +3,12 @@ import {
 	Text,
 	// SafeAreaView,
 	TouchableOpacity,
-	Image,
 	FlatList,
-    RefreshControl,
-    Platform,
+	RefreshControl,
+	Platform,
 	Dimensions,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { useEffect, useRef, useState } from "react";
 import { bgColor, borderLight, fieldColor } from "../../constants/colors";
 import { back, chromecast, options, search } from "../../constants/icons";
@@ -23,75 +23,87 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const yourVideos = () => {
 	const [isActive, setIsActive] = useState(0);
-	
-    const [videos, setVideos] = useState([]);
+
+	const [videos, setVideos] = useState([]);
 	const [shorts, setShorts] = useState([]);
 	const [live, setLive] = useState([]);
-	
+
 	const [specialItemLayout, setSpecialItemLayout] = useState(null);
-    const { setRefreshing, refereshing,user } = getContext();
-    const [isRefreshing, setIsRefreshing] = useState(false);
+	const { setRefreshing, refereshing, user } = getContext();
+	const [isRefreshing, setIsRefreshing] = useState(false);
 
 	const [isTrackedViewVisible, setIsTrackedViewVisible] = useState(true);
 	const trackedViewRef = useRef(null);
 	const screenDimensions = Dimensions.get("window");
-	const handleScroll = () => {
-    // Calculate if tracked view is visible based on its position
-    if (trackedViewRef.current) {
-      trackedViewRef.current.measure((x, y, width, height, pageX, pageY) => {
-        const isViewVisible = pageY >= 0 && pageY <= screenDimensions.height - height;
-        setIsTrackedViewVisible(isViewVisible);
-      });
-    }
-  };
-//   console.log("isVisible header: "+isTrackedViewVisible)
+	// const handleScroll = () => {
+	// 	// Calculate if tracked view is visible based on its position
+	// 	if (trackedViewRef.current) {
+	// 		trackedViewRef.current.measure((x, y, width, height, pageX, pageY) => {
+	// 			const isViewVisible =
+	// 				pageY >= 0 && pageY <= screenDimensions.height - height;
+	// 			setIsTrackedViewVisible(isViewVisible);
+	// 		});
+	// 	}
+	// };
+	const handleScroll = (event) => {
+		const { contentOffset } = event.nativeEvent || {};
+
+		if (contentOffset) {
+			const { y: scrollY } = contentOffset;
+			if (trackedViewRef.current) {
+				trackedViewRef.current.measure((x, y, width, height, pageX, pageY) => {
+					const isViewVisible =
+						pageY >= scrollY && pageY <= scrollY + screenDimensions.height;
+					setIsTrackedViewVisible(isViewVisible);
+				});
+			}
+		}
+	};
+
+	//   console.log("isVisible header: "+isTrackedViewVisible)
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const videoData = await fetchVideos();
-				const shortsData = await fetchShorts()
+				const shortsData = await fetchShorts();
 				setVideos([...videoData]);
 				setShorts([...shortsData]);
 			} catch (err) {
 				// setError(err);
-                console.log(err)
-			} 
+				console.log(err);
+			}
 		};
 
 		fetchData();
 	}, [refereshing]);
-    
-    const vids = videos.filter((v) => {
-			return v.creator==user?.uid;
-		});
+
+	const vids = videos.filter((v) => {
+		return v.creator == user?.uid;
+	});
 	const short = shorts.filter((s) => {
 		return s.creator == user?.uid;
 	});
-   
+
 	let data = [...vids, ...short];
-	
+
 	// shuffleArray([...vids,...short])
 	const [dataTodisplay, setDataTodisplay] = useState();
 	function handleShorts() {
-        setIsActive(3);
+		setIsActive(3);
 		setDataTodisplay([...short]);
-		
 	}
 	function handleVideos() {
 		setIsActive(2);
-        setDataTodisplay([...vids])
-		
+		setDataTodisplay([...vids]);
 	}
 	function handleLive() {
-        setIsActive(4);
-		 setDataTodisplay(live);
-		 
+		setIsActive(4);
+		setDataTodisplay(live);
 	}
 	function handleSort() {
-        // setIsActive(1);
+		// setIsActive(1);
 	}
-	
-	
+
 	const HeaderVid = () => {
 		return (
 			<View
@@ -113,7 +125,7 @@ const yourVideos = () => {
 						}}
 					>
 						{/* {isHeaderVisible && "Your videos"} */}
-						{isTrackedViewVisible && "Your videos"}
+						{isHeaderVisible && "Your videos"}
 					</Text>
 					{/* <View style={{ height: 2 }} ></View> */}
 				</View>
@@ -199,7 +211,7 @@ const yourVideos = () => {
 	// console.log("header: " + isHeaderVisible);
 	return (
 		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
-			<View style={{ alignItems: "center" ,width:"100%"}}>
+			<View style={{ alignItems: "center", width: "100%" }}>
 				<View
 					style={{
 						width: "97%",
@@ -219,11 +231,11 @@ const yourVideos = () => {
 						>
 							<Image
 								source={back}
-								resizeMode="contain"
+								contentFit="contain"
 								style={{ width: 30, height: 30 }}
 							/>
 						</TouchableOpacity>
-						{!isTrackedViewVisible && (
+						{!isHeaderVisible && (
 							<Text
 								style={{
 									color: "#fff",
@@ -247,7 +259,7 @@ const yourVideos = () => {
 							<Image
 								source={chromecast}
 								style={{ width: 21, height: 21 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 
@@ -259,14 +271,14 @@ const yourVideos = () => {
 							<Image
 								source={search}
 								style={{ width: 21, height: 21 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 						<TouchableOpacity>
 							<Image
 								source={options}
 								style={{ width: 21, height: 21 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</TouchableOpacity>
 					</View>
@@ -274,8 +286,7 @@ const yourVideos = () => {
 			</View>
 
 			<FlatList
-				data={data&&!dataTodisplay?data:dataTodisplay}
-				
+				data={data && !dataTodisplay ? data : dataTodisplay}
 				viewabilityConfig={{ viewAreaCoveragePercentThreshold: 100 }}
 				onViewableItemsChanged={onViewableItemsChanged}
 				renderItem={({ item, index }) => {
@@ -302,7 +313,6 @@ const yourVideos = () => {
 				}
 				onScroll={handleScroll}
 			/>
-			
 		</SafeAreaView>
 	);
 };

@@ -1,10 +1,11 @@
-import { View, Text, FlatList, Image, TouchableOpacity, Platform } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Platform } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { bgColor, borderLight, buttonColor, loadingColor } from "../../constants/colors";
 import HeaderApp from "../../components/HeaderApp";
 import { ScrollView } from "react-native-gesture-handler";
 import ForYouButtons from "../../components/ForYouButtons";
+import { Image } from "expo-image";
 import {
 	back,
 	clapper,
@@ -140,9 +141,9 @@ const profile = () => {
 		}
 		getCover();
 	}, [refereshing]);
-	
+	const insets = useSafeAreaInsets();
 	return (
-		<SafeAreaView style={{ backgroundColor: bgColor, height: "100%" }}>
+		<View style={{ backgroundColor: bgColor, height: "100%", paddingTop:insets.top }}>
 			<ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
 				<HeaderApp screenName="you" disable={true} />
 				<TouchableOpacity
@@ -163,7 +164,7 @@ const profile = () => {
 					>
 						<Image
 							source={{ uri: user?.photoURL }}
-							resizeMode="cover"
+							contentFit="cover"
 							style={{
 								width: 70,
 								height: 70,
@@ -215,6 +216,7 @@ const profile = () => {
 											height: 14,
 											
 										}}
+										contentFit="contain"
 									/>
 								</Text>
 							</View>
@@ -388,7 +390,7 @@ const profile = () => {
 					</View>
 				)}
 			</ScrollView>
-		</SafeAreaView>
+		</View>
 	);
 };
 

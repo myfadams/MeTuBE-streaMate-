@@ -1,6 +1,8 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
+
 import React from "react";
-import { back, playAdd } from "../constants/icons";
+import { back, nextPage, playAdd } from "../constants/icons";
 
 const UploadButtons = ({ sourceUrl, title, subtitle, type, handlePress,subValue }) => {
 	return (
@@ -24,7 +26,7 @@ const UploadButtons = ({ sourceUrl, title, subtitle, type, handlePress,subValue 
 				<Image
 					source={sourceUrl}
 					style={{ width: 27, height: 27 }}
-					resizeMode="contain"
+					contentFit="contain"
 					tintColor={"#fff"}
 				/>
 				<View>
@@ -53,7 +55,7 @@ const UploadButtons = ({ sourceUrl, title, subtitle, type, handlePress,subValue 
 							style={{
 								// flex: 0.5,
 								justifyContent: "center",
-								width:"80%"
+								width: "80%",
 							}}
 						>
 							<Text
@@ -62,7 +64,6 @@ const UploadButtons = ({ sourceUrl, title, subtitle, type, handlePress,subValue 
 									color: "#C5C5C5",
 									fontFamily: "Montserrat_500Medium",
 									fontSize: 10,
-									
 								}}
 							>
 								{subValue}
@@ -71,12 +72,13 @@ const UploadButtons = ({ sourceUrl, title, subtitle, type, handlePress,subValue 
 					)}
 				</View>
 			</View>
-			<Image
-				source={type === "playlist" ? playAdd : back}
-				style={{ width: 27, height: 27, transform: [{ rotate: "180deg" }] }}
-				resizeMode="contain"
-				tintColor={"#fff"}
-			/>
+				<Image
+					source={type === "playlist" ? playAdd : nextPage}
+					style={{ width: 27, height: 27 }}
+					contentFit="contain"
+					tintColor={"#fff"}
+				/>
+			
 		</TouchableOpacity>
 	);
 };

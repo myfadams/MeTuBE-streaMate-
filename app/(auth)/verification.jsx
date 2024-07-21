@@ -2,10 +2,11 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	Image,
+	
 	ScrollView,
 	TouchableOpacity,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor, borderPrimary, otherColor } from "../../constants/colors";
@@ -93,7 +94,7 @@ const Verification = () => {
 								width: 250,
 								height: 120,
 							}}
-							resizeMode="contain"
+							contentFit="contain"
 						/>
 						{/* <Text
 							style={{

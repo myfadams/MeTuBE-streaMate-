@@ -2,13 +2,14 @@ import {
 	View,
 	Platform,
 	Text,
-	Image,
+	
 	TouchableOpacity,
 	ScrollView,
 	// SafeAreaView,
 } from "react-native";
 import { Link, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Image } from "expo-image";
 import { bgColor, borderLight } from "../constants/colors";
 import { close } from "../constants/icons";
 import ForYouButtons from "../components/ForYouButtons";
@@ -96,7 +97,7 @@ export default function Modal() {
 				>
 					<Image
 						source={close}
-						resizeMode="contain"
+						contentFit="contain"
 						style={{ width: 25, height: 25 }}
 					/>
 				</TouchableOpacity>

@@ -1,5 +1,6 @@
 
-import { View, Text, TouchableOpacity, Image, Platform } from "react-native";
+import { View, Text, TouchableOpacity,  Platform } from "react-native";
+import { Image } from "expo-image";
 import React from "react";
 import {
 	back,
@@ -34,7 +35,7 @@ const OptionsHeader = ({userInfo}) => {
 					>
 						<Image
 							source={back}
-							resizeMode="contain"
+							contentFit="contain"
 							style={{ width: 30, height: 30 }}
 						/>
 					</TouchableOpacity>
@@ -66,7 +67,7 @@ const OptionsHeader = ({userInfo}) => {
 						<Image
 							source={chromecast}
 							style={{ width: 21, height: 21 }}
-							resizeMode="contain"
+							contentFit="contain"
 						/>
 					</TouchableOpacity>
 
@@ -78,14 +79,14 @@ const OptionsHeader = ({userInfo}) => {
 						<Image
 							source={search}
 							style={{ width: 21, height: 21 }}
-							resizeMode="contain"
+							contentFit="contain"
 						/>
 					</TouchableOpacity>
 					<TouchableOpacity>
 						<Image
 							source={options}
 							style={{ width: 21, height: 21 }}
-							resizeMode="contain"
+							contentFit="contain"
 						/>
 					</TouchableOpacity>
 				</View>

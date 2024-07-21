@@ -2,12 +2,12 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	Image,
 	ScrollView,
 	TouchableOpacity,
 	Platform,
 	Alert,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import InputFields from "../../components/InputFields";
@@ -99,7 +99,7 @@ const SignUp = () => {
 						marginBottom: 14,
 					}}
 				>
-					<Image source={logo} style={styles.image} resizeMode="contain" />
+					<Image source={logo} style={styles.image} contentFit="contain" />
 					{/* <Text
 						style={{
 							color: "#fff",
@@ -165,11 +165,12 @@ const SignUp = () => {
 				<View style={{ width: "97%" }}>
 					<MoreButton
 						title={"Sign Up"}
-						height={60}
+						height={69}
 						color={buttonColor}
 						handlePress={signUp}
 						typeauth={"auth"}
 						isLoading={isLoading}
+						auth={"auth"}
 					/>
 				</View>
 				<View
@@ -184,7 +185,7 @@ const SignUp = () => {
 					<TouchableOpacity style={{ margin: 10 }} activeOpacity={0.7}>
 						<Image
 							source={google}
-							resizeMode="contain"
+							contentFit="contain"
 							style={{ width: 40, height: 40 }}
 						/>
 					</TouchableOpacity>
@@ -192,7 +193,7 @@ const SignUp = () => {
 						<TouchableOpacity style={{ margin: 10 }} activeOpacity={0.7}>
 							<Image
 								source={apple}
-								resizeMode="contain"
+								contentFit="contain"
 								style={{ width: 40, height: 40 }}
 							/>
 						</TouchableOpacity>
@@ -204,6 +205,7 @@ const SignUp = () => {
 						flexDirection: "row",
 						justifyContent: "center",
 						marginTop: 10,
+						marginBottom:25
 					}}
 				>
 					<Text

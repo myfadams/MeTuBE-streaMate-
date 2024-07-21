@@ -1,4 +1,5 @@
-import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text,  TouchableOpacity, Dimensions } from "react-native";
+import { Image } from "expo-image";
 import React, { memo, useEffect, useState } from "react";
 import {
 	commentOutline,
@@ -8,11 +9,12 @@ import {
 	options,
 	shortLogo,
 } from "../constants/icons";
-import { borderLight, loadingColor } from "../constants/colors";
+import { borderLight, fieldColor, loadingColor } from "../constants/colors";
 import {
 	calculateTimePassed,
 	formatSubs,
 	formatViews,
+	getUploadTime,
 	getUploadTimestamp,
 } from "../libs/videoUpdates";
 import { router } from "expo-router";
@@ -35,18 +37,23 @@ const YourVideoComponent = ({ video, type }) => {
 		};
 
 		fetchCreator();
-		if (isConnected)
-			if (!video?.caption)
-				getUploadTimestamp(video?.thumbnail, "videoUploads").then((data) => {
-					let time = calculateTimePassed(data);
-					setTimePassed(time);
-				});
-			else {
-				getUploadTimestamp(video?.thumbnail, "shortsUploads").then((data) => {
-					let time = calculateTimePassed(data);
-					setTimePassed(time);
-				});
-			}
+		// console.log(video.id);
+
+		if (!video?.caption)
+			getUploadTime(video.id, "video").then((res) => {
+				// console.log(res)
+				let time = calculateTimePassed(res);
+				// console.log(time)
+				setTimePassed(time);
+			});
+		else {
+			getUploadTime(video.id, "shorts").then((res) => {
+				// console.log(res)
+				let time = calculateTimePassed(res);
+				// console.log(time)
+				setTimePassed(time);
+			});
+		}
 	}, []);
 	return (
 		<TouchableOpacity
@@ -68,7 +75,6 @@ const YourVideoComponent = ({ video, type }) => {
 						params: {
 							...video,
 							timePassed: timePassed,
-							
 						},
 					});
 				}
@@ -76,17 +82,21 @@ const YourVideoComponent = ({ video, type }) => {
 			activeOpacity={0.6}
 			style={{ margin: 10 }}
 		>
-			<View style={{ flexDirection: "row", alignItems: "center", gap: 17 }}>
-				<View>
+			<View style={{ flexDirection: "row", gap: Dimensions.get("screen").width*0.1-24 }}>
+				<View style={{ width: "45%" }}>
 					<Image
 						source={{ uri: video?.thumbnail.replace("videos/", "videos%2F") }}
 						style={{
-							backgroundColor: "#1A1818",
-							width: 150,
-							height: 85,
-							borderRadius: 8,
+							backgroundColor: fieldColor,
+							// width: 150,
+							height: 115,
+							// borderRadius: 8,
+							borderTopLeftRadius: 15,
+							borderBottomLeftRadius: 21,
+							borderTopRightRadius:21,
+							borderBottomRightRadius:4
 						}}
-						resizeMode="cover"
+						contentFit={!video?.caption?"cover":"scale-down"}
 					/>
 					{video?.caption && (
 						<Image
@@ -99,18 +109,18 @@ const YourVideoComponent = ({ video, type }) => {
 								bottom: 5,
 								right: 5,
 							}}
-							resizeMode="contain"
+							contentFit="contain"
 						/>
 					)}
 				</View>
-				<View style={{ gap: type ? 9 : 4 }}>
+				<View style={{ gap: type ? 9 :14, width: "45%",marginTop:12, }}>
 					<Text
-						numberOfLines={1}
+						numberOfLines={2}
 						style={{
 							color: "white",
-							fontSize: 13,
+							fontSize: 15,
 							fontFamily: "Montserrat_500Medium",
-							width: 0.44*Dimensions.get("window").width,
+							width: 0.44 * Dimensions.get("window").width,
 							// flexWrap: "wrap",
 							flexShrink: 1,
 							flexDirection: "row",
@@ -142,16 +152,16 @@ const YourVideoComponent = ({ video, type }) => {
 							<Image
 								source={dot}
 								style={{ width: 3, height: 3 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 						</View>{" "}
 						{timePassed} ago
 					</Text>
-					<View style={{ flexDirection: "row", gap: 15 }}>
+					<View style={{ flexDirection: "row",  justifyContent:"space-between" }}>
 						<Image
 							source={globe}
 							style={{ width: 20, height: 20 }}
-							resizeMode="contain"
+							contentFit="contain"
 						/>
 						<View
 							style={{ alignItems: "center", flexDirection: "row", gap: 4 }}
@@ -159,7 +169,7 @@ const YourVideoComponent = ({ video, type }) => {
 							<Image
 								source={likeOutline}
 								style={{ width: 20, height: 20 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 							<Text
 								numberOfLines={1}
@@ -179,7 +189,7 @@ const YourVideoComponent = ({ video, type }) => {
 							<Image
 								source={commentOutline}
 								style={{ width: 20, height: 20 }}
-								resizeMode="contain"
+								contentFit="contain"
 							/>
 							<Text
 								numberOfLines={1}
@@ -195,11 +205,11 @@ const YourVideoComponent = ({ video, type }) => {
 						</View>
 					</View>
 				</View>
-				<TouchableOpacity style={{ position: "absolute", right: 1, top: 1 }}>
+				<TouchableOpacity style={{ height: "100%" }}>
 					<Image
 						source={options}
 						style={{ width: 15, height: 15 }}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 				</TouchableOpacity>
 			</View>

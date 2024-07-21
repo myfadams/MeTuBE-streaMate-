@@ -1,5 +1,4 @@
 import {
-	Image,
 	Platform,
 	StyleSheet,
 	Text,
@@ -7,6 +6,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { useState } from "react";
 import { bgColor, borderPrimary, fieldColor, otherColor } from "../constants/colors";
 import { hide, show } from "../constants/icons";
@@ -22,7 +22,7 @@ const InputFields = ({ text, placeholderText, handleChange,value,icon }) => {
 				
 				<Image
 					source={icon}
-					resizeMode="contain"
+					contentFit="contain"
 					style={{ width: 20, height: 20 }}
 					tintColor={"#fff"}
 				/>
@@ -57,7 +57,7 @@ const InputFields = ({ text, placeholderText, handleChange,value,icon }) => {
 					>
 						<Image
 							source={show}
-							resizeMode="contain"
+							contentFit="contain"
 							style={{ width: 24, height: 24 }}
 						/>
 					</TouchableOpacity>
@@ -72,7 +72,7 @@ const InputFields = ({ text, placeholderText, handleChange,value,icon }) => {
 					>
 						<Image
 							source={hide}
-							resizeMode="contain"
+							contentFit="contain"
 							style={{ width: 24, height: 24 }}
 						/>
 					</TouchableOpacity>
@@ -99,11 +99,12 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		alignItems: "center",
 		justifyContent: "center",
-		borderRadius: 10,
+		borderRadius: 19,
 		width: "92%",
 		margin: "0 10px",
-		padding: 10,
-		height: 68,
+		paddingVertical:13,
+		paddingHorizontal:20,
+		height: 69,
 		backgroundColor: fieldColor,
 	},
 });

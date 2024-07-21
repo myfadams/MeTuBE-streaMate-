@@ -71,9 +71,19 @@ import key from "../assets/icons/key.png";
 import username from "../assets/icons/username.png";
 import timeMachine from "../assets/icons/timeMachine.png";
 import arrow from "../assets/icons/arrow.png";
+import playVideo from "../assets/icons/playVideo.png";
 import remix from "../assets/icons/recycle.png";
+import addFill from "../assets/icons/addFill.png";
+import homeFill from "../assets/icons/active/homeFilled.png";
+import shortsFill from "../assets/icons/active/shortsFilled.png";
+import subsFilled from "../assets/icons/active/subscriptionFilled.png";
 
 export {
+	playVideo,
+	homeFill,
+	subsFilled,
+	shortsFill,
+	addFill,
 	remix,
 	nextPage,
 	timeMachine,

@@ -2,14 +2,14 @@ import {
 	View,
 	Text,
 	TouchableOpacity,
-	Image,
 	ActivityIndicator,
 	StyleSheet,
 	Pressable,
 	Platform,
 	Dimensions,
 } from "react-native";
-import React, { memo, useEffect, useRef, useState } from "react";
+import { Image } from "expo-image";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import BottomSheetComponent from "./CommentSection";
 import { ResizeMode, Video } from "expo-av";
 import {
@@ -44,7 +44,7 @@ import {
 	setLikeStatus,
 	subscribeToChannel,
 } from "../libs/videoUpdates";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 const ShortsView = ({
 	sourceUrl,
@@ -56,6 +56,7 @@ const ShortsView = ({
 	videoId,
 	data,
 }) => {
+	// console.log("this short " + shouldPlay);
 	const width = Dimensions.get("window").width;
 	const [play, setPlay] = useState(true);
 	const [likeClicked, setLikeClicked] = useState(false);
@@ -153,7 +154,13 @@ const ShortsView = ({
 		likeUpadate(videoId, "dislike", "shortsRef", user?.uid);
 		getLikes(videoId, setLikes, "shortsRef");
 	};
-
+	const [isInFocus,setIsInFocus]=useState(false)
+	useFocusEffect(useCallback(()=>{
+		setIsInFocus(true)
+		return ()=>{
+			setIsInFocus(false)
+		}
+	}, []))
 	return (
 		<View style={styles.container}>
 			<Pressable
@@ -163,7 +170,7 @@ const ShortsView = ({
 				<Video
 					ref={videoRef}
 					resizeMode={ResizeMode.COVER}
-					shouldPlay={play && shouldPlay && beFocused}
+					shouldPlay={play && shouldPlay && isInFocus}
 					isLooping
 					onPlaybackStatusUpdate={(video) => {
 						if (video.didJustFinish && play && count === 0 && !isIcognito) {
@@ -177,7 +184,7 @@ const ShortsView = ({
 							incrementVideoViews(videoId, "shortsRef");
 					}}
 					style={styles.video}
-					source={{ uri: sourceUrl }}
+					source={{ uri: shouldPlay?sourceUrl:null }}
 				/>
 			</Pressable>
 			{!play && <Image source={pause} style={styles.icon} />}
@@ -192,7 +199,7 @@ const ShortsView = ({
 					<Image
 						source={like}
 						style={styles.button}
-						resizeMode="contain"
+						contentFit="contain"
 						tintColor={likeClicked ? buttonColor : "#fff"}
 					/>
 					<Text style={styles.text}>{likes === 0 ? "Like" : likes}</Text>
@@ -204,7 +211,7 @@ const ShortsView = ({
 					<Image
 						source={dislike}
 						style={styles.button}
-						resizeMode="contain"
+						contentFit="contain"
 						tintColor={dislikeClicked ? buttonColor : "#fff"}
 					/>
 					<Text style={styles.text}>{"Dislike"}</Text>
@@ -213,7 +220,7 @@ const ShortsView = ({
 					onPress={handleToggleBottomSheet}
 					style={{ alignItems: "center", gap: 4 }}
 				>
-					<Image source={comment} style={styles.button} resizeMode="contain" />
+					<Image source={comment} style={styles.button} contentFit="contain" />
 					<Text style={styles.text}>{noComments}</Text>
 				</TouchableOpacity>
 				<TouchableOpacity style={{ alignItems: "center", gap: 4 }}>
@@ -221,7 +228,7 @@ const ShortsView = ({
 						source={share}
 						style={styles.button}
 						tintColor={"#fff"}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 					<Text style={styles.text}>{"Share"}</Text>
 				</TouchableOpacity>
@@ -230,13 +237,20 @@ const ShortsView = ({
 						source={remix}
 						style={styles.button}
 						tintColor={"#fff"}
-						resizeMode="contain"
+						contentFit="contain"
 					/>
 					<Text style={styles.text}>{"Remix"}</Text>
 				</TouchableOpacity>
 			</View>
 			<View style={styles.creatorContainer}>
-				<View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+				<View
+					style={{
+						flexDirection: "row",
+						alignItems: "center",
+						gap: 10,
+						
+					}}
+				>
 					<TouchableOpacity
 						onPress={() => {
 							router.push({
@@ -249,7 +263,11 @@ const ShortsView = ({
 								},
 							});
 						}}
-						style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							gap: 10,
+						}}
 					>
 						<Image
 							source={{ uri: creator[0]?.image }}
@@ -259,8 +277,9 @@ const ShortsView = ({
 							numberOfLines={1}
 							ellipsizeMode="tail"
 							style={styles.creatorText}
+
 						>
-							{creator[0]?.name?.slice(0, 15)}
+							{creator[0]?.name}
 						</Text>
 					</TouchableOpacity>
 
@@ -341,7 +360,7 @@ const styles = StyleSheet.create({
 	},
 	creatorContainer: {
 		position: "absolute",
-		bottom: 50,
+		bottom: Platform.OS === "ios" ? 50 : 45,
 		left: 10,
 	},
 	creatorImage: {
@@ -354,6 +373,7 @@ const styles = StyleSheet.create({
 		color: "white",
 		fontSize: 16,
 		fontFamily: "Montserrat_600SemiBold",
+		maxWidth: (Dimensions.get("window").width) * 0.35,
 	},
 	title: {
 		fontSize: 18,

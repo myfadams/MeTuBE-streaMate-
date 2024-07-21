@@ -1,4 +1,5 @@
-import { View, Text, Image, Platform, TouchableOpacity } from "react-native";
+import { View, Text, Platform, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 import React from "react";
 import { borderLight } from "../constants/colors";
 import { commentOutline, dislikOutline, likeOutline, options } from "../constants/icons";
@@ -19,7 +20,7 @@ const CommentView = ({commentData}) => {
 					backgroundColor: "#000",
 					borderRadius: Platform.OS === "ios" ? "50%" : 50,
 				}}
-				resizeMode="cover"
+				contentFit="cover"
 			/>
 
 			<View
@@ -65,7 +66,7 @@ const CommentView = ({commentData}) => {
 								width: 16,
 								height: 16,
 							}}
-							resizeMode="contain"
+							contentFit="contain"
 							tintColor={"#fff"}
 						/>
 						<Text
@@ -87,7 +88,7 @@ const CommentView = ({commentData}) => {
 								width: 16,
 								height: 16,
 							}}
-							resizeMode="contain"
+							contentFit="contain"
 							tintColor={"#fff"}
 						/>
 					</TouchableOpacity>
@@ -98,7 +99,7 @@ const CommentView = ({commentData}) => {
 								width: 16,
 								height: 16,
 							}}
-							resizeMode="contain"
+							contentFit="contain"
 							tintColor={"#fff"}
 						/>
 					</TouchableOpacity>
@@ -111,7 +112,7 @@ const CommentView = ({commentData}) => {
 						width: 16,
 						height: 16,
 					}}
-					resizeMode="contain"
+					contentFit="contain"
 					tintColor={"#fff"}
 				/>
 			</TouchableOpacity>

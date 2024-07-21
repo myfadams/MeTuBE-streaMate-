@@ -3,10 +3,10 @@ import {
 	Text,
 	FlatList,
 	TouchableOpacity,
-	Image,
 	ActivityIndicator,
 	Dimensions,
 } from "react-native";
+import { Image } from "expo-image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -161,6 +161,7 @@ const VideoPlayer = () => {
 					.filter((vid) => vid.id !== video?.videoview)
 					.slice(0, 10)}
 				key={(item) => item.id}
+				style={{ marginHorizontal: 10 }}
 				initialNumToRender={3}
 				decelerationRate={0.94}
 				ListHeaderComponent={
