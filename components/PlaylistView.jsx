@@ -51,7 +51,18 @@ const PlaylistView = ({ data }) => {
 	// console.log(getLastVid);
 
 	return (
-		<TouchableOpacity style={{ margin: 4 }} onPress={{}}>
+		<TouchableOpacity style={{ margin: 4 }} onPress={()=>{
+			if (data?.id === "likedShorts")
+				router.push({ pathname: "playlist/playlist",params:{type:"likedShorts"} });
+			if (data?.id === "likedVideos")
+				router.push({ pathname: "playlist/playlist",params:{type:"likedVideos"} });
+			if (data?.id === "watchLater")
+				router.push({
+					pathname: "playlist/playlist",
+					params: { type: "watchLater" },
+				});
+			
+		}}>
 			<View>
 				<Image
 					source={{ uri: getLastVid.thumbnail }}

@@ -23,15 +23,17 @@ import { emailVerification, loginUser } from "../../libs/firebase";
 import { authentication } from "../../libs/config";
 import { getAuth } from "firebase/auth";
 import MoreButton from "../../components/MoreButton";
+import * as AuthSession from "expo-auth-session";
+import GoogleLoginButton from "../../components/GoogleSignInButton";
 const SignIn = () => {
 	const [form, setform] = useState({ email: "", password: "" });
 	const [isLoading, setIsLoading] = useState(false);
 	const { user,setUser } = getContext();
 	SplashScreen.hideAsync()
-	// if (authentication["currentUser"] && user.emailVerified) {
-	// 	return <Redirect href="home" />;
-	// }
-
+	const redirectUri = AuthSession.makeRedirectUri({
+		useProxy: true, // This tells it to use a proxy suitable for Expo Go
+	});
+	console.log(redirectUri)
 	async function login() {
 		setIsLoading(true);
 		try {
@@ -165,13 +167,7 @@ const SignIn = () => {
 						marginTop: 20,
 					}}
 				>
-					<TouchableOpacity style={{ margin: 10 }} activeOpacity={0.7}>
-						<Image
-							source={google}
-							contentFit="contain"
-							style={{ width: 40, height: 40 }}
-						/>
-					</TouchableOpacity>
+					<GoogleLoginButton/>
 					{Platform.OS === "ios" && (
 						<TouchableOpacity style={{ margin: 10 }} activeOpacity={0.7}>
 							<Image

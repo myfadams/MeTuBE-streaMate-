@@ -127,6 +127,7 @@ const MyCarousel = ({ data, onScroll, scrollEnabled, onLayout, isVisible,act }) 
 										data={vids}
 										onScroll={onScroll}
 										scrollEnabled={scrollEnabled}
+										channelID={data?.uid}
 										// style={styles.flatList}
 									/>
 								</View>
@@ -139,6 +140,7 @@ const MyCarousel = ({ data, onScroll, scrollEnabled, onLayout, isVisible,act }) 
 										data={short}
 										onScroll={onScroll}
 										scrollEnabled={scrollEnabled}
+										channelID={data?.uid}
 										// style={styles.flatList}
 									/>
 								</View>
@@ -151,6 +153,7 @@ const MyCarousel = ({ data, onScroll, scrollEnabled, onLayout, isVisible,act }) 
 										data={[]}
 										onScroll={onScroll}
 										scrollEnabled={scrollEnabled}
+										channelID={data?.uid}
 										// style={styles.flatList}
 									/>
 								</View>
@@ -163,6 +166,7 @@ const MyCarousel = ({ data, onScroll, scrollEnabled, onLayout, isVisible,act }) 
 										data={[]}
 										onScroll={onScroll}
 										scrollEnabled={scrollEnabled}
+										channelID={data?.uid}
 										// style={styles.flatList}
 									/>
 								</View>

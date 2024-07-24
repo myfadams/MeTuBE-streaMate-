@@ -6,11 +6,21 @@ import { notAvailable, notfoundlogo } from '../constants/images';
 import { buttonColor, loadingColor } from '../constants/colors';
 import { router } from 'expo-router';
 import MoreButton from './MoreButton';
+import { getContext } from '../context/GlobalContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const NotFound = ({type}) => {
-  return (
-		<ScrollView
-			contentContainerStyle={{ flexGrow: 1, justifyContent: "center", height:"100%"}}
+const NotFound = ({ type, channelInfoID }) => {
+	const { user } = getContext();
+	// console.log("cgh: "+channelInfoID);#
+	const insets= useSafeAreaInsets();
+	return (
+		<View
+			style={{
+				flex:1,
+				justifyContent: "center",
+				height: "100%",
+				marginBottom:insets.bottom
+			}}
 		>
 			<View
 				style={{
@@ -23,8 +33,8 @@ const NotFound = ({type}) => {
 			>
 				<View style={{ width: "100%", height: 300 }}>
 					<Image
-						source={type?notAvailable:notfoundlogo}
-						tintColor={!type&&"#fff"}
+						source={type ? notAvailable : notfoundlogo}
+						tintColor={!type && buttonColor}
 						style={{ width: "100%", height: 300 }}
 						contentFit="contain"
 					/>
@@ -39,7 +49,7 @@ const NotFound = ({type}) => {
 							fontWeight: "600",
 						}}
 					>
-						{!type&&"No videos found"}
+						{!type && "No videos found"}
 					</Text>
 					<Text
 						style={{
@@ -50,7 +60,9 @@ const NotFound = ({type}) => {
 							textAlign: "center",
 						}}
 					>
-						{type?"Share your videos with anyone or everyone":"Be the first to upload on StreaMate"}
+						{type
+							? "Share your videos with anyone or everyone"
+							: "Be the first to upload on StreaMate"}
 					</Text>
 				</View>
 				{/* <Button
@@ -59,24 +71,23 @@ const NotFound = ({type}) => {
 						router.push("create");
 					}}
 				/> */}
-				<View style={{ width: "97%" }}>
+				{channelInfoID===user?.uid&&<View style={{ width: "97%" }}>
 					<MoreButton
 						title={"Create A Video"}
 						height={60}
 						color={buttonColor}
 						handlePress={() => {
-							if(!type)
-								router.push("create");
-							else{
+							if (!type) router.push("create");
+							else {
 								router.replace("create");
 							}
 						}}
 						typeauth={"auth"}
 					/>
-				</View>
+				</View>}
 			</View>
-		</ScrollView>
+		</View>
 	);
-}
+};
 
 export default NotFound

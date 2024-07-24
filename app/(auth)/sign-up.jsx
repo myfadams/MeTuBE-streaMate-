@@ -20,6 +20,7 @@ import { Link, router } from "expo-router";
 import { createAccount, emailVerification } from "../../libs/firebase";
 import { getContext } from "../../context/GlobalContext";
 import MoreButton from "../../components/MoreButton";
+import GoogleLoginButton from "../../components/GoogleSignInButton";
 
 const SignUp = () => {
 	const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -182,13 +183,7 @@ const SignUp = () => {
 						marginTop: 20,
 					}}
 				>
-					<TouchableOpacity style={{ margin: 10 }} activeOpacity={0.7}>
-						<Image
-							source={google}
-							contentFit="contain"
-							style={{ width: 40, height: 40 }}
-						/>
-					</TouchableOpacity>
+					<GoogleLoginButton/>
 					{Platform.OS === "ios" && (
 						<TouchableOpacity style={{ margin: 10 }} activeOpacity={0.7}>
 							<Image

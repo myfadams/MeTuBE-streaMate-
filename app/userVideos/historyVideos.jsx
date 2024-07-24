@@ -34,6 +34,7 @@ import { onValue, ref } from "firebase/database";
 import { db } from "../../libs/config";
 import { combineAndGroupByDate } from "../../libs/otherFunctions";
 import { SafeAreaView } from "react-native-safe-area-context";
+import OtherChannelVideo from "../../components/OtherChannelVideo";
 
 const historyVideos = () => {
 	const [isEnabled, setIsEnabled] = useState();
@@ -358,7 +359,7 @@ const historyVideos = () => {
 								}}
 							/>
 							{item[1].map((video, id) => {
-								return <YourVideoComponent video={video} key={id} />;
+								return <OtherChannelVideo video={video} key={id} />;
 							})}
 						</View>
 					);

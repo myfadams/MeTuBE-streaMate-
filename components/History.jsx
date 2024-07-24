@@ -1,11 +1,11 @@
 import {
 	View,
 	Text,
-	ImageBackground,
+	// ImageBackground,
 	
 	TouchableOpacity,
 } from "react-native";
-import { Image } from "expo-image";
+import { Image, ImageBackground } from "expo-image";
 import React, { memo, useEffect, useState } from "react";
 import { loadingColor } from "../constants/colors";
 import { options } from "../constants/icons";
@@ -47,28 +47,24 @@ const History = ({ data, type }) => {
 			// console.log(creator)
 		}
 		getHis();
-
-		try {
-			if (!data?.caption)
-				getUploadTime(data.videoview, "shorts").then((res) => {
-					// console.log(res)
-					let time = calculateTimePassed(res);
-					// console.log(time)
-					setTimePassed(time);
-				});
-			else {
-				getUploadTime(data.videoview, "video").then((res) => {
-					// console.log(res)
-					let time = calculateTimePassed(res);
-					// console.log(time)
-					setTimePassed(time);
-				});
-			}
-		} catch (error) {
-			console.log(error);
+		if (data?.caption)
+			getUploadTime(data.videoview, "shorts").then((res) => {
+				// console.log("fafkjdf sdf dfjdaf :" + res);
+				let time = calculateTimePassed(res);
+				// console.log(time)
+				setTimePassed(time);
+			});
+		else {
+			getUploadTime(data.videoview, "video").then((res) => {
+				console.log(res);
+				let time = calculateTimePassed(res);
+				// console.log(time)
+				setTimePassed(time);
+			});
 		}
-	}, []);
+	}, [data]);
 	// console.log(his);
+	// console.log(data.videoview);
 	if (type !== "shorts")
 		return (
 			<TouchableOpacity

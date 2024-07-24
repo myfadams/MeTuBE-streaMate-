@@ -1,5 +1,5 @@
-import { View, Text, ImageBackground, TouchableOpacity, Dimensions } from 'react-native'
-import { Image } from "expo-image";
+import { View, Text,  TouchableOpacity, Dimensions } from 'react-native'
+import { Image, ImageBackground } from "expo-image";
 import React, { memo } from 'react'
 import { options } from '../constants/icons';
 import { router } from 'expo-router';

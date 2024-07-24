@@ -78,9 +78,11 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 					<TouchableOpacity
 						// activeOpacity={0.7}
 						onPress={() => {
-							addComment(videoID, user.uid, commentText, creatorID);
-							setCommentText("");
-							Keyboard.dismiss();
+							addComment(videoID, user.uid, commentText, creatorID).then(()=>{
+								setCommentText("");
+								Keyboard.dismiss();
+							})
+							
 						}}
 					>
 						<Image

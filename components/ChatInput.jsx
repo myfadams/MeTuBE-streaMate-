@@ -33,8 +33,10 @@ const ChatInput = ({
 					autoFocus={type?true:false}
 					selectionColor={"#fff"}
 					onSubmitEditing={() => {
-						addComment(videoId, user.uid, text,creatorID)
-						handleChange("");
+						addComment(videoId, user.uid, text,creatorID).then(()=>{
+							handleChange("");
+
+						})
 					}}
 					style={{
 						width: "100%",

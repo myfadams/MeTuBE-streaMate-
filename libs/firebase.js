@@ -6,14 +6,20 @@ import {
 	onAuthStateChanged,
 	signInWithEmailAndPassword,
 	updateProfile,
+	GoogleAuthProvider,
+	signInWithPopup,
+	signInWithCredential,
+	signInWithRedirect,
 } from "firebase/auth";
-import { app, db, ref, set, usersRef } from "./config";
+import { app, authentication, db, ref, set, usersRef } from "./config";
 import { avatars } from "./appwrite";
 import { get, onValue, update } from "firebase/database";
-import { collection } from "firebase/firestore";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const authentication = getAuth();
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Google from "expo-auth-session/providers/google";
+import { Platform } from "react-native";
+import { useEffect } from "react";
+// const authentication = getAuth();
 // let user;
 async function createAccount(email, password, name) {
 	try {
@@ -248,14 +254,14 @@ export async function changeUserDetails(type, value) {
 	const userRef = ref(db, "usersref/" + cUser?.uid);
 	if (type === "displayName") {
 		await updateProfile(cUser, { displayName: value });
-		console.log(cUser?.displayName)
+		console.log(cUser?.displayName);
 		await update(userRef, { name: cUser?.displayName });
 	}
 	if (type === "photoURL") {
 		await updateProfile(cUser, { photoURL: value });
 		await update(userRef, { image: cUser?.photoURL });
 	}
-	if(type==="desc"){
+	if (type === "desc") {
 		update(userRef, { description: value });
 	}
 	if (type === "cover") {
@@ -267,4 +273,13 @@ export async function changeUserDetails(type, value) {
 	// console.log(cUser)
 }
 // console.log(authentication.currentUser);
+const provider = new GoogleAuthProvider();
+export const handleSignIn = async () => {
+	try {
+		await signInWithRedirect(authentication, provider);
+	} catch (error) {
+		console.error("Error during sign-in:", error);
+	}
+};
+
 export { createAccount };

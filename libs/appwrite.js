@@ -9,13 +9,13 @@ import {
 } from "react-native-appwrite";
 
 export const appwriteConfig = {
-	endpoint: "https://cloud.appwrite.io/v1",
-	Platform: "com.jsm.learnReact",
-	projectId: "666ec1c80026ad9445c9",
-	databaseId: "666ec490003202b8490e",
-	userCollectionId: "666ec4d2003732e5c7f2",
-	videosCollectionId: "666ec50b002a86e2112b",
-	storageId: "666ecb92003dd5320fb8",
+	endpoint:   process.env.EXPO_PUBLIC_ENDPOINT, 
+	Platform:   process.env.EXPO_PUBLIC_PLATFORM,
+	projectId:   process.env.EXPO_PUBLIC_PROJECT_ID, 
+	databaseId:   process.env.EXPO_PUBLIC_DATABASE_ID,
+	userCollectionId:   process.env.EXPO_PUBLIC_USER_COLLECTION_ID,
+	videosCollectionId:  process.env.EXPO_PUBLIC_VIDEOS_COLLECTION_ID,
+	storageId:  process.env.EXPO_PUBLIC_STORAGE_ID
 };
 
 const client = new Client();

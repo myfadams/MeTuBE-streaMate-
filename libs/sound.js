@@ -97,10 +97,3 @@ export function formatDate(dateString) {
   // Otherwise, return the month and day
   return `${months[inputDate.getMonth()]} ${inputDate.getDate()}`;
 }
-
-// Example usage
-// console.log(formatDate("2024-07-14")); // "Today"
-// console.log(formatDate("2024-07-13")); // "Yesterday"
-// console.log(formatDate("2024-07-12")); // "Friday" (if today is 2024-07-14)
-// console.log(formatDate("2024-07-08")); // "Monday" (if today is 2024-07-14)
-// console.log(formatDate("2024-06-08")); // "June 8"

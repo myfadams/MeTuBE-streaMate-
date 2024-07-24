@@ -4,16 +4,19 @@ import React, { useRef } from "react";
 import { RefreshControl } from "react-native";
 import NotFound from "../NotFound";
 import YourVideoComponent from "../YourVideoComponent";
+import { getContext } from "../../context/GlobalContext";
+import OtherChannelVideo from "../OtherChannelVideo";
 
-const Videos = ({ data, ref, onScroll, scrollEnabled }) => {
-	// console.log(data)
-	 const flatListRef = useRef(null);
+const Videos = ({ data, ref, onScroll, scrollEnabled,channelID }) => {
+	const {user}=getContext()
+	// console.log(user?.uid)
+	const flatListRef = useRef(null);
 	return (
 		<View style={{ width: Dimensions.get("window").width }}>
 			<FlatList
 				ref={flatListRef}
 				onScroll={onScroll}
-				scrollEnabled={scrollEnabled}
+				scrollEnabled={data.length>0&&scrollEnabled}
 				nestedScrollEnabled={true}
 				data={data}
 				// style={{ }}
@@ -25,12 +28,17 @@ const Videos = ({ data, ref, onScroll, scrollEnabled }) => {
 				}
 				// contentContainerStyle={{height:"100%"}}
 				renderItem={({ item, index }) => {
-					return <YourVideoComponent video={item} type={"channel"} />;
+					// console.log(item)
+					if(user?.uid===item.creator)
+						return <YourVideoComponent video={item} type={"channel"} />;
+					else
+						return <OtherChannelVideo video={item} type={"channel"}/>
+
 				}}
 				keyExtractor={(item) => {
 					return item.id;
 				}}
-				ListEmptyComponent={<NotFound type={"yourVideos"} />}
+				ListEmptyComponent={<NotFound type={"yourVideos"} channelInfoID={channelID}/>}
 			/>
 		</View>
 	);

@@ -7,8 +7,7 @@ import {
 	runTransaction,
 	set,
 } from "firebase/database";
-import { db, firestore } from "./config";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { db} from "./config";
 // import { database } from "./firebase";
 import { v4 as uuidv4 } from "uuid";
 export const incrementVideoViews = (videoId, loc) => {
@@ -42,7 +41,7 @@ export function formatViews(numViews) {
 		formattedViews = 1;
 		submessage = "view";
 	} else {
-		formattedViews = numViews.toString();
+		formattedViews = numViews?.toString();
 	}
 
 	return `${formattedViews} ${submessage}`;
@@ -463,47 +462,6 @@ export const playList = (videoId, loc, userId) => {
 	}
 };
 
-// export async function getUploadTimestamp(fileName, type) {
-// 	try {
-
-// 		const docRef = doc(firestore, type, `/${fileName}`);
-// 		const time = (await getDoc(docRef));
-// 		console.log(time.data().uploadedAt.toDate());
-// 		// console.log(docRef.type)
-
-// 	} catch (error) {
-// 		console.error("Error retrieving timestamp:", error);
-// 	}
-// }
-function getFilenameFromUrl(url) {
-	let temp = url?.split("/");
-	let lastitem = temp[temp?.length - 1];
-	let filename = lastitem?.split("?")[0].replace("shorts%2F", "");
-	filename = filename?.replace("videos%2F", "");
-	return filename;
-}
-export async function getUploadTimestamp(url, type) {
-	// console.log(url)
-	const fileName = decodeURIComponent(getFilenameFromUrl(url));
-	// console.log(decodeURIComponent(fileName));
-	try {
-		const docRef = doc(firestore, type, fileName);
-		const docSnap = await getDoc(docRef);
-		// console.log(docSnap.data())
-
-		if (docSnap.exists()) {
-			const uploadedAt = docSnap.data().uploadedAt.toDate();
-			// console.log(uploadedAt)
-
-			return uploadedAt;
-		} else {
-			throw new Error("No such document!");
-		}
-	} catch (error) {
-		console.error("Error retrieving timestamp:", error);
-	}
-}
-
 export async function getUploadTime(videoId, type) {
 	// console.log(videoId)
 	let vidREf;
@@ -514,7 +472,7 @@ export async function getUploadTime(videoId, type) {
 	}
 	try {
 		const vidDate = await get(vidREf);
-		// console.log(vidREf);
+		// console.log(vidDate.val()?.date);
 		return vidDate.val()?.date;
 	} catch (error) {
 		console.error("Error retrieving timestamp:", error);
@@ -554,11 +512,12 @@ function formatTimePassed(seconds) {
 }
 
 export async function addComment(videoId, userId, commentText, creatorID) {
+	const d=new Date().toLocaleDateString()
 	const comment = {
 		text: commentText,
 		commenterID: userId,
 		commentId: uuidv4(),
-		date: new Date().toLocaleDateString(),
+		date: d,
 		likes: 0,
 		replies: [],
 		creatorID: creatorID,
@@ -572,6 +531,8 @@ export async function addComment(videoId, userId, commentText, creatorID) {
 			else {
 				return [...commentsArray, comment];
 			}
-		} catch (error) {}
+		} catch (error) {
+			console.log(error)
+		}
 	});
 }

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import React, { memo, useEffect, useState } from "react";
-import { bgColor, fieldColor, loadingColor } from "../../constants/colors";
+import { bgColor, buttonColor, fieldColor, loadingColor } from "../../constants/colors";
 import { router, useLocalSearchParams } from "expo-router";
 import SearchFields from "../../components/SearchField";
 import { arrow, search, shortLogo, timeMachine } from "../../constants/icons";
@@ -23,6 +23,7 @@ import { get, ref } from "firebase/database";
 import { db, usersRef } from "../../libs/config";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+import { searchNotfound } from "../../constants/images";
 
 const searchView = () => {
 	const { searchWord: pageName } = useLocalSearchParams();
@@ -340,6 +341,34 @@ const searchView = () => {
 								}
 							/>
 						)}
+					{(searchResultVideos?.length <=0 && searchResultShorts?.length <= 0 &&
+					searchResultChannel?.length <= 0) && !isActive && pageName!=="SearchPage"&&
+					(<View
+						style={{
+							height: "100%",
+							width: "100%",
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+					>
+						<Image
+							style={{ height: "60%", width: "100%" }}
+							source={searchNotfound}
+							tintColor={buttonColor}
+							contentFit="contain"
+						/>
+						<Text
+							style={{
+								fontFamily: "Montserrat_700Bold",
+								fontSize: 25,
+								color: "white",
+								textAlign: "center",
+								fontWeight: "600",
+							}}
+						>
+							Oops! Nothing matched your search
+						</Text>
+					</View>)}
 				</View>
 			</View>
 		</SafeAreaView>

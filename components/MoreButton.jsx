@@ -30,17 +30,21 @@ const MoreButton = ({ title, imageUrl, handlePress,height,color,isLoading,typeau
 					tintColor={"#fff"}
 				/>
 			)}
-			{isLoading&&<ActivityIndicator color={"#fff"} />}
-			{!isLoading&&<Text
-				style={{
-					color: "white",
-					marginRight: imageUrl && 14,
-					fontSize: typeauth ? 18 : 14,
-					fontFamily: typeauth ? "Montserrat_500Medium" : "Montserrat_300Light",
-				}}
-			>
-				{title}
-			</Text>}
+			{isLoading && <ActivityIndicator color={"#fff"} />}
+			{!isLoading && (
+				<Text
+					style={{
+						color: "white",
+						marginRight: imageUrl && 14,
+						fontSize: typeauth ? 18 : 14,
+						fontFamily: typeauth
+							? "Montserrat_500Medium"
+							: "Montserrat_400Regular",
+					}}
+				>
+					{title}
+				</Text>
+			)}
 		</TouchableOpacity>
 	);
 	else{
@@ -78,7 +82,7 @@ const MoreButton = ({ title, imageUrl, handlePress,height,color,isLoading,typeau
 						fontSize: typeauth ? 18 : 14,
 						fontFamily: typeauth
 							? "Montserrat_500Medium"
-							: "Montserrat_300Light",
+							: "Montserrat_400Regular",
 					}}
 				>
 					{title}

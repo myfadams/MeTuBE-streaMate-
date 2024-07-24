@@ -71,6 +71,7 @@ import key from "../assets/icons/key.png";
 import username from "../assets/icons/username.png";
 import timeMachine from "../assets/icons/timeMachine.png";
 import arrow from "../assets/icons/arrow.png";
+import shuffle from "../assets/icons/shuffle.png";
 import playVideo from "../assets/icons/playVideo.png";
 import remix from "../assets/icons/recycle.png";
 import addFill from "../assets/icons/addFill.png";
@@ -148,6 +149,7 @@ export {
 	clapper,
 	getPremium,
 	help,
+	shuffle,
 	lightbulb,
 	watchtime,
 	yourVideos,

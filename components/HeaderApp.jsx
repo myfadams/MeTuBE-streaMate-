@@ -84,7 +84,9 @@ const HeaderApp = ({ screenName, disable,type }) => {
 							tintColor={"#fff"}
 						/>
 					</TouchableOpacity>
-					<TouchableOpacity>
+					<TouchableOpacity onPress={()=>{
+						router.push("notifications")
+					}}>
 						<Image
 							source={sub}
 							style={{ width: 21, height: 21 }}

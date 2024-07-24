@@ -152,7 +152,7 @@ const home = () => {
 							</>
 						)}
 
-						{!isLoading && isConnected && <NotFound />}
+						{!isLoading && isConnected && <NotFound channelInfoID={user?.uid}/>}
 					</>
 				}
 			/>

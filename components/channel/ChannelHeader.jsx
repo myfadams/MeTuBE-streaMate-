@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity,  Platform, ImageBackground, Dimensions } from 'react-native'
-import { Image } from "expo-image";
+import { View, Text, TouchableOpacity,  Platform, Dimensions } from 'react-native'
+import { Image, ImageBackground } from "expo-image";
 import React, { useCallback, useEffect, useState } from 'react'
 import {
 	back,

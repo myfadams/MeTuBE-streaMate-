@@ -4,10 +4,9 @@ import {
 	getDownloadURL,
 	uploadBytesResumable,
 } from "firebase/storage";
-import { ShortsRef, VideosRef, firestore, set, storage } from "./config";
+import { ShortsRef, VideosRef, set, storage } from "./config";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { description } from "../constants/icons";
 
 export async function uploadFiles(type, fileUri,title) {
@@ -19,21 +18,10 @@ export async function uploadFiles(type, fileUri,title) {
 	await uploadBytesResumable(fileRef, blob);
 	const downloadURL = await getDownloadURL(fileRef);
 	console.log(`File available at: ${downloadURL}`);
-	if (type === "shorts") {
-		const docRef = doc(firestore, "shortsUploads", `/${filename}`); // Adjust the path as needed
-		await setDoc(docRef, {
-			uploadedAt: serverTimestamp(),
-		});
-	}else{
-        const docRef = doc(firestore, "videoUploads", `/${filename}`); // Adjust the path as needed
-		await setDoc(docRef, {
-			uploadedAt: serverTimestamp(),
-		});
-    }
 	return downloadURL;
 }
 export const addShortToDB = async (file, thumnailUrl, videoUrl, userId,duration) => {
-	const d = new Date();
+	const d =  new Date().toISOString();
 
 	await set(ShortsRef(uuidv4()), {
 		caption: file.title,
@@ -41,22 +29,22 @@ export const addShortToDB = async (file, thumnailUrl, videoUrl, userId,duration)
 		video: "" + videoUrl,
 		creator: userId,
 		duration: duration,
-		date: new Date().toISOString(),
+		date:d,
 		views: 0,
 		likes: 0,
 	});
 };
 
 export const addVideoToDB = async (file, thumnailUrl, videoUrl, userId,duration) => {
-	// const d = new Date();
-
+	const d = new Date().toISOString();
+	console.log(d)
 	await set(VideosRef(uuidv4()), {
 		title: file.title,
 		thumbnail: thumnailUrl,
 		video: "" + videoUrl,
 		creator: userId,
 		description: file.description,
-		date: new Date().toISOString(),
+		date: d,
 		duration: duration,
 		views: 0,
 		likes: 0,
