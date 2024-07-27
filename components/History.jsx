@@ -2,7 +2,6 @@ import {
 	View,
 	Text,
 	// ImageBackground,
-	
 	TouchableOpacity,
 } from "react-native";
 import { Image, ImageBackground } from "expo-image";
@@ -11,7 +10,7 @@ import { loadingColor } from "../constants/colors";
 import { options } from "../constants/icons";
 import { router } from "expo-router";
 import { get, ref } from "firebase/database";
-import { db } from "../libs/config";
+import { authentication, db } from "../libs/config";
 import {
 	calculateTimePassed,
 	getUploadTime,
@@ -25,42 +24,45 @@ const History = ({ data, type }) => {
 	const [timePassed, setTimePassed] = useState();
 	const { isConnected } = getContext();
 	useEffect(() => {
-		async function getHis() {
-			let temp;
-			if (type !== "shorts") {
-				const vidRef = ref(db, `videosRef/${data.videoview}`);
-				temp = await get(vidRef);
-			} else {
-				const vidRef = ref(db, `shortsRef/${data.videoview}`);
-				temp = await get(vidRef);
-			}
+		const currestUSer = authentication.currentUser;
+		if (currestUSer) {
+			async function getHis() {
+				let temp;
+				if (type !== "shorts") {
+					const vidRef = ref(db, `videosRef/${data.videoview}`);
+					temp = await get(vidRef);
+				} else {
+					const vidRef = ref(db, `shortsRef/${data.videoview}`);
+					temp = await get(vidRef);
+				}
 
-			const crRef = ref(db, `usersref/${temp.val().creator}`);
-			let creator = await get(crRef);
-			// console.log(temp.val().description);
-			setHis({
-				...temp.val(),
-				...creator.val(),
-				uid: temp.val().creator,
-				videoDescription: temp.val().description,
-			});
-			// console.log(creator)
-		}
-		getHis();
-		if (data?.caption)
-			getUploadTime(data.videoview, "shorts").then((res) => {
-				// console.log("fafkjdf sdf dfjdaf :" + res);
-				let time = calculateTimePassed(res);
-				// console.log(time)
-				setTimePassed(time);
-			});
-		else {
-			getUploadTime(data.videoview, "video").then((res) => {
-				console.log(res);
-				let time = calculateTimePassed(res);
-				// console.log(time)
-				setTimePassed(time);
-			});
+				const crRef = ref(db, `usersref/${temp.val().creator}`);
+				let creator = await get(crRef);
+				// console.log(temp.val().description);
+				setHis({
+					...temp.val(),
+					...creator.val(),
+					uid: temp.val().creator,
+					videoDescription: temp.val().description,
+				});
+				// console.log(creator)
+			}
+			getHis();
+			if (data?.caption)
+				getUploadTime(data.videoview, "shorts").then((res) => {
+					// console.log("fafkjdf sdf dfjdaf :" + res);
+					let time = calculateTimePassed(res);
+					// console.log(time)
+					setTimePassed(time);
+				});
+			else {
+				getUploadTime(data.videoview, "video").then((res) => {
+					// console.log(res);
+					let time = calculateTimePassed(res);
+					// console.log(time)
+					setTimePassed(time);
+				});
+			}
 		}
 	}, [data]);
 	// console.log(his);

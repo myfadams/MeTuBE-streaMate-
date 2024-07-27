@@ -28,8 +28,9 @@ import { getCreatorInfo } from "../libs/firebase";
 import { getContext } from "../context/GlobalContext";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
+import { removeNotifications } from "../libs/notifications";
 
-const OtherChannelVideo = ({ video, type }) => {
+const OtherChannelVideo = ({ video, type,noti}) => {
 	// console.log(video)
 	const [creator, setCreator] = useState([]);
 	const [timePassed, setTimePassed] = useState();
@@ -97,6 +98,9 @@ const OtherChannelVideo = ({ video, type }) => {
 							timePassed: timePassed,
 						},
 					});
+				}
+				if(noti){
+					removeNotifications(video?.id);
 				}
 			}}
 			activeOpacity={0.6}

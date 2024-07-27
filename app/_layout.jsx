@@ -16,17 +16,26 @@ import {
 	Montserrat_800ExtraBold,
 	Montserrat_900Black,
 } from "@expo-google-fonts/montserrat";
-import { GlobalContext } from "../context/GlobalContext";
+import { getContext, GlobalContext } from "../context/GlobalContext";
 import { bgColor } from "../constants/colors";
-
+import * as ScreenOrientation from "expo-screen-orientation";
+import { Audio } from "expo-av";
 SplashScreen.preventAutoHideAsync();
 LogBox.ignoreLogs([
 	'Expected type "Query", but it was: a custom DocumentReference object',
 	'Firestore (10.12.3): WebChannelConnection RPC "Listen" stream transport errored',
 	"Failed to get document because the client is offline.",
 ]);
-
 const _layout = () => {
+	async function setAudioMode() {
+		await Audio.setAudioModeAsync({
+			allowsRecordingIOS: false,
+			playsInSilentModeIOS: true,
+			staysActiveInBackground: false,
+		});
+	}
+
+	setAudioMode();
 	const [fontsLoaded] = useFonts({
 		Montserrat_100Thin,
 		Montserrat_200ExtraLight,
@@ -48,7 +57,7 @@ const _layout = () => {
 	if (!fontsLoaded) {
 		return null; // or a loading spinner
 	}
-
+	// const{FullScreen}=getContext();
 	return (
 		<GlobalContext>
 			<GestureHandlerRootView>
@@ -90,6 +99,7 @@ const _layout = () => {
 								headerShown: false,
 								gestureDirection: "vertical",
 								presentation: "card",
+								// gestureEnabled:FullScreen
 							}}
 						/>
 					</Stack>

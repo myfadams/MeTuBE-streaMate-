@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import ChatInput from "./ChatInput";
 import { useKeyboard } from "@react-native-community/hooks";
@@ -7,6 +7,8 @@ import { send } from "../constants/icons";
 import { addComment } from "../libs/videoUpdates";
 import { getContext } from "../context/GlobalContext";
 import { Image } from "expo-image";
+import { authentication } from "../libs/config";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const CommentFooter = ({ profile, videoID, creatorID }) => {
 	const [keyboardHeight, setKeyboardHeight] = useState(0);
 	const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -38,7 +40,13 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 			keyboardDidHideListener.remove();
 		};
 	}, []);
-
+	const [c,setC]=useState()
+	const [isSending,setIsSending]=useState(false);
+	useEffect(()=>{
+		setC(authentication.currentUser)
+	},[user])
+	const insets=useSafeAreaInsets();
+	// console.log(!isSending)
 	return (
 		// <></>
 		<KeyboardAvoidingView
@@ -46,12 +54,18 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 			enabled
 		>
-			<View style={{ width: "100%", alignItems: "center" }}>
+			<View
+				style={{
+					width: "100%",
+					alignItems: "center",
+					// marginBottom: Platform.OS === "ios" ?0 : 30,
+				}}
+			>
 				<View
 					style={{
 						width: "94%",
 						flexDirection: "row",
-						marginBottom: 16,
+						marginBottom: 20,
 						backgroundColor: bgColor,
 					}}
 				>
@@ -77,12 +91,16 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 					</View>
 					<TouchableOpacity
 						// activeOpacity={0.7}
+						disabled={isSending}
 						onPress={() => {
-							addComment(videoID, user.uid, commentText, creatorID).then(()=>{
+							setIsSending(true)
+							const cUSer = authentication.currentUser;
+							// Alert.alert(JSON.stringify(cUSer));
+							addComment(videoID, user.uid, commentText, cUSer).then(() => {
 								setCommentText("");
 								Keyboard.dismiss();
-							})
-							
+								setIsSending(false);
+							});
 						}}
 					>
 						<Image

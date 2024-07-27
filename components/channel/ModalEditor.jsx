@@ -1,28 +1,50 @@
-import { View, Text, Modal, StyleSheet, Pressable, KeyboardAvoidingView, Platform,  TouchableWithoutFeedback } from 'react-native'
+import {
+	View,
+	Text,
+	Modal,
+	StyleSheet,
+	Pressable,
+	KeyboardAvoidingView,
+	Platform,
+	TouchableWithoutFeedback,
+} from "react-native";
 import { Image } from "expo-image";
-import React from 'react'
-import ChatInput from '../ChatInput';
-import { bgColor, buttonColor } from '../../constants/colors';
-import MoreButton from '../MoreButton';
-import { globe, info } from '../../constants/icons';
-import { changeUserDetails } from '../../libs/firebase';
-import { getContext } from '../../context/GlobalContext';
-import Toast from 'react-native-root-toast';
+import React from "react";
+import ChatInput from "../ChatInput";
+import { bgColor, buttonColor } from "../../constants/colors";
+import MoreButton from "../MoreButton";
+import { globe, info } from "../../constants/icons";
+import { changeUserDetails } from "../../libs/firebase";
+import { getContext } from "../../context/GlobalContext";
+import Toast from "react-native-root-toast";
 
-const ModalEditor = ({ modalVisible, setModalVisible, type, setVal ,val,setRef,
-refe}) => {
+const ModalEditor = ({
+	modalVisible,
+	setModalVisible,
+	type,
+	setVal,
+	val,
+	setRef,
+	refe,
+}) => {
 	// const {refereshing, setRefreshing} = getContext();
 	function handleSave() {
-        if(type==="name"){
-            // console.log("name");
-            changeUserDetails("displayName", val.name)
-			setVal({...val,name:val.name})
-        }else{
-			changeUserDetails("handle", val.handle);
+		if (type === "name") {
+			// console.log("name");
+			if (val.name?.trim() !== "") {
+				changeUserDetails("displayName", val.name);
+				setVal({ ...val, name: val.name });
+			}
+		} else {
+			if (val.name?.trim() !== "") {
+				let handle = val.handle?.startsWith("@")
+					? val.handle
+					: "@" + val.handle;
+				changeUserDetails("handle", handle);
+			}
 		}
 		setModalVisible(!modalVisible);
-		setRef(!refe)
-
+		setRef(!refe);
 	}
 	return (
 		<Modal
@@ -139,8 +161,7 @@ refe}) => {
 												// width:
 											}}
 										>
-											Visible to all users on
-											StreaMate. Remember to follow our{" "}
+											Visible to all users on StreaMate. Remember to follow our{" "}
 											<Text style={{ color: buttonColor }}>
 												{" "}
 												Community Guidelines
@@ -194,8 +215,8 @@ refe}) => {
 												// width:
 											}}
 										>
-											Changes made to your name will be reflected on StreaMate. You
-											can change your name twice in 14 days.
+											Changes made to your name will be reflected on StreaMate.
+											You can change your name twice in 14 days.
 											<Text style={{ color: buttonColor }}> Learn more</Text>
 										</Text>
 									)}
@@ -232,8 +253,8 @@ const styles = StyleSheet.create({
 	},
 	modalView: {
 		margin: 20,
-        // width:"92%",
-		backgroundColor:bgColor,
+		// width:"92%",
+		backgroundColor: bgColor,
 		borderRadius: 10,
 		padding: 10,
 		// alignItems: "center",
@@ -267,4 +288,4 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 });
-export default ModalEditor
+export default ModalEditor;

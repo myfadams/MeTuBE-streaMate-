@@ -67,10 +67,14 @@ const VideoView = ({ videoInfo, type, menu }) => {
 		// Cleanup listener on unmount
 		return () => unsubscribe();
 	}, [videoInfo?.videoview]);
+	const [isClicked, setIsClicked] = useState(false);
+
 	// console.log(creator)
 	return (
 		<TouchableWithoutFeedback
+			disabled={isClicked}
 			onPress={() => {
+				setIsClicked(true);
 				if (!type)
 					router.push({
 						pathname: "video/" + videoInfo?.id,
@@ -90,6 +94,7 @@ const VideoView = ({ videoInfo, type, menu }) => {
 							videoDescription: videoInfo.description,
 						},
 					});
+				setIsClicked(false);
 			}}
 		>
 			<View>

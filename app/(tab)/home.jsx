@@ -14,6 +14,7 @@ import { shuffleArray } from '../../libs/sound';
 import Menu from '../../components/Menu';
 import { getUploadTimestamp } from '../../libs/videoUpdates';
 import { StatusBar } from "expo-status-bar";
+import { sendNotifications } from '../../libs/notifications';
 const shortsPostion = Math.floor(Math.random() * fetchVideos().length);
 const home = () => {
 	// console.log(shortsPostion)
@@ -25,7 +26,6 @@ const home = () => {
 	const [menuVisiblity,setMenuVisiblity]= useState(false)
 
 	const [isMenuVisible, setIsMenuVisible] = useState(false);
-	
 	useFocusEffect(useCallback(()=>{
 		setMenuVisiblity(true);
 		return () => {

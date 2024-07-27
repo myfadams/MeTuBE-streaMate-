@@ -1,4 +1,5 @@
 // updateViews.js
+import "react-native-get-random-values";
 import {
 	get,
 	onValue,
@@ -7,8 +8,9 @@ import {
 	runTransaction,
 	set,
 } from "firebase/database";
-import { db} from "./config";
+import { authentication, db } from "./config";
 // import { database } from "./firebase";
+
 import { v4 as uuidv4 } from "uuid";
 export const incrementVideoViews = (videoId, loc) => {
 	// console.log(videoId)
@@ -153,115 +155,124 @@ export const removeFromHistory = (type, video, videoId, userId) => {
 };
 
 export const subscribeToChannel = (channelID, userID) => {
-	const channelSubRef = ref(db, `subs/channel/${channelID}/subscribers`);
-	const userSubRef = ref(db, `subs/users/${userID}/subscriptions`);
-	runTransaction(channelSubRef, (subscribers) => {
-		if (subscribers === null) {
-			return [userID]; // If views doesn't exist, initialize it to 1
-		} else {
-			if (subscribers.includes(userID)) {
-				console.log("lost a sub");
-				// setSubStatus(false);
-				return subscribers.filter((us) => {
-					return us !== userID;
-				});
+	const currestUSer = authentication.currentUser;
+	if (currestUSer) {
+		const channelSubRef = ref(db, `subs/channel/${channelID}/subscribers`);
+		const userSubRef = ref(db, `subs/users/${userID}/subscriptions`);
+		runTransaction(channelSubRef, (subscribers) => {
+			if (subscribers === null) {
+				return [userID]; // If views doesn't exist, initialize it to 1
 			} else {
-				console.log("got new sub");
-				// setSubStatus(true);
-				subscribers.push(userID);
-				return subscribers;
+				if (subscribers.includes(userID)) {
+					console.log("lost a sub");
+					// setSubStatus(false);
+					return subscribers.filter((us) => {
+						return us !== userID;
+					});
+				} else {
+					console.log("got new sub");
+					// setSubStatus(true);
+					subscribers.push(userID);
+					return subscribers;
+				}
 			}
-		}
-	})
-		.then(() => {
-			console.log("Subscribed");
 		})
-		.catch((error) => {
-			console.error("Error incrementing subscribe: ", error);
-		});
-	// setSubStatus(true);
-	runTransaction(userSubRef, (subscriptions) => {
-		if (subscriptions === null) {
-			console.log("created new sub and subbed");
-			return [channelID]; // If views doesn't exist, initialize it to 1
-		} else {
-			if (subscriptions?.includes(channelID)) {
-				console.log("unsubbed");
-				// setSubStatus(false);
-				return subscriptions?.filter((ch) => {
-					return ch !== channelID;
-				});
+			.then(() => {
+				console.log("Subscribed");
+			})
+			.catch((error) => {
+				console.error("Error incrementing subscribe: ", error);
+			});
+		// setSubStatus(true);
+		runTransaction(userSubRef, (subscriptions) => {
+			if (subscriptions === null) {
+				console.log("created new sub and subbed");
+				return [channelID]; // If views doesn't exist, initialize it to 1
 			} else {
-				console.log("existing sub and subbed");
-				// setSubStatus(true);
-				subscriptions?.push(channelID);
-				return subscriptions;
+				if (subscriptions?.includes(channelID)) {
+					console.log("unsubbed");
+					// setSubStatus(false);
+					return subscriptions?.filter((ch) => {
+						return ch !== channelID;
+					});
+				} else {
+					console.log("existing sub and subbed");
+					// setSubStatus(true);
+					subscriptions?.push(channelID);
+					return subscriptions;
+				}
 			}
-		}
-	});
+		});
+	}
 };
+
 export function getSubsriptions(userId, setStatus, creatorId) {
 	// console.log("c: " + creatorId, "u: " + userId);
-	const userSubRef = ref(db, `subs/users/${userId}/subscriptions`);
+	const currestUSer = authentication.currentUser;
+	if (currestUSer) {
+		const userSubRef = ref(db, `subs/users/${userId}/subscriptions`);
 
-	let subbs = [];
-	onValue(
-		userSubRef,
-		(snapshot) => {
-			const value = snapshot.val();
-			//   console.log('Snapshot value:', value);
+		let subbs = [];
+		onValue(
+			userSubRef,
+			(snapshot) => {
+				const value = snapshot.val();
+				//   console.log('Snapshot value:', value);
 
-			try {
-				if (snapshot.exists()) {
-					if (Array.isArray(value)) {
-						// Value is an array, check if it includes the creatorId
-						if (value.includes(creatorId)) {
-							setStatus(true);
+				try {
+					if (snapshot.exists()) {
+						if (Array.isArray(value)) {
+							// Value is an array, check if it includes the creatorId
+							if (value.includes(creatorId)) {
+								setStatus(true);
+							} else {
+								setStatus(false);
+							}
+						} else if (typeof value === "object" && value !== null) {
+							// Value is an object, check if any of its values include the creatorId
+							const ids = Object.values(value);
+							if (ids.includes(creatorId)) {
+								setStatus(true);
+							} else {
+								setStatus(false);
+							}
 						} else {
-							setStatus(false);
-						}
-					} else if (typeof value === "object" && value !== null) {
-						// Value is an object, check if any of its values include the creatorId
-						const ids = Object.values(value);
-						if (ids.includes(creatorId)) {
-							setStatus(true);
-						} else {
+							// Handle other types if necessary
 							setStatus(false);
 						}
 					} else {
-						// Handle other types if necessary
 						setStatus(false);
 					}
-				} else {
+				} catch (error) {
+					console.log("Error checking subscriptions:", error);
 					setStatus(false);
 				}
-			} catch (error) {
-				console.log("Error checking subscriptions:", error);
-				setStatus(false);
+			},
+			(error) => {
+				console.log("Error reading subscriptions:", error);
+				setStatus(false); // Handle potential errors
 			}
-		},
-		(error) => {
-			console.log("Error reading subscriptions:", error);
-			setStatus(false); // Handle potential errors
-		}
-	);
-
+		);
+	}
 	// console.log(subbs)
 }
 export function getNumberSubs(channelID, setSubNumber) {
-	const chSubsRef = ref(db, `subs/channel/${channelID}/subscribers`);
-	// getSubsriptions(user.uid, setsubscribed, vidinfo.creator);
-	const unsubscribe = onValue(chSubsRef, (snapshot) => {
-		if (snapshot.exists()) {
-			const data = snapshot.val().length;
-			setSubNumber(data);
-		} else {
-			setSubNumber(0);
-		}
-	});
+	const currestUSer = authentication.currentUser;
+	if (currestUSer) {
+		const chSubsRef = ref(db, `subs/channel/${channelID}/subscribers`);
+		// getSubsriptions(user.uid, setsubscribed, vidinfo.creator);
+		const unsubscribe = onValue(chSubsRef, (snapshot) => {
+			if (snapshot.exists()) {
+				const data = snapshot.val().length;
+				setSubNumber(data);
+			} else {
+				setSubNumber(0);
+			}
+		});
 
-	// Cleanup listener on unmount
-	return () => unsubscribe();
+		// Cleanup listener on unmount
+		return () => unsubscribe();
+	}
 }
 
 export const likeUpadate = (videoId, type, loc, userId) => {
@@ -426,7 +437,8 @@ export const setDisLikeStatus = (videoId, setStatus, userId, loc) => {
 
 export const playList = (videoId, loc, userId) => {
 	// console.log(videoId)
-	if (userId) {
+	const currestUSer = authentication.currentUser;
+	if (currestUSer) {
 		const playlistReff = ref(db, `playlist/${userId}/${loc}`);
 
 		runTransaction(playlistReff, (currentPlaylist) => {
@@ -512,27 +524,34 @@ function formatTimePassed(seconds) {
 }
 
 export async function addComment(videoId, userId, commentText, creatorID) {
-	const d=new Date().toLocaleDateString()
-	const comment = {
-		text: commentText,
-		commenterID: userId,
-		commentId: uuidv4(),
-		date: d,
-		likes: 0,
-		replies: [],
-		creatorID: creatorID,
-	};
-	const commentsRef = ref(db, `commentsRef/${videoId}`);
+	if (commentText && commentText?.trim() !== "") {
+		creatorID = authentication.currentUser?.uid;
+		const date = new Date().toLocaleDateString();
+		const comment = {
+			text: commentText?.trimStart(),
+			commenterID: userId,
+			commentId: uuidv4(),
+			date: date,
+			likes: 0,
+			replies: [],
+			creatorID: creatorID,
+		};
 
-	// const commentsarray = await get(commentsRef, {...comment,commenterId:userId});
-	runTransaction(commentsRef, (commentsArray) => {
+		const commentsRef = ref(db, `commentsRef/${videoId}`);
+
 		try {
-			if (!commentsArray) return [comment];
-			else {
-				return [...commentsArray, comment];
-			}
+			await runTransaction(commentsRef, (currentComments) => {
+				// If there are no comments yet, initialize with an empty array
+				if (currentComments === null) {
+					return [comment];
+				} else {
+					// Add new comment to the existing array
+					return [...currentComments, comment];
+				}
+			});
+			// console.log("Comment added successfully");
 		} catch (error) {
-			console.log(error)
+			console.error("Error adding comment:", error);
 		}
-	});
+	}
 }

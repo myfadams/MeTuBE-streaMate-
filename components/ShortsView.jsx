@@ -316,6 +316,7 @@ const ShortsView = ({
 					creatorID={creatorID}
 				/>
 			)}
+			
 		</View>
 	);
 };
@@ -350,6 +351,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: "100%",
 		position: "relative",
+		
 	},
 	controlsContainer: {
 		position: "absolute",
@@ -360,7 +362,7 @@ const styles = StyleSheet.create({
 	},
 	creatorContainer: {
 		position: "absolute",
-		bottom: Platform.OS === "ios" ? 50 : 45,
+		bottom: Platform.OS === "ios" ? 30 : 35,
 		left: 10,
 	},
 	creatorImage: {

@@ -27,6 +27,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { get, onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
 import { formatSubs, getLikes, getNumberSubs } from "../libs/videoUpdates";
+import { LinkText } from "./DescriptionComponent";
 const windowHeight = Dimensions.get("window").height;
 const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 	// console.log(info)
@@ -239,7 +240,7 @@ const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 							borderRadius: 9,
 						}}
 					>
-						<Text
+						{/* <Text
 							style={{
 								color: "white",
 								fontSize: 15,
@@ -253,7 +254,10 @@ const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 							{info.videoDescription !== ""
 								? info.videoDescription
 								: "This video has no description"}
-						</Text>
+						</Text> */}
+						<LinkText text={info.videoDescription !== ""
+								? info.videoDescription
+								: "This video has no description"}/>
 					</View>
 
 					<TouchableOpacity

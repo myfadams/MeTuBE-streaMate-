@@ -72,14 +72,27 @@ import username from "../assets/icons/username.png";
 import timeMachine from "../assets/icons/timeMachine.png";
 import arrow from "../assets/icons/arrow.png";
 import shuffle from "../assets/icons/shuffle.png";
+import videothumb from "../assets/icons/videothumb.png";
 import playVideo from "../assets/icons/playVideo.png";
 import remix from "../assets/icons/recycle.png";
+import fullScreen from "../assets/icons/fullScreen.png";
+import playIcon from "../assets/icons/play.png";
 import addFill from "../assets/icons/addFill.png";
 import homeFill from "../assets/icons/active/homeFilled.png";
 import shortsFill from "../assets/icons/active/shortsFilled.png";
 import subsFilled from "../assets/icons/active/subscriptionFilled.png";
+import rewindVid from "../assets/icons/rewindVid.png";
+import fowardVid from "../assets/icons/fowardVid.png";
+import exitFullScreen from "../assets/icons/exitFullScreen.png";
+
 
 export {
+	exitFullScreen,
+	fullScreen,
+	rewindVid,
+fowardVid,
+	playIcon,
+	videothumb,
 	playVideo,
 	homeFill,
 	subsFilled,

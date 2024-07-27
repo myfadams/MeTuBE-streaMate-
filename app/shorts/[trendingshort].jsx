@@ -69,7 +69,7 @@ const TrendingShort = () => {
 			return (
 				<View
 					style={{
-						height: screenHeight,
+						height: windowHeight,
 						borderTopWidth: 0.7,
 						borderBottomWidth: 0.7,
 					}}

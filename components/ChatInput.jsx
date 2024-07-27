@@ -1,4 +1,5 @@
 import {
+	Alert,
 	Platform,
 	StyleSheet,
 	Text,
@@ -13,6 +14,7 @@ import { hide, search, show } from "../constants/icons";
 import { router } from "expo-router";
 import { addComment } from "../libs/videoUpdates";
 import { getContext } from "../context/GlobalContext";
+import { authentication } from "../libs/config";
 
 const ChatInput = ({
 	text,
@@ -33,9 +35,13 @@ const ChatInput = ({
 					autoFocus={type?true:false}
 					selectionColor={"#fff"}
 					onSubmitEditing={() => {
-						addComment(videoId, user.uid, text,creatorID).then(()=>{
+						const currentUser = authentication.currentUser
+						addComment(videoId, user.uid, text,currentUser).then(()=>{
 							handleChange("");
 
+						}).catch((error)=>{
+
+							Alert.alert("An Error occured here: "+ error.message)
 						})
 					}}
 					style={{

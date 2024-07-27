@@ -4,10 +4,11 @@ import {
 	getDownloadURL,
 	uploadBytesResumable,
 } from "firebase/storage";
-import { ShortsRef, VideosRef, set, storage } from "./config";
+import { ShortsRef, VideosRef, authentication, db, set, storage } from "./config";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { description } from "../constants/icons";
+import { sendNotifications } from "./notifications";
 
 export async function uploadFiles(type, fileUri,title) {
 	const response = await fetch(fileUri);
@@ -21,9 +22,9 @@ export async function uploadFiles(type, fileUri,title) {
 	return downloadURL;
 }
 export const addShortToDB = async (file, thumnailUrl, videoUrl, userId,duration) => {
-	const d =  new Date().toISOString();
-
-	await set(ShortsRef(uuidv4()), {
+	// const d =  new Date().toISOString();
+	const id = uuidv4();
+	await set(ShortsRef(id), {
 		caption: file.title,
 		thumbnail: thumnailUrl,
 		video: "" + videoUrl,
@@ -33,12 +34,14 @@ export const addShortToDB = async (file, thumnailUrl, videoUrl, userId,duration)
 		views: 0,
 		likes: 0,
 	});
+	await sendNotifications(id);
 };
 
 export const addVideoToDB = async (file, thumnailUrl, videoUrl, userId,duration) => {
 	const d = new Date().toISOString();
-	console.log(d)
-	await set(VideosRef(uuidv4()), {
+	// console.log(d)
+	const id = uuidv4();
+	await set(VideosRef(id), {
 		title: file.title,
 		thumbnail: thumnailUrl,
 		video: "" + videoUrl,
@@ -49,6 +52,7 @@ export const addVideoToDB = async (file, thumnailUrl, videoUrl, userId,duration)
 		views: 0,
 		likes: 0,
 	});
+	await sendNotifications(id)
 };
 
 
@@ -65,3 +69,4 @@ export async function uploadProfileAndCover(fileUri,userID,type) {
 	
 	return downloadURL;
 }
+

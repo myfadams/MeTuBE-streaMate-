@@ -87,7 +87,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 		getSubsriptions(user?.uid, setsubscribed, vidinfo.creator); 
 		// console.log("Get sub status: "+subscribed);
 	}
-	console.log(latestComment)
+	// console.log(latestComment)
 	return (
 		<View
 			style={{

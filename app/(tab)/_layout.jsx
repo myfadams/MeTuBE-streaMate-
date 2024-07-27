@@ -80,6 +80,7 @@ const TabsLayout = () => {
 				tabBarActiveTintColor: buttonColor, //so this is passed to set the text color for active
 				tabBarInactiveTintColor: "#fff",
 				//for inactive'
+				
 				tabBarStyle: {
 					backgroundColor: fieldColor,
 					borderTopWidth: 1,

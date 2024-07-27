@@ -1,6 +1,6 @@
 import { View, Text,  TouchableOpacity, Dimensions } from 'react-native'
 import { Image, ImageBackground } from "expo-image";
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 import { options } from '../constants/icons';
 import { router } from 'expo-router';
 import { getUploadTimestamp } from '../libs/videoUpdates';
@@ -10,12 +10,16 @@ import { db } from '../libs/config';
 const width =Dimensions.get("window").width
 const ShortComponent = ({title,short,marginVid,type}) => {
 	// console.log(short)
+	const [isClicked, setIsClicked] = useState(false);
   return (
 		<TouchableOpacity
+		disabled={isClicked}
 			style={{ width:!type? 0.44 * width:0.3*width, height:!type? 250:150, margin: marginVid }}
 			activeOpacity={0.7}
 			onPress={() => {
+				setIsClicked(true)
 				router.push({ pathname: "shorts/" + short.id, params: short });
+				setIsClicked(false);
 			}}
 		>
 			<View

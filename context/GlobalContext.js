@@ -17,7 +17,8 @@ const GlobalContext = ({ children }) => {
 	const [chDescription, setChDescription] = useState(null);
 	const [isIcognito, setIsIncognito] = useState(false);
 	const [isConnected, setIsConnected] = useState(true);
-
+	const [FullScreen, setFullScreen] = useState(false);
+	const [hasNotifications, setHasNotifications] = useState(false);
 	useEffect(() => {
 		// Check initial connectivity state
 		const fetchInitialState = async () => {
@@ -48,6 +49,8 @@ const GlobalContext = ({ children }) => {
 	return (
 		<MyContext.Provider
 			value={{
+				hasNotifications, setHasNotifications,
+				FullScreen, setFullScreen,
 				chDescription, setChDescription,
 				isConnected,
 				isIcognito,

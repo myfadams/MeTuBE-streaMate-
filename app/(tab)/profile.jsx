@@ -1,7 +1,15 @@
 import { View, Text, FlatList, TouchableOpacity, Platform } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { bgColor, borderLight, buttonColor, loadingColor } from "../../constants/colors";
+import {
+	SafeAreaView,
+	useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import {
+	bgColor,
+	borderLight,
+	buttonColor,
+	loadingColor,
+} from "../../constants/colors";
 import HeaderApp from "../../components/HeaderApp";
 import { ScrollView } from "react-native-gesture-handler";
 import ForYouButtons from "../../components/ForYouButtons";
@@ -37,33 +45,40 @@ const profile = () => {
 		setUser,
 		isIcognito,
 		setIsIncognito,
-		refereshing, setRefreshing,
+		refereshing,
+		setRefreshing,
 		isConnected,
 	} = getContext();
-	const [isFocused, setIsFocused] = useState(false)
-	useFocusEffect(useCallback(()=>{
-		// console.log(authentication.currentUser);c
-		
-		setIsFocused(true)
-		setRefreshing(!refereshing)
-		return ()=>{
-			// setUser(authentication.currentUser);
-			setIsFocused(false);
+	const [isFocused, setIsFocused] = useState(false);
+	useFocusEffect(
+		useCallback(() => {
+			// console.log(authentication.currentUser);c
+
+			setIsFocused(true);
+			setRefreshing(!refereshing);
+			return () => {
+				// setUser(authentication.currentUser);
+				setIsFocused(false);
+			};
+		}, [])
+	);
+	useEffect(() => {
+		const currestUSer = authentication.currentUser;
+		// console.log(currestUSer)
+		if (currestUSer) {
+			async function getD() {
+				const tempdata = await fetchData("playlist/" + user?.uid);
+				// console.log(tempdata);
+				setplayList([...tempdata]);
+			}
+			getD();
+			setUser(authentication.currentUser);
 		}
-	},[]))
-	useEffect(()=>{
-		async function getD() {
-			const tempdata = await fetchData("playlist/" + user?.uid);
-			// console.log(tempdata);
-			setplayList([...tempdata]);
-		}
-		getD();
-		setUser(authentication.currentUser);
-	},[isFocused])
+	}, [isFocused]);
 	// console.log(user)
-	const [playList, setplayList] = useState([])
+	const [playList, setplayList] = useState([]);
 	const incognitoMode = () => {
-		if(isConnected){
+		if (isConnected) {
 			setIsIncognito(!isIcognito);
 			setIsActivated(!isActivated);
 			if (!isActivated) {
@@ -81,44 +96,50 @@ const profile = () => {
 					Toast.hide(toast);
 				}, 3000);
 			}
-		}else{
-			let toast = Toast.show("You need an internet connection to change account settings", {
-				duration: Toast.durations.LONG,
-			});
+		} else {
+			let toast = Toast.show(
+				"You need an internet connection to change account settings",
+				{
+					duration: Toast.durations.LONG,
+				}
+			);
 			setTimeout(function hideToast() {
 				Toast.hide(toast);
 			}, 3000);
 		}
 	};
 	const [history, setHistory] = useState([]);
-	const {addedToplaylist, setAddedToplaylist}=getContext();
+	const { addedToplaylist, setAddedToplaylist } = getContext();
 	const [historyShorts, setHistoryShorts] = useState([]);
 	useEffect(() => {
-		async function getD(){
-			const tempdata = await fetchData("playlist/" + user?.uid);
-			// console.log(tempdata);
-			setplayList([...tempdata])
-		}
-		getD();
-		const videoRef = ref(db, `history/videos/${user?.uid}`);
-
-		const unsubscribe = onValue(videoRef, (snapshot) => {
-			if(snapshot.exists()){
-				const data = snapshot.val();
-				// console.log(snapshot.val())
-
-				setHistory([...data]);
+		const currestUSer = authentication.currentUser;
+		if (currestUSer) {
+			async function getD() {
+				const tempdata = await fetchData("playlist/" + user?.uid);
+				// console.log(tempdata);
+				setplayList([...tempdata]);
 			}
-		});
+			getD();
+			const videoRef = ref(db, `history/videos/${user?.uid}`);
 
-		// Cleanup listener on unmount
-		return () => unsubscribe();
-	}, [user?.uid,refereshing]);
+			const unsubscribe = onValue(videoRef, (snapshot) => {
+				if (snapshot.exists()) {
+					const data = snapshot.val();
+					// console.log(snapshot.val())
+
+					setHistory([...data]);
+				}
+			});
+
+			// Cleanup listener on unmount
+			return () => unsubscribe();
+		}
+	}, [user?.uid, refereshing]);
 	useEffect(() => {
 		const shortsRef = ref(db, `history/shorts/${user?.uid}`);
 
 		const unsubscribe = onValue(shortsRef, (snapshot) => {
-			if(snapshot.exists()){
+			if (snapshot.exists()) {
 				const data = snapshot.val();
 				// console.log(snapshot.val())
 
@@ -128,9 +149,9 @@ const profile = () => {
 
 		// Cleanup listener on unmount
 		return () => unsubscribe();
-	}, [user?.uid,refereshing]);
+	}, [user?.uid, refereshing]);
 	const [userObj, setUserObj] = useState();
-	
+
 	useEffect(() => {
 		async function getCover() {
 			const detailRef = ref(db, "usersref/" + user?.uid);
@@ -143,7 +164,13 @@ const profile = () => {
 	}, [refereshing]);
 	const insets = useSafeAreaInsets();
 	return (
-		<View style={{ backgroundColor: bgColor, height: "100%", paddingTop:insets.top }}>
+		<View
+			style={{
+				backgroundColor: bgColor,
+				height: "100%",
+				paddingTop: insets.top,
+			}}
+		>
 			<ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
 				<HeaderApp screenName="you" disable={true} />
 				<TouchableOpacity
@@ -173,7 +200,6 @@ const profile = () => {
 								borderColor: borderLight,
 								borderWidth: 1,
 							}}
-							
 						/>
 						<View>
 							<Text
@@ -196,7 +222,7 @@ const profile = () => {
 										fontFamily: "Montserrat_300Light",
 									}}
 								>
-									{userObj?.handle?? "No handle"} {" . "}
+									{userObj?.handle ?? "No handle"} {" . "}
 								</Text>
 								<Text
 									style={{
@@ -214,7 +240,6 @@ const profile = () => {
 										style={{
 											width: 14,
 											height: 14,
-											
 										}}
 										contentFit="contain"
 									/>

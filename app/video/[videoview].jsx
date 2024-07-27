@@ -5,10 +5,19 @@ import {
 	TouchableOpacity,
 	ActivityIndicator,
 	Dimensions,
+	BackHandler,
+	Platform,
 } from "react-native";
 import { Image } from "expo-image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import {
+	Redirect,
+	router,
+	useFocusEffect,
+	useLocalSearchParams,
+	useNavigation,
+	useRouter,
+} from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { bgColor, loadingColor } from "../../constants/colors";
 import { ResizeMode, Video } from "expo-av";
@@ -26,6 +35,7 @@ import { get, ref } from "firebase/database";
 import { db } from "../../libs/config";
 import Offline from "../../components/Offline";
 import { shuffleArray } from "../../libs/sound";
+import VideoPlayerComponent from "../../components/VideoPlayer";
 
 const VideoPlayer = () => {
 	const { user, isIcognito, isConnected } = getContext();
@@ -93,68 +103,55 @@ const VideoPlayer = () => {
 		setIsAboutVisible(!isBottomSheetVisible);
 	};
 
-	const handleRestart = async () => {
-		if (videoRef.current) {
-			await videoRef.current.setPositionAsync(0); // Seek to the beginning
-			await videoRef.current.playAsync(); // Start playing the video
+	// useEffect(() => {
+	// 	// Update videoPlaying based on network status
+	// 	if (isConnected) {
+	// 		setVideoPlaying(videoRef.current?.status?.isPlaying || false);
+	// 	}
+	// }, [isConnected]);
+	
+	
+	// console.log("vido: "+videoPlaying)
+	const [isFullScreen, setIsFullScreen] = useState(false);
+	const navigation = useNavigation();
+	useEffect(() => {
+		navigation.setOptions({ gestureEnabled: !isFullScreen });
+	}, [isFullScreen, navigation]);
+
+	const handleBack = () => {
+		if (isFullScreen) {
+			Alert.alert("Back navigation is disabled in full-screen mode");
+			return true; // Prevent default back action
 		}
-		setIsDone(false);
+		return false; // Allow default back action
 	};
 
 	useEffect(() => {
-		// Update videoPlaying based on network status
-		if (isConnected) {
-			setVideoPlaying(videoRef.current?.status?.isPlaying || false);
+		if (Platform.OS === "android") {
+			const backHandler = BackHandler.addEventListener(
+				"hardwareBackPress",
+				handleBack
+			);
+			return () => backHandler.remove(); // Cleanup listener on unmount
 		}
-	}, [isConnected]);
+	}, [isFullScreen]);
 
-	if (!isConnected && !videoPlaying) {
+	if (!isConnected && videoPlaying === false) {
+		// router.replace("offline")
+		// return <Redirect href={"offline"} />;
 		return <Offline type={"video"} />;
 	}
-
 	return (
 		<SafeAreaView
 			style={{ backgroundColor: bgColor, width: "100%", height: "100%" }}
 		>
 			<View style={{ justifyContent: "center", alignItems: "center" }}>
-				<Video
-					ref={videoRef}
-					resizeMode={ResizeMode.CONTAIN}
-					shouldPlay={true && isFocused && !isDone}
-					useNativeControls={!isDone}
-					onLoad={() => {
-						setTimeout(() => {
-							incrementVideoViews(video.videoview, "videosRef");
-							if (!isIcognito)
-								addToHistory("videos", video, video.videoview, user?.uid);
-						}, 4000);
-					}}
-					onPlaybackStatusUpdate={(vid) => {
-						if (vid.isLoaded) {
-							setHasStarted(true);
-							setVideoPlaying(true); // Mark video as playing
-						}
-						if (vid.didJustFinish) setIsDone(true);
-					}}
-					isMuted={false}
-					style={{ width: "100%", height: 250, backgroundColor: "#1A1818" }}
-					source={{ uri: video.video.replace("videos/", "videos%2F") }}
+				<VideoPlayerComponent
+					video={video}
+					setFullScreen={setIsFullScreen}
+					setVideoPlaying={setVideoPlaying}
+					isFocused
 				/>
-				{isDone && (
-					<TouchableOpacity
-						style={{ position: "absolute" }}
-						onPress={handleRestart}
-					>
-						<Image source={replay} style={{ width: 45, height: 45 }} />
-					</TouchableOpacity>
-				)}
-				{!hasStarted && (
-					<ActivityIndicator
-						size="large"
-						color="#fff"
-						style={{ position: "absolute" }}
-					/>
-				)}
 			</View>
 			<FlatList
 				data={subvideos
@@ -185,17 +182,21 @@ const VideoPlayer = () => {
 				showsVerticalScrollIndicator={false}
 				ListEmptyComponent={<VidScreenLoad />}
 			/>
-			<BottomSheetComponent
-				isVisible={isBottomSheetVisible}
-				onClose={handleCloseBottomSheet}
-				videoID={video?.videoview}
-				creatorID={video?.creator}
-			/>
-			<AboutVideo
-				isVisible={isAboutVisible}
-				onClose={handleCloseAbout}
-				info={video}
-			/>
+			{!isFullScreen && (
+				<BottomSheetComponent
+					isVisible={isBottomSheetVisible}
+					onClose={handleCloseBottomSheet}
+					videoID={video?.videoview}
+					creatorID={video?.creator}
+				/>
+			)}
+			{!isFullScreen && (
+				<AboutVideo
+					isVisible={isAboutVisible}
+					onClose={handleCloseAbout}
+					info={video}
+				/>
+			)}
 		</SafeAreaView>
 	);
 };

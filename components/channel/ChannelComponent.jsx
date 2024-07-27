@@ -1,11 +1,21 @@
-import { View, Text, TouchableOpacity,  Platform, Dimensions } from "react-native";
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	Platform,
+	Dimensions,
+} from "react-native";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
-import { formatSubs, getSubsriptions, subscribeToChannel } from "../../libs/videoUpdates";
+import {
+	formatSubs,
+	getSubsriptions,
+	subscribeToChannel,
+} from "../../libs/videoUpdates";
 import OtherViewButtons from "../OtherViewButtons";
 import { borderLight, buttonColor, fieldColor } from "../../constants/colors";
 import { get, ref } from "firebase/database";
-import { db } from "../../libs/config";
+import { authentication, db } from "../../libs/config";
 import { getContext } from "../../context/GlobalContext";
 import { router } from "expo-router";
 
@@ -19,21 +29,25 @@ const ChannelComponent = ({ channel }) => {
 		getSubsriptions(user?.uid, setIsSubscribed, channel.id);
 	}
 	useEffect(() => {
-		const usersRef = ref(db, `subs/users/${user?.uid}/subscriptions`);
-		const subsRef = ref(db, `subs/channel/${channel?.id}/subscribers`);
-		async function getSubs() {
-			const subs = await (await get(usersRef)).val();
-			const subscribers = await (await get(subsRef)).val();
-			// console.log(susbcribers)
-			setNoSubs(subscribers?.length ?? "No");
-			if (subs?.includes(channel?.id)) {
-                // console.log("is true")
-				setIsSubscribed(true);
+		const currestUSer = authentication.currentUser;
+		if (currestUSer) {
+			const usersRef = ref(db, `subs/users/${user?.uid}/subscriptions`);
+			const subsRef = ref(db, `subs/channel/${channel?.id}/subscribers`);
+			async function getSubs() {
+				const subs = await (await get(usersRef)).val();
+				const subscribers = await (await get(subsRef)).val();
+				// console.log(susbcribers)
+				setNoSubs(subscribers?.length ?? "No");
+				if (subs?.includes(channel?.id)) {
+					// console.log("is true")
+					setIsSubscribed(true);
+				}
 			}
+
+			getSubs();
 		}
-		getSubs();
 	}, []);
-	console.log(isSubscribed);
+	// console.log(isSubscribed);
 	return (
 		<TouchableOpacity
 			onPress={() => {
@@ -77,7 +91,12 @@ const ChannelComponent = ({ channel }) => {
 						borderRadius: Platform.OS === "ios" ? "50%" : 50,
 					}}
 				/>
-				<View style={{ width: Dimensions.get("window").width * 0.45, alignItems:"center"}}>
+				<View
+					style={{
+						width: Dimensions.get("window").width * 0.45,
+						alignItems: "center",
+					}}
+				>
 					<Text
 						numberOfLines={1}
 						style={{

@@ -9,7 +9,10 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import React, { useCallback, useEffect, useState } from "react";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+	SafeAreaView,
+	useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { bgColor, buttonColor } from "../../constants/colors";
 import HeaderApp from "../../components/HeaderApp";
 import HomeHeader from "../../components/HomeHeader";
@@ -20,11 +23,13 @@ import { fetchData, fetchVideos } from "../../libs/firebase";
 import { shuffleArray } from "../../libs/sound";
 import { getContext } from "../../context/GlobalContext";
 import Offline from "../../components/Offline";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import Menu from "../../components/Menu";
+import NothingToseeHere from "../../components/NothingToseeHere";
+import { searchNotfound } from "../../constants/images";
 
 const subcription = () => {
-	const { user,isConnected } = getContext();
+	const { user, isConnected } = getContext();
 	const { setRefreshing, refereshing } = getContext();
 	const [users, setUsers] = useState([]);
 	const [subscriptions, setSubscriptions] = useState([]);
@@ -110,73 +115,84 @@ const subcription = () => {
 	});
 	const insets = useSafeAreaInsets();
 	// console.log(subVideos)
-	if(isConnected)
-	return (
-		<View
-			style={{
-				backgroundColor: bgColor,
-				height: "100%",
-				paddingTop: insets.top,
-			}}
-		>
-			<FlatList
-				data={subVideos}
-				showsHorizontalScrollIndicator={false}
-				style={{ paddingHorizontal: 10 }}
-				renderItem={({ item, index }) => {
-					if (index === 0)
-						return (
-							<>
-								<VideoView
-									videoInfo={item}
-									menu={() => {
-										handleToggleMenu(item.id);
-									}}
-								/>
-								<TrendingShorts
-									type={"suggested"}
-									data={"subs"}
-									subs={subscriptions}
-								/>
-							</>
-						);
-					return (
-						<VideoView
-							videoInfo={item}
-							menu={() => {
-								handleToggleMenu(item.id);
-							}}
-						/>
-					);
+	if (isConnected)
+		return (
+			<View
+				style={{
+					backgroundColor: bgColor,
+					height: "100%",
+					paddingTop: insets.top,
 				}}
-				ListHeaderComponent={<SubcriptionsHeader channel={subscr} />}
-				refreshControl={
-					<RefreshControl
-						refreshing={isRefreshing}
-						onRefresh={() => {
-							setIsRefreshing(true);
-							setTimeout(() => {
-								setRefreshing(!refereshing);
-								setIsRefreshing(false);
-							}, 1500);
-						}}
-						colors={Platform.OS === "android" && ["#fff"]}
-						tintColor={Platform.OS === "ios" && "#fff"}
-					/>
-				}
-			/>
-			{menuVisiblity && (
-				<Menu
-					isVisible={isMenuVisible}
-					onClose={handleCloseMenu}
-					vidId={videId}
-					userId={user.uid}
+			>
+				<FlatList
+					data={subVideos}
+					showsHorizontalScrollIndicator={false}
+					style={{ paddingHorizontal: 10 }}
+					renderItem={({ item, index }) => {
+						if (index === 0)
+							return (
+								<>
+									<VideoView
+										videoInfo={item}
+										menu={() => {
+											handleToggleMenu(item.id);
+										}}
+									/>
+									<TrendingShorts
+										type={"suggested"}
+										data={"subs"}
+										subs={subscriptions}
+									/>
+								</>
+							);
+						return (
+							<VideoView
+								videoInfo={item}
+								menu={() => {
+									handleToggleMenu(item.id);
+								}}
+							/>
+						);
+					}}
+					ListHeaderComponent={<SubcriptionsHeader channel={subscr} />}
+					refreshControl={
+						<RefreshControl
+							refreshing={isRefreshing}
+							onRefresh={() => {
+								setIsRefreshing(true);
+								setTimeout(() => {
+									setRefreshing(!refereshing);
+									setIsRefreshing(false);
+								}, 1500);
+							}}
+							colors={Platform.OS === "android" && ["#fff"]}
+							tintColor={Platform.OS === "ios" && "#fff"}
+						/>
+					}
+					ListEmptyComponent={
+						<NothingToseeHere
+							text={"Subscribed channels will appear here"}
+							image={searchNotfound}
+							buttonText={"Find a channel"}
+							handleButton={() => {
+								router.push("search/SearchPage");
+							}}
+							type={true}
+						/>
+					}
+					// contentInset={{bottom:150}}
 				/>
-			)}
-		</View>
-	);
-	else
-		return <Offline/>
+				{menuVisiblity && (
+					<Menu
+						isVisible={isMenuVisible}
+						onClose={handleCloseMenu}
+						vidId={videId}
+						userId={user.uid}
+					/>
+				)}
+			</View>
+		);
+	else return <Offline />;
 };
 
 export default subcription;

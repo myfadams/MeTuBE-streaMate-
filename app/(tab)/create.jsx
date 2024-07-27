@@ -68,9 +68,8 @@ export default function App() {
 				allVideos.map(async (video) => {
 					const info = await MediaLibrary.getAssetInfoAsync(video.id);
 					return { ...video, thumbnail: info.localUri || info.uri };
-				})
+				}).reverse()
 			);
-
 			setVideos(videoDetails);
 		} catch (error) {
 			console.error("Error fetching all videos:", error);
