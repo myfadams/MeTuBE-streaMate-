@@ -10,9 +10,14 @@ import { getContext } from '../context/GlobalContext';
 import { get, ref } from 'firebase/database';
 
 const HeaderApp = ({ screenName, disable,type }) => {
+<<<<<<< HEAD
 	const { user, hasNotifications, setHasNotifications, unreadMessages } =
 	getContext();
 	// console.log("unread",unreadMessages)
+=======
+	// console.log(screenName)
+	const { user, hasNotifications, setHasNotifications } = getContext();
+>>>>>>> 9c99762 (ixx lots of bugs video playing bugs, network bugs, add a new video player so both android and ios look the same, add the notfications so user recieves notifications update when subscribed channel posts a video)
 	// const [hasNotifications,setHasNotifications]=useState(false)
 	useEffect(()=>{
 		if(user)

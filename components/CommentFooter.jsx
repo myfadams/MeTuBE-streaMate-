@@ -40,13 +40,7 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 			keyboardDidHideListener.remove();
 		};
 	}, []);
-	const [c,setC]=useState()
-	const [isSending,setIsSending]=useState(false);
-	useEffect(()=>{
-		setC(authentication.currentUser)
-	},[user])
-	const insets=useSafeAreaInsets();
-	// console.log(keyboardHeight);
+
 	return (
 		// <></>
 		<KeyboardAvoidingView
@@ -65,7 +59,7 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 					style={{
 						width: "94%",
 						flexDirection: "row",
-						marginBottom: 30,
+						marginBottom: 16,
 						backgroundColor: bgColor,
 						alignItems: "center",
 					}}
@@ -94,10 +88,7 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 						// activeOpacity={0.7}
 						disabled={isSending}
 						onPress={() => {
-							setIsSending(true);
-							const cUSer = authentication.currentUser;
-							// Alert.alert(JSON.stringify(cUSer));
-							addComment(videoID, user.uid, commentText, cUSer).then(() => {
+							addComment(videoID, user.uid, commentText, creatorID).then(()=>{
 								setCommentText("");
 								Keyboard.dismiss();
 								setIsSending(false);

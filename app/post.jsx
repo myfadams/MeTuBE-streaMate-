@@ -1,75 +1,21 @@
-import * as React from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
-import * as Haptics from "expo-haptics";
+// App.js
+import React from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import CustomVideoPlayer from "../components/VideoPlayer";
+
 
 export default function App() {
 	return (
-		<View style={styles.container}>
-			<Text style={styles.text}>Haptics.selectionAsync</Text>
-			<View style={styles.buttonContainer}>
-				<Button title="Selection" onPress={() => Haptics.selectionAsync()} />
-			</View>
-			<Text style={styles.text}>Haptics.notificationAsync</Text>
-			<View style={styles.buttonContainer}>
-				<Button
-					title="Success"
-					onPress={() =>
-						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-					}
-				/>
-				<Button
-					title="Error"
-					onPress={() =>
-						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-					}
-				/>
-				<Button
-					title="Warning"
-					onPress={() =>
-						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)
-					}
-				/>
-			</View>
-			<Text style={styles.text}>Haptics.impactAsync</Text>
-			<View style={styles.buttonContainer}>
-				<Button
-					title="Light"
-					onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-				/>
-				<Button
-					title="Medium"
-					onPress={() =>
-						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-					}
-				/>
-				<Button
-					title="Heavy"
-					onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}
-				/>
-				<Button
-					title="Rigid"
-					onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid)}
-				/>
-				<Button
-					title="Soft"
-					onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)}
-				/>
-			</View>
-		</View>
+		<SafeAreaView style={styles.container}>
+			<CustomVideoPlayer
+				source={{ uri: "https://www.w3schools.com/html/mov_bbb.mp4" }}
+			/>
+		</SafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: "center",
-		paddingHorizontal: 16,
-	},
-	buttonContainer: {
-		flexDirection: "row",
-		alignItems: "stretch",
-		marginTop: 10,
-		marginBottom: 30,
-		justifyContent: "space-between",
 	},
 });

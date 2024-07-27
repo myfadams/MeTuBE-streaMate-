@@ -216,50 +216,36 @@ const profile = () => {
 								{user?.displayName}
 							</Text>
 							<View style={{ flexDirection: "row" }}>
-								<View style={{}}>
-									<Text
-										style={{
-											color: "white",
-											fontSize: 14,
-											fontFamily: "Montserrat_300Light",
-											flexWrap: "wrap",
-											flexShrink: 1,
-											width: Dimensions.get("window").width * 0.65,
-											marginVertical: 5,
-										}}
-									>
-										{userObj?.handle ?? "No handle"}
-									</Text>
-									<View
-										style={{
-											flexDirection: "row",
-											justifyContent: "space-between",
-										}}
-									>
-										<Text
-											style={{
-												color: buttonColor,
-												fontSize: 14,
-												fontFamily: "Montserrat_400Regular",
-												alignItems: "center",
-												justifyContent: "center",
-
-												// flexDirection:"row"lk
-											}}
-										>
-											view channel{" "}
-										</Text>
-									</View>
-								</View>
-								<Image
-									source={nextPage}
+								<Text
 									style={{
-										width: 14,
-										height: 14,
+										color: "white",
+										fontSize: 14,
+										fontFamily: "Montserrat_300Light",
 									}}
-									contentFit="contain"
-									tintColor={buttonColor}
-								/>
+								>
+									{userObj?.handle?? "No handle"} {" . "}
+								</Text>
+								<Text
+									style={{
+										color: "white",
+										fontSize: 14,
+										fontFamily: "Montserrat_300Light",
+										alignItems: "center",
+										justifyContent: "center",
+										// flexDirection:"row"lk
+									}}
+								>
+									view channel{" "}
+									<Image
+										source={nextPage}
+										style={{
+											width: 14,
+											height: 14,
+											
+										}}
+										contentFit="contain"
+									/>
+								</Text>
 							</View>
 						</View>
 					</View>

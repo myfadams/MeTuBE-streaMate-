@@ -370,13 +370,9 @@ const styles = StyleSheet.create({
 		width: "80%",
 		marginVertical: 10,
 	},
-	controlButton: {
-		backgroundColor: "rgba(128, 128, 128, 0.5)",
-		justifyContent: "center",
-		alignItems: "center",
-		borderRadius: Platform.OS === "ios" ? "50%" : 50,
-		width: 47,
-		height: 47,
+	controlText: {
+		color: "white",
+		fontSize: 16,
 	},
 	slider: {
 		height: 40,

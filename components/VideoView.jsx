@@ -74,8 +74,6 @@ const VideoView = ({ videoInfo, type, menu }) => {
 		<TouchableWithoutFeedback
 			disabled={isClicked}
 			onPress={() => {
-				setIsClicked(true);
-				// Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 				if (!type)
 					router.push({
 						pathname: "video/" + videoInfo?.id,

@@ -26,8 +26,7 @@ import CommentFooter from "./CommentFooter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { get, onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
-import { calculateTimePassed, formatSubs, getLikes, getNumberSubs, getUploadTime } from "../libs/videoUpdates";
-import { LinkText } from "./DescriptionComponent";
+import { formatSubs, getLikes, getNumberSubs } from "../libs/videoUpdates";
 const windowHeight = Dimensions.get("window").height;
 const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 	// console.log(info)

@@ -23,8 +23,8 @@ export async function uploadFiles(type, fileUri,title) {
 }
 export const addShortToDB = async (file, thumnailUrl, videoUrl, userId,duration) => {
 	const d =  new Date().toISOString();
-	const id = uuidv4();
-	await set(ShortsRef(id), {
+
+	await set(ShortsRef(uuidv4()), {
 		caption: file.title,
 		thumbnail: thumnailUrl,
 		video: "" + videoUrl,

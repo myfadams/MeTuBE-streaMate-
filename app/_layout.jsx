@@ -18,8 +18,6 @@ import {
 } from "@expo-google-fonts/montserrat";
 import { getContext, GlobalContext } from "../context/GlobalContext";
 import { bgColor } from "../constants/colors";
-import * as ScreenOrientation from "expo-screen-orientation";
-import { Audio } from "expo-av";
 
 SplashScreen.preventAutoHideAsync();
 LogBox.ignoreLogs([
@@ -58,8 +56,7 @@ const _layout = () => {
 	if (!fontsLoaded) {
 		return null; // or a loading spinner
 	}
-	// const{FullScreen}=getContext();
-	
+
 	return (
 		<GlobalContext>
 			<GestureHandlerRootView>
