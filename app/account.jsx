@@ -1,49 +1,207 @@
-import { View, Text, TouchableOpacity,  ScrollView, Alert, Platform } from "react-native";
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	ScrollView,
+	Alert,
+	Platform,
+} from "react-native";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { accountSetting, addAccount, close, signout } from "../constants/icons";
+import { accountSetting, addAccount, checkMark, close, signout } from "../constants/icons";
 import { bgColor, borderLight, buttonColor } from "../constants/colors";
 import { getContext } from "../context/GlobalContext";
 import MoreButton from "../components/MoreButton";
 import ForYouButtons from "../components/ForYouButtons";
-import { signOut } from "firebase/auth";
+import {
+	signInWithCredential,
+	signOut,
+	signInWithEmailAndPassword,
+} from "firebase/auth";
 import { authentication, db } from "../libs/config";
 import { formatSubs, getNumberSubs } from "../libs/videoUpdates";
 import { get, ref } from "firebase/database";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getStoredAccountIds } from "../libs/otherFunctions";
+import Toast from "react-native-root-toast";
 
 const AccountInfo = () => {
-	const { user } = getContext();
+	const { user, setUser } = getContext();
 	const [noSubs, setNoSubs] = useState(0);
-	useEffect(()=>{
-		getNumberSubs(user?.uid, setNoSubs);
-	},[]);
-	const handleSignOut = () => {
-    signOut(authentication)
-      .then(() => {
-        Alert.alert('Signed Out', 'You have been signed out successfully.');
-		// while (router.canGoBack()) { router.back() }
-		router.dismissAll()
-		router.replace("sign-in")
-		
-        // Perform any additional actions like navigating to the login screen
-      })
-      .catch((error) => {
-        Alert.alert('Error', error.message);
-      });
-	}
-	const [chInfo, setChInfo] = useState()
+	const [otherAcc, setOtherAcc] = useState([]);
 	useEffect(() => {
-		async function getCover() {
-			const inforef = ref(db, "usersref/" + user?.uid);
-			const res = await get(inforef);
-			// console.log(res)
-			setChInfo(res.val());
-			
+		const cUSer = authentication.currentUser;
+		if (cUSer) {
+			getNumberSubs(user?.uid, setNoSubs);
+			function returnSubNo(subNo) {
+				// console.log(subNo);
+				return subNo;
+			}
+			getStoredAccountIds().then(async (accounts) => {
+				// Filter out the current user's ID
+				const altAccounts = accounts.filter((acc) => acc.uid !== user?.uid);
+
+				// Prepare an array of promises for fetching details
+				const detailPromises = altAccounts.map(async (acc) => {
+					const inforef = ref(db, "usersref/" + acc?.uid);
+					const d = await get(inforef);
+					getNumberSubs(acc?.uid, returnSubNo);
+					return { ...d.val(), credential: acc?.credential }; // Return the data for each account
+				});
+
+				try {
+					// Wait for all promises to resolve
+					const altDetails = await Promise.all(detailPromises);
+					// console.log(altDetails[0]);
+					setOtherAcc(altDetails);
+					// Log the details once all promises are resolved
+				} catch (error) {
+					console.error("Error fetching account details:", error);
+				}
+			});
 		}
-		getCover();
+	}, [user]);
+	const handleSignOut = () => {
+		signOut(authentication)
+			.then(() => {
+				Alert.alert("Signed Out", "You have been signed out successfully.");
+				// while (router.canGoBack()) { router.back() }
+				router.dismissAll();
+				router.replace("sign-in");
+
+				// Perform any additional actions like navigating to the login screen
+			})
+			.catch((error) => {
+				Alert.alert("Error", error.message);
+			});
+	};
+	const [chInfo, setChInfo] = useState();
+	useEffect(() => {
+		const cUSer = authentication.currentUser;
+		if (cUSer) {
+			async function getCover() {
+				const inforef = ref(db, "usersref/" + user?.uid);
+				const res = await get(inforef);
+				// console.log(res)
+				setChInfo(res.val());
+			}
+			getCover();
+		}
 	}, []);
+
+	const handleSwitchAccount = async (accInfo) => {
+		try {
+			// Sign out the current user
+			await signOut(authentication);
+
+			// Show a toast message indicating account switch
+			const toast = Toast.show("Switching accounts", {
+				duration: Toast.durations.LONG,
+			});
+
+			// Sign in with the new credentials
+			const userCredential = await signInWithEmailAndPassword(
+				authentication,
+				accInfo.credential.email,
+				accInfo.credential.password
+			);
+			const user = userCredential.user;
+
+			// Update user state and show success toast
+			setUser(user);
+			Toast.show("Switched to " + accInfo.name, {
+				duration: Toast.durations.LONG,
+			});
+
+			// Hide toast after 3 seconds
+			setTimeout(() => Toast.hide(toast), 3000);
+		} catch (error) {
+			// Handle errors
+			Alert.alert("Error", error.message);
+			console.log(error);
+		}
+	};
+	function OtherAccount({ accInfo }) {
+		return (
+			<View>
+				<Text
+					style={{
+						color: borderLight,
+						fontSize: 14,
+						marginBottom: 12,
+						// fontWeight:"600",
+						fontFamily: "Montserrat_400Regular",
+						alignItems: "center",
+						justifyContent: "center",
+						marginLeft: "3%",
+						// flexDirection:"row"
+					}}
+				>
+					{accInfo?.email}
+				</Text>
+				<TouchableOpacity
+					onPress={() => {
+						handleSwitchAccount(accInfo);
+					}}
+					style={{
+						width: "100%",
+						alignItems: "center",
+						marginTop: 15,
+						
+					}}
+				>
+					<View
+						style={{
+							width: "97%",
+							flexDirection: "row",
+							// alignItems: "center",
+							gap: 20,
+							marginBottom: 20,
+						}}
+					>
+						<Image
+							source={{ uri: accInfo?.image }}
+							contentFit="contain"
+							style={{
+								width: 50,
+								height: 50,
+								backgroundColor: "#000",
+								borderColor: borderLight,
+								borderWidth: 1,
+								borderRadius: Platform.OS === "ios" ? "50%" : 50,
+							}}
+						/>
+						<View style={{ gap: 8 }}>
+							<Text
+								numberOfLines={2}
+								style={{
+									color: "white",
+									fontSize: 20,
+									fontFamily: "Montserrat_500Medium",
+									flexWrap: "wrap",
+									marginBottom: 5,
+									flexDirection: "row",
+								}}
+							>
+								{accInfo?.name}
+							</Text>
+
+							<Text
+								style={{
+									color: "white",
+									fontSize: 14,
+									fontFamily: "Montserrat_300Light",
+								}}
+							>
+								{accInfo?.handle ?? "No handle"}
+							</Text>
+						</View>
+					</View>
+				</TouchableOpacity>
+			</View>
+		);
+	}
 	return (
 		<SafeAreaView
 			style={{
@@ -88,9 +246,14 @@ const AccountInfo = () => {
 					Account
 				</Text>
 			</View>
-			<ScrollView>
+			<ScrollView style={{ paddingHorizontal: "2%" }}>
 				<View
-					style={{ borderColor: borderLight, borderBottomWidth: 0.3, gap: 8 }}
+					style={{
+						borderColor: borderLight,
+						borderBottomWidth: 0.3,
+						gap: 8,
+						// paddingHorizontal: "4%",
+					}}
 				>
 					<Text
 						style={{
@@ -123,11 +286,16 @@ const AccountInfo = () => {
 					</Text>
 				</View>
 				<TouchableOpacity
-					style={{ width: "100%", alignItems: "center", marginTop: 30 }}
+					style={{
+						width: "100%",
+						alignItems: "center",
+						marginTop: 30,
+						// paddingHorizontal: "4%",
+					}}
 				>
 					<View
 						style={{
-							width: "97%",
+							// width: "100%",
 							flexDirection: "row",
 							// alignItems: "center",
 							gap: 20,
@@ -184,8 +352,8 @@ const AccountInfo = () => {
 							<TouchableOpacity
 								activeOpacity={0.7}
 								style={{ marginTop: 20, marginBottom: "20" }}
-								onPress={()=>{
-									router.replace("userVideos/channelSettings")
+								onPress={() => {
+									router.replace("userVideos/channelSettings");
 								}}
 							>
 								<Text
@@ -198,6 +366,21 @@ const AccountInfo = () => {
 									Edit channel
 								</Text>
 							</TouchableOpacity>
+						</View>
+						<View
+							style={{
+								flexDirection: "row",
+								flex: 1,
+								justifyContent: "flex-end",
+								height: "100%",
+								alignItems: "center",
+							}}
+						>
+							<Image
+								source={checkMark}
+								tintColor={buttonColor}
+								style={{ width: 20, height: 20 }}
+							/>
 						</View>
 					</View>
 				</TouchableOpacity>
@@ -223,81 +406,29 @@ const AccountInfo = () => {
 					>
 						Other accounts
 					</Text>
-					<Text
+					<View
 						style={{
-							color: borderLight,
-							fontSize: 14,
-							marginBottom: 12,
-							// fontWeight:"600",
-							fontFamily: "Montserrat_400Regular",
-							alignItems: "center",
-							justifyContent: "center",
-							marginLeft: "3%",
-							// flexDirection:"row"
-						}}
-					>
-						username@email.com
-					</Text>
-					<TouchableOpacity
-						style={{
-							width: "100%",
-							alignItems: "center",
-							marginTop: 15,
 							borderBottomWidth: 0.3,
 							borderColor: borderLight,
+							width: "100%",
 						}}
 					>
-						<View
-							style={{
-								width: "97%",
-								flexDirection: "row",
-								// alignItems: "center",
-								gap: 20,
-								marginBottom: 20,
-							}}
-						>
-							<Image
-								// source={{ uri: user.photoURL }}
-								contentFit="contain"
-								style={{
-									width: 50,
-									height: 50,
-									backgroundColor: "#000",
-									borderColor: borderLight,
-									borderWidth: 1,
-									borderRadius: Platform.OS === "ios" ? "50%" : 50,
-								}}
-							/>
-							<View style={{ gap: 8 }}>
-								<Text
-									numberOfLines={2}
-									style={{
-										color: "white",
-										fontSize: 20,
-										fontFamily: "Montserrat_500Medium",
-										flexWrap: "wrap",
-										marginBottom: 5,
-										flexDirection: "row",
-									}}
-								>
-									Channel name
-								</Text>
-
-								<Text
-									style={{
-										color: "white",
-										fontSize: 14,
-										fontFamily: "Montserrat_300Light",
-									}}
-								>
-									77 subscribers
-								</Text>
-							</View>
-						</View>
-					</TouchableOpacity>
+						{otherAcc.map((account, index) => {
+							return <OtherAccount accInfo={account} key={index} />;
+						})}
+					</View>
 				</View>
 				<View style={{ marginTop: 7, paddingLeft: "2%", paddingRight: "2%" }}>
-					<ForYouButtons sourceUrl={addAccount} title={"Add account"} />
+					<ForYouButtons
+						sourceUrl={addAccount}
+						title={"Add account"}
+						handlePress={() => {
+							router.push({
+								pathname: "sign-in",
+								params: { addAccount: "addAccount" },
+							});
+						}}
+					/>
 					<ForYouButtons
 						sourceUrl={signout}
 						title={"Use StreaMate sign out"}

@@ -17,28 +17,38 @@ import React, { useEffect, useState } from 'react'
 import { formatSubs, getLikes, likeUpadate, playList } from "../libs/videoUpdates";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
-
-const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
+import * as Haptics from "expo-haptics";
+import {startDownload} from "../libs/downloads"
+import { getContext } from "../context/GlobalContext";
+const ScrollButtons = ({
+	videoId,
+	userId,
+	likeStatus,
+	disLikeStatus,
+	vidinfo,
+}) => {
 	// console.log(likeStatus)
+	const { user, isConnected } = getContext();
 	const [likeClicked, setLikeClicked] = useState(false);
 	const [dislikeClicked, setDislikeClicked] = useState(false);
 	const [likes, setlikes] = useState(0);
 	useEffect(() => {
-		getLikes(videoId, setlikes,"videosRef");
+		getLikes(videoId, setlikes, "videosRef");
 	}, [videoId]);
 
 	useEffect(() => {
 		setLikeClicked(likeStatus);
 		setDislikeClicked(disLikeStatus);
-	}, [likeStatus,disLikeStatus]);
+	}, [likeStatus, disLikeStatus]);
 	function addLike() {
 		if (!likeClicked) {
 			setLikeClicked(true);
 			setDislikeClicked(false);
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 		} else setLikeClicked(false);
 		likeUpadate(videoId, "like", "videosRef", userId);
 		getLikes(videoId, setlikes, "videosRef");
-		playList(videoId,"likedVideos",userId)
+		playList(videoId, "likedVideos", userId);
 	}
 
 	function addDislike() {
@@ -46,11 +56,14 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 			// console.log("dislike");
 			setLikeClicked(false);
 			setDislikeClicked(true);
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 		} else setDislikeClicked(false);
 		// console.log("kjfkdsaf: "+dislikeClicked)
 		likeUpadate(videoId, "dislike", "videosRef", userId);
 		getLikes(videoId, setlikes, "videosRef");
 	}
+	const [progressDownload,setProgressDownload]=useState()
+	console.log(progressDownload)
 	return (
 		<ScrollView
 			horizontal
@@ -174,6 +187,10 @@ const ScrollButtons = ({ videoId, userId, likeStatus, disLikeStatus }) => {
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity
+				onPress={()=>{
+					if(isConnected)
+						startDownload(vidinfo,setProgressDownload)
+				}}
 				style={{
 					height: 35,
 					gap: 3,

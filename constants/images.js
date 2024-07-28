@@ -5,7 +5,9 @@ import notfoundlogo from "../assets/images/notfound.png"
 import defaultCover from "../assets/images/defaultCover.png";
 import searchNotfound from "../assets/images/searchNotFound.png";
 import noNotifications from "../assets/images/noNotifications.png";
+import downloadsHere from "../assets/images/downloadsHere.png";
 export {
+	downloadsHere,
 	noNotifications,
 	offineLogo,
 	logo,

@@ -62,7 +62,6 @@ const _layout = () => {
 		<GlobalContext>
 			<GestureHandlerRootView>
 				<RootSiblingParent>
-					
 					<Stack screenOptions={{ headerShown: false }}>
 						<Stack.Screen name="index" options={{ headerShown: false }} />
 						<Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -102,6 +101,14 @@ const _layout = () => {
 								// gestureEnabled:FullScreen
 							}}
 						/>
+						<Stack.Screen
+							name="notifications"
+							options={{ headerShown: false }}
+						/>
+						{/* <Stack.Screen
+							name="shorts/[trendingshort]"
+							options={{ headerShown: false, tabBarVisible:true }}
+						/> */}
 					</Stack>
 				</RootSiblingParent>
 			</GestureHandlerRootView>

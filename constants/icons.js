@@ -77,6 +77,7 @@ import playVideo from "../assets/icons/playVideo.png";
 import remix from "../assets/icons/recycle.png";
 import fullScreen from "../assets/icons/fullScreen.png";
 import playIcon from "../assets/icons/play.png";
+import checkMark from "../assets/icons/checkMark.png";
 import addFill from "../assets/icons/addFill.png";
 import homeFill from "../assets/icons/active/homeFilled.png";
 import shortsFill from "../assets/icons/active/shortsFilled.png";
@@ -87,10 +88,11 @@ import exitFullScreen from "../assets/icons/exitFullScreen.png";
 
 
 export {
+	checkMark,
 	exitFullScreen,
 	fullScreen,
 	rewindVid,
-fowardVid,
+	fowardVid,
 	playIcon,
 	videothumb,
 	playVideo,

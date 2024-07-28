@@ -8,6 +8,7 @@ import { offineLogo } from "../constants/images";
 import MoreButton from "./MoreButton";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getContext } from "../context/GlobalContext";
+import { router } from "expo-router";
 
 const Offline = ({type}) => {
     const { setRefreshing, refereshing } = getContext();
@@ -54,7 +55,9 @@ const Offline = ({type}) => {
 							title={"Go to downloads"}
 							height={45}
 							color={buttonColor}
-							// handlePress={uploadStreaMateShorts}
+							handlePress={()=>{
+								router.push("downloads")
+							}}
 						/>
 					</View>
 				</View>

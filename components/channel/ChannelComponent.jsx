@@ -18,15 +18,16 @@ import { get, ref } from "firebase/database";
 import { authentication, db } from "../../libs/config";
 import { getContext } from "../../context/GlobalContext";
 import { router } from "expo-router";
-
-const ChannelComponent = ({ channel }) => {
+import * as Haptics from "expo-haptics";
+const ChannelComponent = ({ channel,type }) => {
 	const [isSubscribed, setIsSubscribed] = useState(false);
 	const [noSubs, setNoSubs] = useState();
 	const { user } = getContext();
-	// console.log(user.uid)
+	// console.log(channel)
 	function handleSubscribe() {
 		subscribeToChannel(channel?.id, user?.uid);
 		getSubsriptions(user?.uid, setIsSubscribed, channel.id);
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 	}
 	useEffect(() => {
 		const currestUSer = authentication.currentUser;
@@ -80,7 +81,11 @@ const ChannelComponent = ({ channel }) => {
 				}}
 			>
 				<Image
-					source={{ uri: channel?.image }}
+					source={{
+						uri: !type
+							? channel?.image
+							: channel?.image?.replace("/ChannelsInfo/", "/ChannelsInfo%2F"),
+					}}
 					contentFit="contain"
 					style={{
 						width: 70,

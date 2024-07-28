@@ -1,4 +1,4 @@
-// const bgColor = "#1F2544";
+// const bgColor = "#0A0A0A";
 const bgColor = "#141313";
 const borderPrimary = "#434242";
 // const fieldColor = "#474F7A";

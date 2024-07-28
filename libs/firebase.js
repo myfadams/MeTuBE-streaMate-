@@ -10,6 +10,8 @@ import {
 	signInWithPopup,
 	signInWithCredential,
 	signInWithRedirect,
+	EmailAuthProvider,
+	signOut,
 } from "firebase/auth";
 import { app, authentication, db, ref, set, usersRef } from "./config";
 import { avatars } from "./appwrite";
@@ -19,9 +21,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Google from "expo-auth-session/providers/google";
 import { Platform } from "react-native";
 import { useEffect } from "react";
+import { addAccountId } from "./otherFunctions";
 // const authentication = getAuth();
 // let user;
 async function createAccount(email, password, name) {
+	
 	try {
 		const user = await createUserWithEmailAndPassword(
 			authentication,
@@ -34,7 +38,8 @@ async function createAccount(email, password, name) {
 		} catch (error) {
 			console.log(error);
 		}
-
+		const credential = EmailAuthProvider.credential(user?.user.email, password);
+		addAccountId({ uid: user?.user?.uid, credential: credential });
 		return user?.user;
 	} catch (error) {
 		// console.log(error.code)
@@ -45,12 +50,19 @@ export function emailVerification(user) {
 	return user?.emailVerified;
 }
 export async function loginUser(email, password) {
+	// const cUser = authentication.currentUser;
+	// if (cUser) {
+	// 	await signOut(authentication);
+	// }
 	try {
 		const user = await signInWithEmailAndPassword(
 			authentication,
 			email,
 			password
 		);
+		const credential =EmailAuthProvider.credential(user?.user.email, password);
+		addAccountId({uid:user?.user?.uid, credential:credential});
+		// console.log("credential: " + JSON.stringify(user?.user));
 		return user?.user;
 	} catch (error) {
 		throw error;
@@ -75,6 +87,7 @@ export async function checkVerified(user) {
 				email: user?.email,
 				image: "" + image,
 			});
+			// addAccountId(user?.uid);
 		}
 	});
 	console.log("here nowe: " + user?.emailVerified);

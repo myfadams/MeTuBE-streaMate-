@@ -1,58 +1,75 @@
-import React from "react";
-import { Text, View, Linking } from "react-native";
+import * as React from "react";
+import { StyleSheet, View, Text, Button } from "react-native";
+import * as Haptics from "expo-haptics";
 
-// Utility function to detect and parse URLs and hashtags
-const parseText = (text) => {
-	// Regex patterns for URLs and hashtags
-	const urlRegex = /(https?:\/\/[^\s]+)/g;
-	const hashtagRegex = /(#\w+)/g;
-
-	// Split the text into parts based on URLs and hashtags
-	const parts = text.split(/(\s|[\b])(?=\b(?:https?:\/\/|#))/g);
-
-	return parts.map((part, index) => {
-		if (urlRegex.test(part)) {
-			return (
-				<Text
-					key={index}
-					style={{ color: "blue", textDecorationLine: "underline" }}
-					onPress={() => Linking.openURL(part)}
-				>
-					{part}
-				</Text>
-			);
-		}
-
-		if (hashtagRegex.test(part)) {
-			return (
-				<Text
-					key={index}
-					style={{ color: "blue", textDecorationLine: "underline" }}
-					onPress={() => console.log(`Hashtag pressed: ${part}`)} // Handle hashtag press
-				>
-					{part}
-				</Text>
-			);
-		}
-
-		return <Text key={index}>{part}</Text>;
-	});
-};
-
-const LinkText = ({ text }) => {
-	return <View>{parseText(text)}</View>;
-};
-
-// Usage
-const App = () => {
-	const sampleText =
-		"Check out this link: https://www.example.com and this one: http://another-example.com. Also, check out #hashtag and #AnotherHashtag";
-
+export default function App() {
 	return (
-		<View style={{ padding: 20 }}>
-			<LinkText text={sampleText} />
+		<View style={styles.container}>
+			<Text style={styles.text}>Haptics.selectionAsync</Text>
+			<View style={styles.buttonContainer}>
+				<Button title="Selection" onPress={() => Haptics.selectionAsync()} />
+			</View>
+			<Text style={styles.text}>Haptics.notificationAsync</Text>
+			<View style={styles.buttonContainer}>
+				<Button
+					title="Success"
+					onPress={() =>
+						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+					}
+				/>
+				<Button
+					title="Error"
+					onPress={() =>
+						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+					}
+				/>
+				<Button
+					title="Warning"
+					onPress={() =>
+						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)
+					}
+				/>
+			</View>
+			<Text style={styles.text}>Haptics.impactAsync</Text>
+			<View style={styles.buttonContainer}>
+				<Button
+					title="Light"
+					onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+				/>
+				<Button
+					title="Medium"
+					onPress={() =>
+						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+					}
+				/>
+				<Button
+					title="Heavy"
+					onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}
+				/>
+				<Button
+					title="Rigid"
+					onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid)}
+				/>
+				<Button
+					title="Soft"
+					onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)}
+				/>
+			</View>
 		</View>
 	);
-};
+}
 
-export default App;
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: "center",
+		paddingHorizontal: 16,
+	},
+	buttonContainer: {
+		flexDirection: "row",
+		alignItems: "stretch",
+		marginTop: 10,
+		marginBottom: 30,
+		justifyContent: "space-between",
+	},
+});

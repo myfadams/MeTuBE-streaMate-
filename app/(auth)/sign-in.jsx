@@ -17,7 +17,7 @@ import { logo } from "../../constants/images";
 import { StatusBar } from "expo-status-bar";
 import Button from "../../components/Button";
 import { apple, email, google, key } from "../../constants/icons";
-import { Link, Redirect, SplashScreen, router } from "expo-router";
+import { Link, Redirect, SplashScreen, router, useLocalSearchParams } from "expo-router";
 import { getContext } from "../../context/GlobalContext";
 import { emailVerification, loginUser } from "../../libs/firebase";
 import { authentication } from "../../libs/config";
@@ -29,6 +29,8 @@ const SignIn = () => {
 	const [form, setform] = useState({ email: "", password: "" });
 	const [isLoading, setIsLoading] = useState(false);
 	const { user,setUser } = getContext();
+	const {addAccount} = useLocalSearchParams();
+	// console.log(addAccount);
 	SplashScreen.hideAsync()
 	const redirectUri = AuthSession.makeRedirectUri({
 		useProxy: true, // This tells it to use a proxy suitable for Expo Go
@@ -178,7 +180,7 @@ const SignIn = () => {
 						</TouchableOpacity>
 					)}
 				</View>
-				<View
+				{!addAccount&&<View
 					style={{
 						width: "92%",
 						flexDirection: "row",
@@ -209,7 +211,7 @@ const SignIn = () => {
 						{" "}
 						Sign Up
 					</Link>
-				</View>
+				</View>}
 			</ScrollView>
 			<StatusBar style="light" />
 		</SafeAreaView>

@@ -23,7 +23,7 @@ import {
 } from "../libs/videoUpdates";
 import { getContext } from "../context/GlobalContext";
 import { formatTime } from "../constants/videoTime";
-
+import * as Haptics from "expo-haptics";
 const VideoView = ({ videoInfo, type, menu }) => {
 	// console.log(videoInfo)
 	const [creator, setCreator] = useState([]);
@@ -75,6 +75,7 @@ const VideoView = ({ videoInfo, type, menu }) => {
 			disabled={isClicked}
 			onPress={() => {
 				setIsClicked(true);
+				// Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 				if (!type)
 					router.push({
 						pathname: "video/" + videoInfo?.id,

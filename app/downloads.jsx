@@ -11,60 +11,22 @@ import OtherChannelVideo from "../components/OtherChannelVideo";
 import { bgColor, buttonColor } from "../constants/colors";
 import { Image } from "expo-image";
 import { FlatList } from "react-native";
-import NothingToseeHere from "../components/NothingToseeHere";
-import { noNotifications, notfoundlogo } from "../constants/images";
-import { get, ref } from "firebase/database";
-import { db } from "../libs/config";
+import { downloadsHere } from "../constants/images";
+import DownloadVideoView from "../components/DownloadVideoView";
+import { fetchDownloadedFiles } from "../libs/downloads";
 
-const notifications = () => {
+
+const downloads = () => {
 	const { user } = getContext();
 	const [videos, setvideos] = useState([]);
-	const [isLoading,setIsLoading]=useState(true)
-	async function fetchVideo(type, id) {
-		const tRef = ref(db, `${type}/${id}`);
-		const vidRes = await get(tRef);
-		let t = vidRes.val();
-		return { id: id, ...t };
-	}
-	useEffect(() => {
-		const notiRef = ref(db, `notifications/${user?.uid}/noti`);
-		async function getPlayList() {
-			try {
-				const res = await get(notiRef);
-				// console.log(nlist);
-				if (res.exists()) {
-					const nlist = res.val();
-					// Use map to create an array of promises
-					const fetchPromises = nlist?.map(async (vidId) => {
-						async function tempFunc() {
-							const t = await fetchVideo("shortsRef", vidId);
-							const items = Object.keys(t).length;
-							if (items <= 1) {
-								return fetchVideo("videosRef", vidId);
-							} else {
-								return fetchVideo("shortsRef", vidId);
-							}
-						}
-
-						return tempFunc();
-					});
-
-					// Wait for all promises to resolve
-					const temp = await Promise.all(fetchPromises);
-					temp.reverse();
-					// console.log(temp);
-					setvideos([...temp]);
-				}
-			} catch (error) {
-				console.error("Error fetching playlist or videos:", error);
-			}
-		}
-
-		getPlayList();
-		setIsLoading(false)
-	}, []);
-	// console.log(videos);
 	const insets = useSafeAreaInsets();
+	const [refreshDownloads, setRefreshDownloads] = useState(false);
+	useEffect(()=>{
+		fetchDownloadedFiles().then((res)=>{
+			// console.log(res)
+			setvideos(res)
+		})
+	},[refreshDownloads])
 	return (
 		<View
 			style={{
@@ -108,7 +70,7 @@ const notifications = () => {
 						fontSize: 20,
 					}}
 				>
-					Notifications
+					Downloads
 				</Text>
 				<View
 					style={{
@@ -141,19 +103,24 @@ const notifications = () => {
 			<FlatList
 				data={videos}
 				renderItem={({ item, index }) => {
-					if (item?.caption)
-						return <OtherChannelVideo video={item} type={"short"} noti={"yes"}/>;
-					return <OtherChannelVideo video={item} noti={"yes"} />;
+					return (
+						<DownloadVideoView
+							video={item}
+							key={index}
+							setRefresh={setRefreshDownloads}
+							refre={refreshDownloads}
+						/>
+					);
 				}}
-				keyExtractor={(item) => {
-					return item.id;
-				}}
-				contentContainerStyle={{ paddingHorizontal: "2%", paddingTop:30 }}
+				// keyExtractor={(item) => {
+				// 	return item.id;
+				// }}
+				contentContainerStyle={{ paddingHorizontal: "2%", paddingTop: 30 }}
 				contentInset={{ bottom: insets.bottom }}
 				ListEmptyComponent={
 					// <NothingToseeHere type={false} image={noNotifications} />
 					() => {
-						if(!isLoading){
+						
 							return (
 								<View
 									style={{
@@ -165,14 +132,14 @@ const notifications = () => {
 									}}
 								>
 									<Image
-										source={noNotifications}
+										source={downloadsHere}
 										style={{ width: "80%", height: 350 }} // Adjust width as needed
 										contentFit="contain"
 										tintColor={buttonColor}
 									/>
 									<Text
 										style={{
-											marginTop: 30,
+											// marginTop: 30,
 											fontFamily: "Montserrat_700Bold",
 											fontSize: 20,
 											color: "white",
@@ -180,16 +147,16 @@ const notifications = () => {
 											fontWeight: "600",
 										}}
 									>
-										Nothing new
+										Downloads will appear here
 									</Text>
 								</View>
 							);
 						}
 					}
-				}
+				
 			/>
 		</View>
 	);
 };
 
-export default notifications;
+export default downloads;

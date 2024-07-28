@@ -7,7 +7,7 @@ import BottomSheetComponent from "./CommentSection";
 import ScrollButtons from "./ScrollButtons";
 import { getContext } from "../context/GlobalContext";
 import { formatSubs, formatViews, getNumberSubs, getSubsriptions, setDisLikeStatus, setLikeStatus, subscribeToChannel } from "../libs/videoUpdates";
-
+import * as Haptics from "expo-haptics";
 import { ref, onValue, get } from "firebase/database";
 import { db } from "../libs/config";
 import { router, useFocusEffect } from "expo-router";
@@ -85,6 +85,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 	function handleSubscribe(){
 		subscribeToChannel(vidinfo?.creator, user?.uid);
 		getSubsriptions(user?.uid, setsubscribed, vidinfo.creator); 
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 		// console.log("Get sub status: "+subscribed);
 	}
 	// console.log(latestComment)
@@ -239,6 +240,7 @@ const VidHeader = ({ comment, about,vidinfo}) => {
 			</View>
 			{/* //my ScrollButtons */}
 			<ScrollButtons
+				vidinfo={vidinfo}
 				videoId={vidinfo.videoview}
 				userId={user?.uid}
 				likeStatus={like}

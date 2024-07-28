@@ -85,6 +85,9 @@ const SubcriptionsHeader = ({ channel }) => {
 						</ScrollView>
 						<TouchableOpacity
 							activeOpacity={0.7}
+							onPress={()=>{
+								router.push({ pathname: "allSubbedChannels" ,params:{channels:JSON.stringify(channel)}});
+							}}
 							style={{
 								// height: "100%",
 								width: 50,

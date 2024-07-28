@@ -18,6 +18,7 @@ import { sendNotifications } from '../../libs/notifications';
 const shortsPostion = Math.floor(Math.random() * fetchVideos().length);
 const home = () => {
 	// console.log(shortsPostion)
+	const { user, isConnected } = getContext();
 	const [videos, setVideos] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState();
@@ -81,7 +82,7 @@ const home = () => {
 	
 	// console.log(videos); // Videos are now available here
 
-	const { user,isConnected } = getContext();
+	
 	// console.log(user)
 	const insets = useSafeAreaInsets();
 	if (!user || (user && !user?.emailVerified))
