@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, ScrollView, Platform } from "react-native"
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	ScrollView,
+	Platform,
+	Linking,
+} from "react-native";
 import { Image } from "expo-image";
 import {
 	clip,
@@ -12,14 +19,24 @@ import {
 	save,
 	shorts,
 } from "../constants/icons";
-import { buttonColor, fieldColor} from "../constants/colors";
-import React, { useEffect, useState } from 'react'
-import { formatSubs, getLikes, likeUpadate, playList } from "../libs/videoUpdates";
+import { buttonColor, fieldColor } from "../constants/colors";
+import React, { useEffect, useState } from "react";
+import {
+	formatSubs,
+	getLikes,
+	likeUpadate,
+	playList,
+} from "../libs/videoUpdates";
 import { onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
 import * as Haptics from "expo-haptics";
-import {startDownload} from "../libs/downloads"
+import { startDownload } from "../libs/downloads";
 import { getContext } from "../context/GlobalContext";
+import * as Clipboard from "expo-clipboard";
+import Toast from "react-native-root-toast";
+import { router } from "expo-router";
+import { generateLinkVideos } from "../libs/share";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const ScrollButtons = ({
 	videoId,
 	userId,
@@ -32,10 +49,31 @@ const ScrollButtons = ({
 	const [likeClicked, setLikeClicked] = useState(false);
 	const [dislikeClicked, setDislikeClicked] = useState(false);
 	const [likes, setlikes] = useState(0);
+	const [isDownloaded,setIsDownloaded]=useState(false)
+	useEffect(() => {
+		AsyncStorage.getItem("downloads").then((res) => {
+			if (res) {
+				const array = JSON.parse(res);
+				// console.log("res",res)
+				const containsObjectWithKey = array.some(
+					(item) => item["id"] === videoId
+				);
+				setIsDownloaded(containsObjectWithKey);
+			}
+		});
+	}, [progressDownload]);
 	useEffect(() => {
 		getLikes(videoId, setlikes, "videosRef");
+		AsyncStorage.getItem("downloads").then((res)=>{
+			if(res){
+				const array= JSON.parse(res)
+				// console.log("res",res)
+				const containsObjectWithKey = array.some((item) => item["id"] === videoId);
+				setIsDownloaded(containsObjectWithKey);
+			}
+		})
 	}, [videoId]);
-
+	console.log("isDownloaded",isDownloaded)
 	useEffect(() => {
 		setLikeClicked(likeStatus);
 		setDislikeClicked(disLikeStatus);
@@ -62,8 +100,24 @@ const ScrollButtons = ({
 		likeUpadate(videoId, "dislike", "videosRef", userId);
 		getLikes(videoId, setlikes, "videosRef");
 	}
-	const [progressDownload,setProgressDownload]=useState()
-	console.log(progressDownload)
+	const [progressDownload, setProgressDownload] = useState();
+	console.log(progressDownload);
+	const shareVideo = async () => {
+		const textToCopy = generateLinkVideos(videoId, vidinfo?.title);
+
+		// Copy text to clipboard
+		await Clipboard.setStringAsync(textToCopy);
+
+		// Optionally show an alert or message
+		let toast = Toast.show("Copied link to copied", {
+			duration: Toast.durations.LONG,
+		});
+
+		router.push("chatHomeScreen");
+		setTimeout(function hideToast() {
+			Toast.hide(toast);
+		}, 3000);
+	};
 	return (
 		<ScrollView
 			horizontal
@@ -132,6 +186,7 @@ const ScrollButtons = ({
 			</View>
 
 			<TouchableOpacity
+				onPress={shareVideo}
 				style={{
 					height: 35,
 					gap: 3,
@@ -187,9 +242,11 @@ const ScrollButtons = ({
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity
-				onPress={()=>{
-					if(isConnected)
-						startDownload(vidinfo,setProgressDownload)
+				disabled={isDownloaded}
+				onPress={async () => {
+					if (isConnected) {
+						startDownload(vidinfo, setProgressDownload);
+					}
 				}}
 				style={{
 					height: 35,
@@ -214,7 +271,10 @@ const ScrollButtons = ({
 						fontFamily: "Montserrat_300Light",
 					}}
 				>
-					download
+					{/* {progressDownload?.download && !isDownloaded && `downloading`} */}
+					{isDownloaded
+						? "Downloaded"
+						: "download"}
 				</Text>
 			</TouchableOpacity>
 			<TouchableOpacity
@@ -303,4 +363,4 @@ const ScrollButtons = ({
 	);
 };
 
-export default ScrollButtons
+export default ScrollButtons;

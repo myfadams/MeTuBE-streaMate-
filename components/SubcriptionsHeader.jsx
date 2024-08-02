@@ -12,64 +12,65 @@ import HomeHeader from "./HomeHeader";
 import { bgColor, borderLight, buttonColor } from "../constants/colors";
 import { router } from "expo-router";
 
-const SubcriptionsHeader = ({ channel }) => {
-	function SubView({ info }) {
-		// console.log(info)
-		return info?.map((channel, id) => {
-			return (
-				<TouchableOpacity
-					onPress={() => {
-						router.push({
-							pathname: "userVideos/aboutVids",
-							params: {
-								uid: channel.id,
-								photoURL: channel.image,
-								displayName: channel.name,
-								otherChannel: "OtherChannel",
-							},
-						});
-					}}
-					activeOpacity={0.6}
+function SubView({ info }) {
+	// console.log(info)
+	return info?.map((channel, id) => {
+		return (
+			<TouchableOpacity
+				onPress={() => {
+					router.push({
+						pathname: "userVideos/aboutVids",
+						params: {
+							uid: channel.id,
+							photoURL: channel.image,
+							displayName: channel.name,
+							otherChannel: "OtherChannel",
+						},
+					});
+				}}
+				activeOpacity={0.6}
+				style={{
+					width: 100,
+					height: 120,
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+				key={id}
+			>
+				<Image
+					source={{ uri: channel?.image }}
 					style={{
-						width: 100,
-						height: 120,
-						alignItems: "center",
-						justifyContent: "center",
+						width: 60,
+						height: 60,
+						borderRadius: Platform.OS === "ios" ? "50%" : 50,
+						backgroundColor: "#000",
+						borderColor: borderLight,
+						borderWidth: 1,
 					}}
-					key={id}
+				/>
+				<Text
+					numberOfLines={1}
+					style={{
+						color: "white",
+						fontSize: 15.5,
+						marginTop: 12,
+						marginLeft: "3%",
+						fontFamily: "Montserrat_500Medium",
+						alignItems: "center",
+						fontWeight: "500",
+						justifyContent: "center",
+						// flexDirection:"row"
+					}}
 				>
-					<Image
-						source={{ uri: channel?.image }}
-						style={{
-							width: 60,
-							height: 60,
-							borderRadius: Platform.OS === "ios" ? "50%" : 50,
-							backgroundColor: "#000",
-							borderColor: borderLight,
-							borderWidth: 1,
-						}}
-					/>
-					<Text
-						numberOfLines={1}
-						style={{
-							color: "white",
-							fontSize: 15.5,
-							marginTop: 12,
-							marginLeft: "3%",
-							fontFamily: "Montserrat_500Medium",
-							alignItems: "center",
-							fontWeight: "500",
-							justifyContent: "center",
-							// flexDirection:"row"
-						}}
-					>
-						{channel?.name}
-					</Text>
-				</TouchableOpacity>
-			);
-		});
-	}
+					{channel?.name}
+				</Text>
+			</TouchableOpacity>
+		);
+	});
+}
 
+const SubcriptionsHeader = ({ channel }) => {
+	
 	return (
 		<View>
 			<HeaderApp />

@@ -20,6 +20,7 @@ import OptionsHeader from "../../components/channel/OptionsHeader";
 import { getContext } from "../../context/GlobalContext";
 import Offline from "../../components/Offline";
 import { authentication } from "../../libs/config";
+import { setRequests } from "../../libs/chatFunctions";
 
 const { height: windowHeight } = Dimensions.get("window");
 
@@ -55,6 +56,7 @@ export default function MyPager() {
 		}, [])
 	);
 	useEffect(() => {
+		setRequests()
 		setUser(authentication.currentUser);
 	}, [isFocused]);
 

@@ -1,15 +1,18 @@
 import { View, Text, Platform } from 'react-native'
 import { Image } from "expo-image";
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Tabs, useFocusEffect } from 'expo-router';
 import { add, addFill, home, homeFill, shorts, shortsFill, subsFilled, subsription} from '../../constants/icons';
 import { bgColor, borderLight, borderPrimary, buttonColor, fieldColor } from '../../constants/colors';
 import { getContext } from '../../context/GlobalContext';
 import { getUSerProfile } from '../../libs/firebase';
+import { authentication } from '../../libs/config';
+import { getMessagesCountsAfterLastMessages } from '../../libs/chatFunctions';
 function TabIcon({ icon, color, name, focused }) {
-	const { user, refereshing } = getContext();
+	const { user, refereshing, unreadMessages, setUnreadMessages } = getContext();
 	// console.log(user)
-	const [userInfo,setUserInfo]=useState(null)
+	const [userInfo, setUserInfo] =
+		useState(null);
 	// const [userImage, setUserImage] = useState("")
 	// console.log(user)
 
@@ -21,8 +24,17 @@ function TabIcon({ icon, color, name, focused }) {
 			}
 		}
 		daTa();
-	}, [refereshing]);
-	
+		getMessagesCountsAfterLastMessages().then((res)=>{
+			setUnreadMessages(res)
+		})
+	}, [refereshing,user]);
+	useFocusEffect(useCallback(()=>{
+		setUserInfo(authentication.currentUser)
+		 return () => {
+				setUserInfo(authentication.currentUser);
+			};
+	}, []))
+	// console.log(unreadMessages)
 	return (
 		<View
 			style={{

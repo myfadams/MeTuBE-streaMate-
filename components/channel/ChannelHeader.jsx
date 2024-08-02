@@ -1,13 +1,23 @@
-import { View, Text, TouchableOpacity,  Platform, Dimensions } from 'react-native'
-import { Image, ImageBackground } from "expo-image";
-import React, { useCallback, useEffect, useState } from 'react'
 import {
+	View,
+	Text,
+	TouchableOpacity,
+	Platform,
+	Dimensions,
+} from "react-native";
+import { Image, ImageBackground } from "expo-image";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+	addFriend,
 	back,
 	chromecast,
 	edit,
+	message,
 	nextPage,
 	options,
+	requestSent,
 	search,
+	sendChat,
 	watchtime,
 } from "../../constants/icons";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
@@ -21,87 +31,103 @@ import {
 	videoColor,
 } from "../../constants/colors";
 import MoreButton from "../../components/MoreButton";
-import OptionsHeader from './OptionsHeader';
-import { getContext } from '../../context/GlobalContext';
-import { getSubsriptions, subscribeToChannel } from '../../libs/videoUpdates';
-import OtherViewButtons from '../OtherViewButtons';
-import { get, ref } from 'firebase/database';
-import { db } from '../../libs/config';
-import { defaultCover } from '../../constants/images';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-const ChannelHeader = ({userInfo,act}) => {
-	const { user, refereshing } = getContext();
-	const [userObj,setUserObj]= useState()
-	const [cover,setCover]=useState()
+import OptionsHeader from "./OptionsHeader";
+import { getContext } from "../../context/GlobalContext";
+import { getSubsriptions, subscribeToChannel } from "../../libs/videoUpdates";
+import OtherViewButtons from "../OtherViewButtons";
+import { get, ref } from "firebase/database";
+import { db } from "../../libs/config";
+import { defaultCover } from "../../constants/images";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+	addFriendRequest,
+	addNewFriend,
+	addNewFriendToCache,
+	alreadyRecieved,
+	checkIfUserIsFriend,
+	getAddedFriends,
+} from "../../libs/chatFunctions";
+import Toast from "react-native-root-toast";
+
+function AboutBtn({ icon, handlepress, type }) {
+	return (
+		<TouchableOpacity
+			onPress={handlepress}
+			style={{
+				backgroundColor: type ? buttonColor : fieldColor,
+				width: 45,
+				height: 45,
+				borderRadius: Platform.OS === "ios" ? "50%" : 50,
+				justifyContent: "center",
+				alignItems: "center",
+			}}
+		>
+			<Image
+				source={icon}
+				contentFit="contain"
+				style={{ width: 24, height: 24 }}
+				tintColor={"#fff"}
+			/>
+		</TouchableOpacity>
+	);
+}
+const ChannelHeader = ({ userInfo, act }) => {
+	const { user, refereshing, isConnected } = getContext();
+	const [userObj, setUserObj] = useState();
+	const [cover, setCover] = useState();
 	// console.log(userInfo)
-	const [isFocused,setIsFocused]=useState(false)
+	const [isFocused, setIsFocused] = useState(false);
 	useEffect(() => {
-		async function getCover() {
-			const coverPhoto = ref(db, "usersref/" + userInfo?.uid);
-			const res = await get(coverPhoto);
-			// console.log(res)
-			setCover(res.val().coverPhoto);
-			setUserObj(res.val())
-		}
-		getCover();
-	}, [refereshing,isFocused]);
-	useFocusEffect(useCallback(()=>{
 		async function getCover() {
 			const coverPhoto = ref(db, "usersref/" + userInfo?.uid);
 			const res = await get(coverPhoto);
 			// console.log(res)
 			setCover(res.val().coverPhoto);
 			setUserObj(res.val());
-			setIsFocused(!isFocused)
-			return ()=>{
-				setCover(res.val().coverPhoto);
-				setUserObj(res.val());
-			}
 		}
 		getCover();
-	}, []))
-	
+	}, [refereshing, isFocused]);
+	useFocusEffect(
+		useCallback(() => {
+			async function getCover() {
+				const coverPhoto = ref(db, "usersref/" + userInfo?.uid);
+				const res = await get(coverPhoto);
+				// console.log(res)
+				setCover(res.val().coverPhoto);
+				setUserObj(res.val());
+				setIsFocused(!isFocused);
+				return () => {
+					setCover(res.val().coverPhoto);
+					setUserObj(res.val());
+				};
+			}
+			getCover();
+		}, [])
+	);
+
 	const [subscribed, setsubscribed] = useState(false);
+	const [isFriend, setIsFriend] = useState(false);
 	function handleSubscribe() {
 		subscribeToChannel(userInfo?.uid, user?.uid);
 		getSubsriptions(user?.uid, setsubscribed, userInfo?.uid);
 		// console.log("Get sub status: "+subscribed);
 	}
 	useEffect(() => {
-	
+		checkIfUserIsFriend(userInfo?.uid, setIsFriend);
 		getSubsriptions(user?.uid, setsubscribed, userInfo?.uid);
-		
 	}, []);
 	// console.log("subbed: "+subscribed)
-    function AboutBtn({ icon, handlepress }) {
-			return (
-				<TouchableOpacity
-					onPress={handlepress}
-					style={{
-						backgroundColor: fieldColor,
-						width: 42,
-						height: 42,
-						borderRadius: Platform.OS === "ios" ? "50%" : 50,
-						justifyContent: "center",
-						alignItems: "center",
-						// position: "absolute",
-						opacity: 0.8,
-						// top: "2%",
-						// left: "2%",
-					}}
-				>
-					<Image
-						source={icon}
-						contentFit="contain"
-						style={{ width: 25, height: 25 }}
-						tintColor={"#fff"}
-					/>
-				</TouchableOpacity>
-			);
-		}
+	const [hasBeenSentRequest, setHasBeenSentRequest] = useState(false);
+	const [isSent, setIsSent] = useState(false);
+	useEffect(() => {
+		getAddedFriends().then((res) => {
+			if (res.includes(userInfo?.uid)) setHasBeenSentRequest(true);
+			else setHasBeenSentRequest(false);
+		});
+	}, [hasBeenSentRequest, isSent]);
 
-	 const insets = useSafeAreaInsets();
-  return (
+	const insets = useSafeAreaInsets();
+	return (
 		<View>
 			<View style={{ alignItems: "center" }}>
 				<ImageBackground
@@ -162,21 +188,22 @@ const ChannelHeader = ({userInfo,act}) => {
 						borderWidth: 1,
 					}}
 				/>
-				<View
-					style={{
-						flexDirection: "row",
-						width: 130,
-						position: "absolute",
-						top: 175,
-						left: Dimensions.get("screen").width * 0.06,
-					}}
-				>
-					{userInfo?.uid !== user?.uid && (
+				{userInfo?.uid !== user?.uid && (
+					<View
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							gap: 8,
+							position: "absolute",
+							top: 175,
+							left: Dimensions.get("screen").width * 0.06,
+						}}
+					>
 						<OtherViewButtons
 							title={subscribed ? "Subscribed" : "Subscribe"}
 							handlePress={handleSubscribe}
 							styles={{
-								flex: 1,
+								width: 130,
 								height: 53,
 								backgroundColor: subscribed ? fieldColor : buttonColor,
 								borderWidth: subscribed ? 0.6 : 0,
@@ -186,8 +213,58 @@ const ChannelHeader = ({userInfo,act}) => {
 								borderRadius: 30,
 							}}
 						/>
-					)}
-				</View>
+						{!isFriend ? (
+							<AboutBtn
+								icon={hasBeenSentRequest || isSent ? requestSent : addFriend}
+								handlepress={async () => {
+									// router.push("userVideos/channelSettings");
+									if (isConnected) {
+										if (!hasBeenSentRequest) {
+											const hasAlreadyReceivedreq = await alreadyRecieved(
+												userInfo?.uid
+											);
+											if (!hasAlreadyReceivedreq)
+												addFriendRequest(userInfo?.uid).then(() => {
+													addNewFriendToCache(userInfo?.uid);
+													setIsSent(true);
+												});
+											else {
+												let toast = Toast.show(
+													"User already sent a you friends request",
+													{
+														duration: Toast.durations.LONG,
+													}
+												);
+												setTimeout(function hideToast() {
+													Toast.hide(toast);
+												}, 3000);
+											}
+										} else {
+											let toast = Toast.show("Request already sent", {
+												duration: Toast.durations.LONG,
+											});
+											setTimeout(function hideToast() {
+												Toast.hide(toast);
+											}, 3000);
+										}
+									}
+								}}
+								type={"addFried"}
+							/>
+						) : (
+							<AboutBtn
+								icon={sendChat}
+								handlepress={() => {
+									router.push({
+										pathname: "chatScreen",
+										params: { chatInfo: JSON.stringify(isFriend) },
+									});
+								}}
+								type={"message"}
+							/>
+						)}
+					</View>
+				)}
 				<View
 					style={{
 						width: "100%",
@@ -300,7 +377,6 @@ const ChannelHeader = ({userInfo,act}) => {
 			</View>
 		</View>
 	);
-}
+};
 
-
-export default ChannelHeader
+export default ChannelHeader;

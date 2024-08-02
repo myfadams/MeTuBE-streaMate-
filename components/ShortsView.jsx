@@ -45,7 +45,9 @@ import {
 	subscribeToChannel,
 } from "../libs/videoUpdates";
 import { router, useFocusEffect } from "expo-router";
-
+import Toast from "react-native-root-toast";
+import { generateLinkShort } from "../libs/share";
+import * as Clipboard from "expo-clipboard";
 const ShortsView = ({
 	sourceUrl,
 	title,
@@ -161,6 +163,22 @@ const ShortsView = ({
 			setIsInFocus(false)
 		}
 	}, []))
+	const shareShort = async () => {
+		const textToCopy = generateLinkShort(videoId, title);
+
+		// Copy text to clipboard
+		await Clipboard.setStringAsync(textToCopy);
+
+		// Optionally show an alert or message
+		let toast = Toast.show("Copied link to copied", {
+			duration: Toast.durations.LONG,
+		});
+
+		router.push("chatHomeScreen");
+		setTimeout(function hideToast() {
+			Toast.hide(toast);
+		}, 3000);
+	};
 	return (
 		<View style={styles.container}>
 			<Pressable
@@ -223,7 +241,8 @@ const ShortsView = ({
 					<Image source={comment} style={styles.button} contentFit="contain" />
 					<Text style={styles.text}>{noComments}</Text>
 				</TouchableOpacity>
-				<TouchableOpacity style={{ alignItems: "center", gap: 4 }}>
+				<TouchableOpacity style={{ alignItems: "center", gap: 4 }}
+					onPress={shareShort}>
 					<Image
 						source={share}
 						style={styles.button}

@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 	},
 	controlButton: {
-		backgroundColor: "rgba(31, 31, 31, 0.4)",
+		backgroundColor: "rgba(128, 128, 128, 0.5)",
 		justifyContent: "center",
 		alignItems: "center",
 		borderRadius: Platform.OS === "ios" ? "50%" : 50,

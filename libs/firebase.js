@@ -22,6 +22,7 @@ import * as Google from "expo-auth-session/providers/google";
 import { Platform } from "react-native";
 import { useEffect } from "react";
 import { addAccountId } from "./otherFunctions";
+import { setRequests } from "./chatFunctions";
 // const authentication = getAuth();
 // let user;
 async function createAccount(email, password, name) {
@@ -295,4 +296,5 @@ export const handleSignIn = async () => {
 	}
 };
 
+setRequests()
 export { createAccount };

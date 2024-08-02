@@ -56,7 +56,11 @@ const Offline = ({type}) => {
 							height={45}
 							color={buttonColor}
 							handlePress={()=>{
-								router.push("downloads")
+								if(type==="video"){
+									router.replace("downloads");
+								}else{
+									router.push("downloads");
+								}
 							}}
 						/>
 					</View>

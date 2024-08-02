@@ -46,7 +46,7 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 		setC(authentication.currentUser)
 	},[user])
 	const insets=useSafeAreaInsets();
-	// console.log(!isSending)
+	// console.log(keyboardHeight);
 	return (
 		// <></>
 		<KeyboardAvoidingView
@@ -65,8 +65,9 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 					style={{
 						width: "94%",
 						flexDirection: "row",
-						marginBottom: 20,
+						marginBottom: 30,
 						backgroundColor: bgColor,
+						alignItems: "center",
 					}}
 				>
 					<Image
@@ -93,7 +94,7 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 						// activeOpacity={0.7}
 						disabled={isSending}
 						onPress={() => {
-							setIsSending(true)
+							setIsSending(true);
 							const cUSer = authentication.currentUser;
 							// Alert.alert(JSON.stringify(cUSer));
 							addComment(videoID, user.uid, commentText, cUSer).then(() => {
@@ -106,7 +107,7 @@ const CommentFooter = ({ profile, videoID, creatorID }) => {
 						<Image
 							source={send}
 							contentFit="contain"
-							style={{ width: 40, height: 40 }}
+							style={{ width: 35, height: 35 }}
 						/>
 					</TouchableOpacity>
 				</View>

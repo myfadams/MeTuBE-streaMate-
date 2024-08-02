@@ -79,7 +79,7 @@ export const startDownload = async (video, setProgress) => {
 				const progressPercent =
 					downloadProgress.totalBytesWritten /
 					downloadProgress.totalBytesExpectedToWrite;
-				setProgress((prev) => ({ ...prev, [imgfileName]: progressPercent }));
+				setProgress((prev) => ({ ...prev, download: progressPercent }));
 			}
 		);
 

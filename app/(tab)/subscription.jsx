@@ -86,7 +86,7 @@ const subcription = () => {
 		};
 		fetchUsers();
 		fetchSubscriptions();
-	}, [refereshing]);
+	}, [refereshing,user?.uid]);
 
 	useEffect(() => {
 		const fetchDataVids = async () => {
@@ -103,7 +103,7 @@ const subcription = () => {
 		};
 
 		fetchDataVids();
-	}, [refereshing]);
+	}, [refereshing, user?.uid]);
 
 	// console.log(users)
 	const subscr = users.filter((ch) => {

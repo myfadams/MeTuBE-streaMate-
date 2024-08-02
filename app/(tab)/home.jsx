@@ -60,7 +60,7 @@ const home = () => {
 		};
 
 		fetchData();
-	}, [refereshing]);
+	}, [refereshing,user]);
 	useEffect(() => {
 		const fetchData = async () => {
 			setIsLoading(true);

@@ -22,7 +22,7 @@ export async function uploadFiles(type, fileUri,title) {
 	return downloadURL;
 }
 export const addShortToDB = async (file, thumnailUrl, videoUrl, userId,duration) => {
-	// const d =  new Date().toISOString();
+	const d =  new Date().toISOString();
 	const id = uuidv4();
 	await set(ShortsRef(id), {
 		caption: file.title,

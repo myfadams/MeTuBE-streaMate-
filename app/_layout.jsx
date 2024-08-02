@@ -20,6 +20,7 @@ import { getContext, GlobalContext } from "../context/GlobalContext";
 import { bgColor } from "../constants/colors";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Audio } from "expo-av";
+
 SplashScreen.preventAutoHideAsync();
 LogBox.ignoreLogs([
 	'Expected type "Query", but it was: a custom DocumentReference object',
@@ -58,6 +59,7 @@ const _layout = () => {
 		return null; // or a loading spinner
 	}
 	// const{FullScreen}=getContext();
+	
 	return (
 		<GlobalContext>
 			<GestureHandlerRootView>
@@ -88,6 +90,7 @@ const _layout = () => {
 								gestureResponseDistance: { vertical: 0 },
 								headerShown: false,
 								gestureDirection: "vertical",
+								gestureEnabled:false,
 								presentation: "card",
 							}}
 						/>
@@ -103,6 +106,18 @@ const _layout = () => {
 						/>
 						<Stack.Screen
 							name="notifications"
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="shorts/[trendingshort]"
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="chatHomeScreen"
+							options={{ headerShown: false }}
+						/>
+						<Stack.Screen
+							name="userVideos/channelSettings"
 							options={{ headerShown: false }}
 						/>
 						{/* <Stack.Screen

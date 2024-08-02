@@ -25,7 +25,87 @@ import { get, ref } from "firebase/database";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getStoredAccountIds } from "../libs/otherFunctions";
 import Toast from "react-native-root-toast";
+import { setRequests } from "../libs/chatFunctions";
 
+function OtherAccount({ accInfo, handleSwitchAccount }) {
+	return (
+		<View>
+			<Text
+				style={{
+					color: borderLight,
+					fontSize: 14,
+					marginBottom: 12,
+					// fontWeight:"600",
+					fontFamily: "Montserrat_400Regular",
+					alignItems: "center",
+					justifyContent: "center",
+					marginLeft: "3%",
+					// flexDirection:"row"
+				}}
+			>
+				{accInfo?.email}
+			</Text>
+			<TouchableOpacity
+				onPress={() => {
+					handleSwitchAccount(accInfo);
+				}}
+				style={{
+					width: "100%",
+					alignItems: "center",
+					marginTop: 15,
+				}}
+			>
+				<View
+					style={{
+						width: "97%",
+						flexDirection: "row",
+						// alignItems: "center",
+						gap: 20,
+						marginBottom: 20,
+					}}
+				>
+					<Image
+						source={{ uri: accInfo?.image }}
+						contentFit="contain"
+						style={{
+							width: 50,
+							height: 50,
+							backgroundColor: "#000",
+							borderColor: borderLight,
+							borderWidth: 1,
+							borderRadius: Platform.OS === "ios" ? "50%" : 50,
+						}}
+					/>
+					<View style={{ gap: 8 }}>
+						<Text
+							numberOfLines={2}
+							style={{
+								color: "white",
+								fontSize: 20,
+								fontFamily: "Montserrat_500Medium",
+								flexWrap: "wrap",
+								marginBottom: 5,
+								flexDirection: "row",
+							}}
+						>
+							{accInfo?.name}
+						</Text>
+
+						<Text
+							style={{
+								color: "white",
+								fontSize: 14,
+								fontFamily: "Montserrat_300Light",
+							}}
+						>
+							{accInfo?.handle ?? "No handle"}
+						</Text>
+					</View>
+				</View>
+			</TouchableOpacity>
+		</View>
+	);
+}
 const AccountInfo = () => {
 	const { user, setUser } = getContext();
 	const [noSubs, setNoSubs] = useState(0);
@@ -89,10 +169,11 @@ const AccountInfo = () => {
 			getCover();
 		}
 	}, []);
-
+	const [isSwitching,setIsSwitching]=useState(false)
 	const handleSwitchAccount = async (accInfo) => {
 		try {
 			// Sign out the current user
+			setIsSwitching(true)
 			await signOut(authentication);
 
 			// Show a toast message indicating account switch
@@ -114,94 +195,19 @@ const AccountInfo = () => {
 				duration: Toast.durations.LONG,
 			});
 
+			await setRequests()
 			// Hide toast after 3 seconds
 			setTimeout(() => Toast.hide(toast), 3000);
+			setIsSwitching(false);
 		} catch (error) {
 			// Handle errors
 			Alert.alert("Error", error.message);
 			console.log(error);
-		}
-	};
-	function OtherAccount({ accInfo }) {
-		return (
-			<View>
-				<Text
-					style={{
-						color: borderLight,
-						fontSize: 14,
-						marginBottom: 12,
-						// fontWeight:"600",
-						fontFamily: "Montserrat_400Regular",
-						alignItems: "center",
-						justifyContent: "center",
-						marginLeft: "3%",
-						// flexDirection:"row"
-					}}
-				>
-					{accInfo?.email}
-				</Text>
-				<TouchableOpacity
-					onPress={() => {
-						handleSwitchAccount(accInfo);
-					}}
-					style={{
-						width: "100%",
-						alignItems: "center",
-						marginTop: 15,
-						
-					}}
-				>
-					<View
-						style={{
-							width: "97%",
-							flexDirection: "row",
-							// alignItems: "center",
-							gap: 20,
-							marginBottom: 20,
-						}}
-					>
-						<Image
-							source={{ uri: accInfo?.image }}
-							contentFit="contain"
-							style={{
-								width: 50,
-								height: 50,
-								backgroundColor: "#000",
-								borderColor: borderLight,
-								borderWidth: 1,
-								borderRadius: Platform.OS === "ios" ? "50%" : 50,
-							}}
-						/>
-						<View style={{ gap: 8 }}>
-							<Text
-								numberOfLines={2}
-								style={{
-									color: "white",
-									fontSize: 20,
-									fontFamily: "Montserrat_500Medium",
-									flexWrap: "wrap",
-									marginBottom: 5,
-									flexDirection: "row",
-								}}
-							>
-								{accInfo?.name}
-							</Text>
 
-							<Text
-								style={{
-									color: "white",
-									fontSize: 14,
-									fontFamily: "Montserrat_300Light",
-								}}
-							>
-								{accInfo?.handle ?? "No handle"}
-							</Text>
-						</View>
-					</View>
-				</TouchableOpacity>
-			</View>
-		);
-	}
+		}
+		setIsSwitching(false);
+	};
+	
 	return (
 		<SafeAreaView
 			style={{
@@ -222,6 +228,7 @@ const AccountInfo = () => {
 			>
 				<TouchableOpacity
 					style={{ justifyContent: "center", marginLeft: 15 }}
+					disabled={isSwitching}
 					onPress={() => {
 						router.push("../");
 					}}
@@ -414,7 +421,13 @@ const AccountInfo = () => {
 						}}
 					>
 						{otherAcc.map((account, index) => {
-							return <OtherAccount accInfo={account} key={index} />;
+							return (
+								<OtherAccount
+									accInfo={account}
+									key={index}
+									handleSwitchAccount={handleSwitchAccount}
+								/>
+							);
 						})}
 					</View>
 				</View>

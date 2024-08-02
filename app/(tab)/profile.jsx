@@ -222,7 +222,7 @@ const profile = () => {
 											color: "white",
 											fontSize: 14,
 											fontFamily: "Montserrat_300Light",
-											flexWrap: 1,
+											flexWrap: "wrap",
 											flexShrink: 1,
 											width: Dimensions.get("window").width * 0.65,
 											marginVertical: 5,

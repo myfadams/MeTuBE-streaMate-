@@ -15,16 +15,26 @@ import NothingToseeHere from "../components/NothingToseeHere";
 import { noNotifications, notfoundlogo } from "../constants/images";
 import { get, ref } from "firebase/database";
 import { db } from "../libs/config";
+import ChannelComponent from "../components/channel/ChannelComponent";
+import FriendsRequestComponent from "../components/FriendsRequestComponent";
 
 const notifications = () => {
 	const { user } = getContext();
-	const [videos, setvideos] = useState([]);
+	// const [videos, setvideos] = useState([]);
+	const [notifications, setNotifications] = useState([]);
 	const [isLoading,setIsLoading]=useState(true)
+	const [reload,setReload]=useState(false);
 	async function fetchVideo(type, id) {
 		const tRef = ref(db, `${type}/${id}`);
 		const vidRes = await get(tRef);
 		let t = vidRes.val();
 		return { id: id, ...t };
+	}
+	async function fetchRequest( id) {
+		const tRef = ref(db, `usersref/${id}`);
+		const uRes = await get(tRef);
+		let t = uRes.val();
+		return { id: id, ...t,friendsRequest:true };
 	}
 	useEffect(() => {
 		const notiRef = ref(db, `notifications/${user?.uid}/noti`);
@@ -35,14 +45,18 @@ const notifications = () => {
 				if (res.exists()) {
 					const nlist = res.val();
 					// Use map to create an array of promises
-					const fetchPromises = nlist?.map(async (vidId) => {
+					const fetchPromises = nlist?.map(async (Id) => {
 						async function tempFunc() {
-							const t = await fetchVideo("shortsRef", vidId);
-							const items = Object.keys(t).length;
-							if (items <= 1) {
-								return fetchVideo("videosRef", vidId);
-							} else {
-								return fetchVideo("shortsRef", vidId);
+							if(typeof Id !== "object"){
+								const t = await fetchVideo("shortsRef", Id);
+								const items = Object.keys(t).length;
+								if (items <= 1) {
+									return fetchVideo("videosRef", Id);
+								} else {
+									return fetchVideo("shortsRef", Id);
+								}
+							}else{
+								return fetchRequest(Id.id);
 							}
 						}
 
@@ -53,7 +67,7 @@ const notifications = () => {
 					const temp = await Promise.all(fetchPromises);
 					temp.reverse();
 					// console.log(temp);
-					setvideos([...temp]);
+					setNotifications([...temp]);
 				}
 			} catch (error) {
 				console.error("Error fetching playlist or videos:", error);
@@ -62,7 +76,7 @@ const notifications = () => {
 
 		getPlayList();
 		setIsLoading(false)
-	}, []);
+	}, [reload]);
 	// console.log(videos);
 	const insets = useSafeAreaInsets();
 	return (
@@ -139,11 +153,17 @@ const notifications = () => {
 				</View>
 			</View>
 			<FlatList
-				data={videos}
+				data={notifications}
 				renderItem={({ item, index }) => {
-					if (item?.caption)
-						return <OtherChannelVideo video={item} type={"short"} noti={"yes"}/>;
-					return <OtherChannelVideo video={item} noti={"yes"} />;
+					if (!item?.friendsRequest) {
+						if (item?.caption)
+							return (
+								<OtherChannelVideo video={item} type={"short"} noti={"yes"} />
+							);
+						return <OtherChannelVideo video={item} noti={"yes"} />;
+					}else{
+						return <FriendsRequestComponent channel={item} setReload={setReload} reload={reload} />
+					}
 				}}
 				keyExtractor={(item) => {
 					return item.id;

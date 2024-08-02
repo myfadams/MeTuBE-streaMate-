@@ -10,8 +10,9 @@ import { getContext } from '../context/GlobalContext';
 import { get, ref } from 'firebase/database';
 
 const HeaderApp = ({ screenName, disable,type }) => {
-	// console.log(screenName)
-	const { user, hasNotifications, setHasNotifications } = getContext();
+	const { user, hasNotifications, setHasNotifications, unreadMessages } =
+	getContext();
+	// console.log("unread",unreadMessages)
 	// const [hasNotifications,setHasNotifications]=useState(false)
 	useEffect(()=>{
 		if(user)
@@ -76,7 +77,7 @@ const HeaderApp = ({ screenName, disable,type }) => {
 				>
 					{screenName !== "you" && (
 						<TouchableOpacity onPress={()=>{
-							router.push("post")
+							router.push("chatHomeScreen");
 						}}>
 							<Image
 								source={message}
@@ -84,7 +85,7 @@ const HeaderApp = ({ screenName, disable,type }) => {
 								contentFit="contain"
 								tintColor={"#fff"}
 							/>
-							<View
+							{unreadMessages?.length>0&&<View
 								style={{
 									height: 7,
 									width: 7,
@@ -93,17 +94,19 @@ const HeaderApp = ({ screenName, disable,type }) => {
 									backgroundColor: "red",
 									right: 0,
 								}}
-							></View>
+							></View>}
 						</TouchableOpacity>
 					)}
-					<TouchableOpacity>
+					{/* <TouchableOpacity onPress={()=>{
+						router.push("test");
+					}}>
 						<Image
 							source={chromecast}
 							style={{ width: 21, height: 21 }}
 							contentFit="contain"
 							tintColor={"#fff"}
 						/>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 					<TouchableOpacity onPress={()=>{
 						setHasNotifications(false)
 						router.push("notifications")

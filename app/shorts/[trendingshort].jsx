@@ -22,7 +22,7 @@ const screenHeight = Dimensions.get("screen").height
 const TrendingShort = () => {
 	// const { trendingshort: toBePlayed } = useLocalSearchParams();
 	const shortItem = useLocalSearchParams();
-	// console.log(shortItem)
+	console.log(shortItem)
 	const [shorts, setShorts] = useState([]);
 	const [error, setError] = useState();
 	useEffect(() => {
@@ -64,7 +64,7 @@ const TrendingShort = () => {
 	// console.log(newS)
 	const renderItem = useCallback(
 		({ item, index }) => {
-			const shouldPlay = viewableItems.includes(item.id.toString());
+			const shouldPlay = viewableItems.includes(item.id?.toString());
 			// console.log(index+" "+shouldPlay)
 			return (
 				<View

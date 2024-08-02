@@ -7,7 +7,7 @@ import {
 	Platform,
 	Switch,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Image } from "expo-image";
 import {
 	back,
@@ -29,7 +29,7 @@ import { getContext } from "../../context/GlobalContext";
 import { OpenImageView } from "../../libs/sound";
 import { uploadProfileAndCover } from "../../libs/uploadFirebase";
 import ModalEditor from "../../components/channel/ModalEditor";
-import { router } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { authentication, db } from "../../libs/config";
 import { onValue, ref } from "firebase/database";
 import { changeUserDetails } from "../../libs/firebase";
@@ -40,7 +40,7 @@ const channelSettings = () => {
 	const [isEnabled, setIsEnabled] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [type, setType] = useState(false);
-
+	const  {type:receieveType}=useLocalSearchParams();
 	function handleSwitch() {
 		setIsEnabled(!isEnabled);
 	}
@@ -129,6 +129,13 @@ const channelSettings = () => {
 	}, [refereshing]);
 	// console.log("new name"+user.);
 	// console.log(userData?.handle);
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				setRefreshing(!refereshing);
+			};
+		}, [refereshing])
+	);
 	async function handleChangeProfile() {
 		const data = await OpenImageView("profile");
 		if (data) {
@@ -213,32 +220,38 @@ const channelSettings = () => {
 								gap: 30,
 							}}
 						>
-							<TouchableOpacity>
-								<Image
-									source={chromecast}
-									style={{ width: 21, height: 21 }}
-									contentFit="contain"
-								/>
-							</TouchableOpacity>
+							{!receieveType && (
+								<TouchableOpacity>
+									<Image
+										source={chromecast}
+										style={{ width: 21, height: 21 }}
+										contentFit="contain"
+									/>
+								</TouchableOpacity>
+							)}
 
-							<TouchableOpacity
-								onPress={() => {
-									router.push("/search/SearchPage");
-								}}
-							>
-								<Image
-									source={search}
-									style={{ width: 21, height: 21 }}
-									contentFit="contain"
-								/>
-							</TouchableOpacity>
-							<TouchableOpacity>
-								<Image
-									source={options}
-									style={{ width: 21, height: 21 }}
-									contentFit="contain"
-								/>
-							</TouchableOpacity>
+							{!receieveType && (
+								<TouchableOpacity
+									onPress={() => {
+										router.push("/search/SearchPage");
+									}}
+								>
+									<Image
+										source={search}
+										style={{ width: 21, height: 21 }}
+										contentFit="contain"
+									/>
+								</TouchableOpacity>
+							)}
+							{!receieveType && (
+								<TouchableOpacity>
+									<Image
+										source={options}
+										style={{ width: 21, height: 21 }}
+										contentFit="contain"
+									/>
+								</TouchableOpacity>
+							)}
 						</View>
 					</View>
 				</View>
@@ -247,7 +260,7 @@ const channelSettings = () => {
 					<View>
 						<TouchableOpacity onPress={handleChangeCover}>
 							<Image
-								source={{uri:userData?.coverPhoto}}
+								source={{ uri: userData?.coverPhoto }}
 								style={{
 									backgroundColor: videoColor,
 									width: "100%",
@@ -335,14 +348,15 @@ const channelSettings = () => {
 						subtitle={"www.StreaMate.com/channel_name"}
 					/>
 					<ChannelEditButtons
-						handlePress={()=>{
-							router.push({pathname:"userVideos/channelDescription",params:userData})
+						handlePress={() => {
+							router.push({
+								pathname: "userVideos/channelDescription",
+								params: userData,
+							});
 						}}
 						sourceUrl={edit}
 						title={"Description"}
-						subtitle={
-							userData?.description ?? "No channel description"
-						}
+						subtitle={userData?.description ?? "No channel description"}
 					/>
 
 					<View
@@ -407,8 +421,8 @@ const channelSettings = () => {
 									// width:
 								}}
 							>
-								Changes made to your name and profile are visible only on StreaMate
-								and not other Google services.
+								Changes made to your name and profile are visible only on
+								StreaMate and not other Google services.
 								<Text style={{ color: buttonColor }}> Learn more</Text>
 							</Text>
 						</View>

@@ -26,7 +26,7 @@ import CommentFooter from "./CommentFooter";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { get, onValue, ref } from "firebase/database";
 import { db } from "../libs/config";
-import { formatSubs, getLikes, getNumberSubs } from "../libs/videoUpdates";
+import { calculateTimePassed, formatSubs, getLikes, getNumberSubs, getUploadTime } from "../libs/videoUpdates";
 import { LinkText } from "./DescriptionComponent";
 const windowHeight = Dimensions.get("window").height;
 const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
@@ -95,6 +95,16 @@ const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 		// Cleanup listener on unmount
 		return () => unsubscribe();
 	}, [info.videoview]);
+
+	const [timePassed,setTimePassed]=useState()
+	useEffect(()=>{
+		getUploadTime(info.videoview, "video").then((res) => {
+			// console.log(res)
+			let time = calculateTimePassed(res);
+			// console.log(time)
+			setTimePassed(time);
+		});
+	},[])
 	return (
 		<BottomSheet
 			ref={bottomSheetRef}
@@ -213,7 +223,8 @@ const AboutVideo = ({ isVisible, onClose, isActive, info }) => {
 									// flex:1
 								}}
 							>
-								{info?.timePassed}
+								{/* {info?.timePassed} */}
+								{timePassed}
 							</Text>
 							<Text
 								style={{

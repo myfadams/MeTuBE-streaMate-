@@ -24,7 +24,7 @@
     "@react-native-google-signin/google-signin": "^12.2.1",
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
-    "expo": "~51.0.22",
+    "expo": "~51.0.24",
     "expo-auth-session": "~5.5.2",
     "expo-av": "~14.0.6",
     "expo-blur": "~13.0.2",
@@ -37,8 +37,8 @@
     "expo-image-picker": "~15.0.7",
     "expo-linking": "~6.3.1",
     "expo-media-library": "~16.0.4",
-    "expo-notifications": "~0.28.11",
-    "expo-router": "~3.5.18",
+    "expo-notifications": "~0.28.14",
+    "expo-router": "~3.5.20",
     "expo-screen-orientation": "~7.0.5",
     "expo-status-bar": "~1.12.1",
     "expo-updates": "~0.25.21",
@@ -75,7 +75,11 @@
     "uuid": "^10.0.0",
     "expo-secure-store": "~13.0.2",
     "expo-device": "~6.0.2",
-    "expo-file-system": "~17.0.1"
+    "expo-file-system": "~17.0.1",
+    "expo-dev-client": "~4.0.21",
+    "expo-clipboard": "~6.0.3",
+    "expo-image-manipulator": "~12.0.5",
+    "expo-camera": "~15.0.14"
   },
   "devDependencies": {
     "@babel/core": "^7.24.8"

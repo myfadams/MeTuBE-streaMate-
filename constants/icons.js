@@ -78,16 +78,26 @@ import remix from "../assets/icons/recycle.png";
 import fullScreen from "../assets/icons/fullScreen.png";
 import playIcon from "../assets/icons/play.png";
 import checkMark from "../assets/icons/checkMark.png";
+import addFriend from "../assets/icons/addFriend.png";
 import addFill from "../assets/icons/addFill.png";
+import requestSent from "../assets/icons/requestSent.png";
 import homeFill from "../assets/icons/active/homeFilled.png";
 import shortsFill from "../assets/icons/active/shortsFilled.png";
 import subsFilled from "../assets/icons/active/subscriptionFilled.png";
 import rewindVid from "../assets/icons/rewindVid.png";
 import fowardVid from "../assets/icons/fowardVid.png";
 import exitFullScreen from "../assets/icons/exitFullScreen.png";
+import sendChat from "../assets/icons/sendChat.png";
+import imagesent from "../assets/icons/imagesent.png";
+import videosent from "../assets/icons/videosent.png";
 
 
 export {
+	imagesent,
+	videosent,
+	sendChat,
+	requestSent,
+	addFriend,
 	checkMark,
 	exitFullScreen,
 	fullScreen,
