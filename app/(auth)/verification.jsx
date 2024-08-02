@@ -47,9 +47,9 @@ const Verification = () => {
 
 		return () => clearInterval(interval); // Clear interval on component unmount
 	}, [user]);
-	if (isVerified) return <Redirect href="home" />;
+	const animation = useRef()
 	console.log(isVerified);
-	 const animation = useRef()
+	if (isVerified) return <Redirect href="home" />;
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.vewStyle}>

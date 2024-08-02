@@ -1,7 +1,7 @@
 import { View, Text,  } from "react-native";
 import { Image } from "expo-image";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { bgColor, buttonColor, loadingColor } from "../constants/colors";
 import HeaderApp from "./HeaderApp";
 import { offineLogo } from "../constants/images";
@@ -14,7 +14,7 @@ const Offline = ({type}) => {
     const { setRefreshing, refereshing } = getContext();
 	return (
 		<SafeAreaView
-			style={{ backgroundColor: bgColor, justifyContent: "center" }}
+			style={{ backgroundColor: bgColor, justifyContent: "center", paddingTop:useSafeAreaInsets().top }}
 		>
 			{!type&&<HeaderApp />}
 			<View style={{ height: "100%", }}>

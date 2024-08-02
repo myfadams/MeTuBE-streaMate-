@@ -225,43 +225,47 @@ export const removeFriendRequest = async (friendID) => {
 	await removeRequestNotifications(friendID);
 };
 
-export const acceptRequest = async (friendID) => {
-	console.log(friendID);
-	const userID = authentication?.currentUser?.uid;
-	const userContactRef = ref(db, `chats/${userID}/contacts`);
-	const friendContactRef = ref(db, `chats/${friendID}/contacts`);
-	try {
-		// Get existing requests
-		const userContacts = await get(userContactRef);
-		const friendsContact = await get(friendContactRef);
-		const chatRoomId = await createChatRoom([userID, friendID]);
-		if (!userContacts.exists()) {
-			// No existing request, so set initial data
-			await set(userContactRef, [{ id: friendID, chatRoomId }]);
-			await set(friendContactRef, [{ id: userID, chatRoomId }]);
-		} else {
-			// Update existing data
-			const existingUserContacts = userContacts.val() || [];
-			const existingFriendsContact = friendsContact.val() || [];
-			if (!Array.isArray(existingUserContacts)) {
-				throw new Error("Existing request data is not an array.");
-			}
-			const updatedUserContacts = [
-				...existingUserContacts,
-				{ id: friendID, chatRoomId },
-			];
-			const updatedFriendsContacts = [
-				...existingFriendsContact,
-				{ id: userID, chatRoomId },
-			];
-			// Use set to overwrite the existing data with the updated array
-			await set(userContactRef, updatedUserContacts);
-			await set(friendContactRef, updatedFriendsContacts);
-		}
-	} catch (error) {
-		console.error("Error adding Friend:", error);
-	}
-};
+// export const acceptRequest = async (friendID) => {
+// 	// console.log(friendID);
+// 	const userID = authentication?.currentUser?.uid;
+// 	const userContactRef = ref(db, `chats/${userID}/contacts`);
+// 	const friendContactRef = ref(db, `chats/${friendID}/contacts`);
+// 	try {
+// 		// Get existing requests
+// 		const userContacts = await get(userContactRef);
+// 		const friendsContact = await get(friendContactRef);
+// 		const chatRoomId = await createChatRoom([userID, friendID]);
+// 		if (!userContacts.exists()) {
+// 			// No existing request, so set initial data
+// 			console.log("user adding new ");
+// 			await set(userContactRef, [{ id: friendID, chatRoomId }]);
+// 			await set(friendContactRef, [{ id: userID, chatRoomId }]);
+// 		} else {
+// 			// Update existing data
+// 			console.log("user adding old ");
+// 			const existingUserContacts = userContacts.val() || [];
+// 			const existingFriendsContact = friendsContact.val() || [];
+// 			if (!Array.isArray(existingUserContacts)) {
+// 				throw new Error("Existing request data is not an array.");
+// 			}
+// 			console.log("existing user contact",existingUserContacts)
+// 			console.log("existing friends contact", existingFriendsContact);
+// 			const updatedUserContacts = [
+// 				...existingUserContacts,
+// 				{ id: friendID, chatRoomId },
+// 			];
+// 			const updatedFriendsContacts = [
+// 				...existingFriendsContact,
+// 				{ id: userID, chatRoomId },
+// 			];
+// 			// Use set to overwrite the existing data with the updated array
+// 			await set(userContactRef, updatedUserContacts);
+// 			await set(friendContactRef, updatedFriendsContacts);
+// 		}
+// 	} catch (error) {
+// 		console.error("Error adding Friend:", error);
+// 	}
+// };
 
 const fetchUserById = async (userId, chatID) => {
 	try {
@@ -714,56 +718,7 @@ export async function alreadyRecieved(friendID) {
 	return false;
 }
 
-// export async function getMessagesCountsAfterLastMessages() {
-// 	const results = [];
-// 	const user = authentication?.currentUser?.uid;
-// 	const chatRooms = await fetchArrayFromCache("lastMessages/" + user);
 
-// 	for (const chatRoom of chatRooms) {
-// 		const { chatRoomID, id: lastMessageId } = chatRoom;
-
-// 		if (lastMessageId) {
-// 			try {
-// 				const roomRef = ref(db, `chatrooms/${chatRoomID}/messages`);
-
-// 				// Fetch all messages
-// 				const roomSnapshot = await get(roomRef);
-// 				if (!roomSnapshot.exists()) {
-// 					console.log(`Chat room ${chatRoomID} does not exist`);
-// 					results.push({ chatRoomID, count: 0 });
-// 					continue;
-// 				}
-
-// 				const messages = roomSnapshot.val();
-// 				if (!messages) {
-// 					results.push({ chatRoomID, count: 0 });
-// 					continue;
-// 				}
-
-// 				// Find the index of the last message
-// 				const messageKeys = Object.keys(messages);
-// 				const lastMessageIndex = messageKeys.findIndex(
-// 					(key) => messages[key].id === lastMessageId
-// 				);
-
-// 				// Count messages after the last message
-// 				const numberOfMessagesAfter =
-// 					lastMessageIndex >= 0 ? messageKeys.length - lastMessageIndex - 1 : 0;
-
-// 				results.push({ chatRoomID, count: numberOfMessagesAfter });
-// 			} catch (error) {
-// 				console.error(
-// 					`Error fetching messages for chat room ${chatRoomID}:`,
-// 					error
-// 				);
-// 				results.push({ chatRoomID, count: 0 });
-// 			}
-// 		}
-// 	}
-
-// 	// console.log("Unread messages count:", results);
-// 	return results;
-// }
 
 AsyncStorage.getItem("lastMessages/JVzOWZRRH3dqylwXNX1yw3qlgk32").then(
 	(res) => {
@@ -911,4 +866,80 @@ export const useLastMessage = (chatID, isConnected, setLastMessage) => {
 		}, [chatID, isConnected, setLastMessage]);
 		
 	
+};
+
+
+export const acceptRequest = async (friendID) => {
+	const userID = authentication?.currentUser?.uid;
+	const userContactRef = ref(db, `chats/${userID}/contacts`);
+	const friendContactRef = ref(db, `chats/${friendID}/contacts`);
+	try {
+		// Get existing contacts
+		const userContactsSnapshot = await get(userContactRef);
+		const friendContactsSnapshot = await get(friendContactRef);
+
+		const chatRoomId = await createChatRoom([userID, friendID]);
+
+		if (!userContactsSnapshot.exists() && !friendContactsSnapshot.exists()) {
+			// No existing contacts, add new contacts
+			console.log("user adding new contact");
+			await set(userContactRef, [{ id: friendID, chatRoomId }]);
+			await set(friendContactRef, [{ id: userID, chatRoomId }]);
+		} else if (
+			userContactsSnapshot.exists() &&
+			!friendContactsSnapshot.exists()
+		) {
+			// User's contacts exist but friend's contacts do not, add the friend to user's contacts
+			console.log("user adding friend to contacts");
+			const existingUserContacts = userContactsSnapshot.val() || [];
+			if (!Array.isArray(existingUserContacts)) {
+				throw new Error("Existing user contacts data is not an array.");
+			}
+			const updatedUserContacts = [
+				...existingUserContacts,
+				{ id: friendID, chatRoomId },
+			];
+			await set(userContactRef, updatedUserContacts);
+			await set(friendContactRef, [{ id: userID, chatRoomId }]);
+		} else if (
+			!userContactsSnapshot.exists() &&
+			friendContactsSnapshot.exists()
+		) {
+			// Friend's contacts exist but user's contacts do not, add the user to friend's contacts
+			console.log("user adding themselves to friend's contacts");
+			const existingFriendContacts = friendContactsSnapshot.val() || [];
+			if (!Array.isArray(existingFriendContacts)) {
+				throw new Error("Existing friend contacts data is not an array.");
+			}
+			const updatedFriendContacts = [
+				...existingFriendContacts,
+				{ id: userID, chatRoomId },
+			];
+			await set(friendContactRef, updatedFriendContacts);
+			await set(userContactRef, [{ id: friendID, chatRoomId }]);
+		} else {
+			// Both user and friend already have contacts, update both
+			console.log("user updating existing both contacts");
+			const existingUserContacts = userContactsSnapshot.val()
+			const existingFriendContacts = friendContactsSnapshot.val() 
+			if (
+				!Array.isArray(existingUserContacts) ||
+				!Array.isArray(existingFriendContacts)
+			) {
+				throw new Error("Existing contacts data is not an array.");
+			}
+			const updatedUserContacts = [
+				...existingUserContacts,
+				{ id: friendID, chatRoomId },
+			];
+			const updatedFriendContacts = [
+				...existingFriendContacts,
+				{ id: userID, chatRoomId },
+			];
+			await set(userContactRef, updatedUserContacts);
+			await set(friendContactRef, updatedFriendContacts);
+		}
+	} catch (error) {
+		console.error("Error adding Friend:", error);
+	}
 };

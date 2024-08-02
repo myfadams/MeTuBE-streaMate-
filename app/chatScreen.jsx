@@ -272,16 +272,31 @@ const ChatScreen = () => {
 					/>
 				</TouchableOpacity>
 				<View style={styles.profileContainer}>
-					<Image
-						source={{
-							uri: curChatInfo?.image?.replace(
-								"/ChannelsInfo/",
-								"/ChannelsInfo%2F"
-							),
+					{console.log("chatInfo",chatInfo)}
+					<TouchableOpacity
+						onPress={() => {
+							router.push({
+								pathname: "userVideos/aboutVids",
+								params: {
+									uid: curChatInfo?.id,
+									photoURL: curChatInfo?.image,
+									displayName: curChatInfo?.name,
+									from: "chat",
+								},
+							});
 						}}
-						style={styles.profileImage}
-						contentFit="cover"
-					/>
+					>
+						<Image
+							source={{
+								uri: curChatInfo?.image?.replace(
+									"/ChannelsInfo/",
+									"/ChannelsInfo%2F"
+								),
+							}}
+							style={styles.profileImage}
+							contentFit="cover"
+						/>
+					</TouchableOpacity>
 					<View style={styles.profileInfo}>
 						<Text style={styles.userName}>{curChatInfo?.name}</Text>
 						<Text style={styles.lastSeen}>Last seen 5 minutes ago</Text>

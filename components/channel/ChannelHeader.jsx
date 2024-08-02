@@ -75,7 +75,7 @@ const ChannelHeader = ({ userInfo, act }) => {
 	const { user, refereshing, isConnected } = getContext();
 	const [userObj, setUserObj] = useState();
 	const [cover, setCover] = useState();
-	// console.log(userInfo)
+	// console.log(userInfo?.from)
 	const [isFocused, setIsFocused] = useState(false);
 	useEffect(() => {
 		async function getCover() {
@@ -213,8 +213,8 @@ const ChannelHeader = ({ userInfo, act }) => {
 								borderRadius: 30,
 							}}
 						/>
-						{!isFriend ? (
-							<AboutBtn
+						{!isFriend  ? (
+							!userInfo?.from&&<AboutBtn
 								icon={hasBeenSentRequest || isSent ? requestSent : addFriend}
 								handlepress={async () => {
 									// router.push("userVideos/channelSettings");
@@ -252,7 +252,7 @@ const ChannelHeader = ({ userInfo, act }) => {
 								type={"addFried"}
 							/>
 						) : (
-							<AboutBtn
+							!userInfo?.from&&<AboutBtn
 								icon={sendChat}
 								handlepress={() => {
 									router.push({

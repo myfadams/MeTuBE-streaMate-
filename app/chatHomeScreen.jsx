@@ -294,11 +294,25 @@ const ChatItem = ({ item }) => {
 				});
 			}}
 		>
-			<Image
-				source={{ uri: item?.image }}
-				style={styles.profileImage}
-				contentFit="cover"
-			/>
+			<TouchableOpacity
+				onPress={() => {
+					router.push({
+						pathname: "userVideos/aboutVids",
+						params: {
+							uid: item?.id,
+							photoURL: item?.image,
+							displayName: item?.name,
+							from:"chat"
+						},
+					});
+				}}
+			>
+				<Image
+					source={{ uri: item?.image }}
+					style={styles.profileImage}
+					contentFit="cover"
+				/>
+			</TouchableOpacity>
 			<View
 				style={{
 					flexDirection: "row",
@@ -315,7 +329,14 @@ const ChatItem = ({ item }) => {
 					<Text style={styles.name} numberOfLines={1}>
 						{item?.name}
 					</Text>
-					<View style={{ flexDirection: "row", flex: 1, gap:5, alignItems:"center" }}>
+					<View
+						style={{
+							flexDirection: "row",
+							flex: 1,
+							gap: 5,
+							alignItems: "center",
+						}}
+					>
 						<Text style={styles.message} numberOfLines={1}>
 							{lastMessage?.text ?? "No messages yet"}
 						</Text>
@@ -324,7 +345,7 @@ const ChatItem = ({ item }) => {
 								source={
 									lastMessage?.mediaType === "image" ? imagesent : videosent
 								}
-								style={{width:20,height:20}}
+								style={{ width: 20, height: 20 }}
 								tintColor={buttonColor}
 							/>
 						)}
