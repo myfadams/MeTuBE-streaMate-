@@ -23,13 +23,9 @@ StreamMate (formerly known as MeTube) is a comprehensive YouTube clone applicati
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1416.png)
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1417.png)
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1418.png)
-
-
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1419.png)
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1440.png)
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1436.png)
-
-
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1435.png)
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1426.png)
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1427.png)
