@@ -6,12 +6,18 @@ StreamMate (formerly known as MeTube) is a comprehensive YouTube clone applicati
 
 
 ## Key Features
-Video Streaming: Watch and upload videos with a user-friendly interface.
-Channel Management: Create and manage your own channels, subscribe to others, and stay updated with the latest content.
-Playlists: Organize your favorite videos into playlists for easy access.
-One-on-One Messaging: Connect with other users through a built-in messaging system, allowing real-time chat and engagement.
-React Native & Expo: Built with React Native and Expo for a smooth and performant cross-platform experience.
-Firebase & Appwrite Integration: Utilizes Firebase for authentication and real-time database services, and Appwrite for additional backend functionalities.
+#### Video Streaming: 
+  Watch and upload videos with a user-friendly interface.
+#### Channel Management:
+  Create and manage your own channels, subscribe to others, and stay updated with the latest content.
+#### Playlists: '
+  Organize your favorite videos into playlists for easy access.
+#### One-on-One Messaging: 
+  Connect with other users through a built-in messaging system, allowing real-time chat and engagement.
+#### React Native & Expo:
+  Built with React Native and Expo for a smooth and performant cross-platform experience.
+#### Firebase & Appwrite Integration: 
+  Utilizes Firebase for authentication and real-time database services, and Appwrite for additional backend functionalities.
 ## Screenshots
 
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1416.png)
