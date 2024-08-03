@@ -7,9 +7,9 @@ Briefly describe what your project does and its purpose.
 ## Features
 
 ![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1416.png)
-![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1417.PNG)
-![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1418.PNG)
-![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1419.PNG)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1417.png)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1418.png)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1419.png)
 
 
 ## Installation
