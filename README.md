@@ -6,10 +6,10 @@ Briefly describe what your project does and its purpose.
 
 ## Features
 
-![Screenshot](https://github.com/myfadams/streamMate/blob/master/tempVid/IMG_1416.PNG)
-![Screenshot](https://github.com/myfadams/streamMate/blob/master/tempVid/IMG_1417.PNG)
-![Screenshot](https://github.com/myfadams/streamMate/blob/master/tempVid/IMG_1418.PNG)
-![Screenshot](https://github.com/myfadams/streamMate/blob/master/tempVid/IMG_1419.PNG)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1416.PNG)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1417.PNG)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1418.PNG)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/images/IMG_1419.PNG)
 
 
 ## Installation
