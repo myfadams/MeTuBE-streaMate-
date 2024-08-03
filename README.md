@@ -6,9 +6,11 @@ Briefly describe what your project does and its purpose.
 
 ## Features
 
-- Feature 1
-- Feature 2
-- Feature 3
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/tempVid/IMG_1416.PNG)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/tempVid/IMG_1417.PNG)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/tempVid/IMG_1418.PNG)
+![Screenshot](https://github.com/myfadams/streamMate/blob/master/tempVid/IMG_1419.PNG)
+
 
 ## Installation
 
@@ -23,3 +25,4 @@ cd your-repo
 
 # Install dependencies
 npm install
+
